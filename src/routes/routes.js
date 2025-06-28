@@ -9,9 +9,10 @@ router.post('/signup', (req, res) => {
     return res.status(400).json({ error: 'Email, focus, and gender required' });
   }
   db.run(`INSERT INTO users (email, name, focus, gender) VALUES (?, ?, ?, ?)`,
-    [email, name, focus, gender], (err) => {
+    [email, name || null, focus, gender], (err) => {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Sign-up failed: Database issue' });
       }
       res.status(200).json({ message: 'Sign-up successful' });
     });

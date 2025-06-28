@@ -5,7 +5,9 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     email: formData.get('email'),
     name: formData.get('name'),
     focus: formData.get('focus'),
+    gender: formData.get('gender'),
   };
+  console.log('Form data:', data); // Add this line
   try {
     const response = await fetch('/api/signup', {
       method: 'POST',
