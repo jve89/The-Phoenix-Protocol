@@ -2,7 +2,10 @@ const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
 
-dotenv.config();
+const result = dotenv.config({ path: './.env' });
+if (result.error) throw result.error;
+console.log('Loaded STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY);
+
 const app = express();
 const port = process.env.PORT || 3000;
 
