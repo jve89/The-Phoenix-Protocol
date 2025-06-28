@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db/db');
+const { createCheckoutSession } = require('../utils/payment');
 
 const router = express.Router();
 
@@ -16,6 +17,13 @@ router.post('/signup', (req, res) => {
       }
       res.status(200).json({ message: 'Sign-up successful' });
     });
+});
+
+router.post('/create-checkout-session', async (req, res) => {
+  const { email, plan } = req.body;
+  if (!email || !plan) return res.status(400).json({ error: 'Email and plan required' });
+  const url = await createCheckoutSession(email, plan);
+  res.json({ url });
 });
 
 module.exports = router;
