@@ -1,0 +1,33 @@
+The-Phoenix-Protocol/
+├── /public/
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
+│   └── success.html
+├── /src/
+│   ├── /routes/
+│   │   └── routes.js
+│   ├── /utils/
+│   │   ├── auth.js
+│   │   ├── content.js
+│   │   ├── email.js
+│   │   ├── cron.js
+│   │   └── payment.js
+│   ├── /db/
+│   │   └── db.js
+│   └── server.js
+├── /templates/
+│   ├── email.html
+│   └── welcome.html
+├── /content/
+│   ├── prompts.js
+│   └── fallback.json
+├── /config/
+│   ├── config.js
+│   └── .env
+├── filetree.txt
+├── package.json
+├── .gitignore
+├── .gitpod.yml
+├── README.md
+├── setup.md

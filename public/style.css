@@ -1,0 +1,7 @@
+/* Custom styles for The Phoenix Protocol */
+body {
+  font-family: Arial, sans-serif;
+}
+button:hover {
+  background-color: #1e40af;
+}

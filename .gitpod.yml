@@ -1,0 +1,7 @@
+image: gitpod/workspace-full
+tasks:
+  - init: npm install
+    command: node src/server.js
+ports:
+  - port: 3000
+    onOpen: open-preview
