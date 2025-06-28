@@ -1,12 +1,11 @@
 const Stripe = require('stripe');
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const createCheckoutSession = async (email, plan) => {
   if (!process.env.STRIPE_SECRET_KEY) {
     console.error('Stripe secret key not found in .env');
     throw new Error('Missing Stripe API key');
   }
-  console.log('Using Stripe key:', process.env.STRIPE_SECRET_KEY);
+  console.log('Using Stripe key from env:', process.env.STRIPE_SECRET_KEY);
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

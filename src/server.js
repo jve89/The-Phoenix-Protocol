@@ -2,9 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
 
-const result = dotenv.config({ path: './.env' });
-if (result.error) throw result.error;
-console.log('Loaded STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY);
+dotenv.config({ path: './.env' }); // Explicit root path
+if (!process.env.STRIPE_SECRET_KEY) console.error('Stripe key not loaded');
 
 const app = express();
 const port = process.env.PORT || 3000;
