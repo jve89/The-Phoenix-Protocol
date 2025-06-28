@@ -1,0 +1,29 @@
+{
+  "name": "the-phoenix-protocol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jve89/The-Phoenix-Protocol.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jve89/The-Phoenix-Protocol/issues"
+  },
+  "homepage": "https://github.com/jve89/The-Phoenix-Protocol#readme",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.3",
+    "sqlite3": "^5.1.7",
+    "stripe": "^18.2.1"
+  }
+}
