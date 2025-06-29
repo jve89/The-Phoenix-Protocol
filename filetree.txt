@@ -8,7 +8,6 @@ The-Phoenix-Protocol/
 │   ├── /routes/
 │   │   └── routes.js
 │   ├── /utils/
-│   │   ├── auth.js
 │   │   ├── content.js
 │   │   ├── email.js
 │   │   ├── cron.js
@@ -19,9 +18,6 @@ The-Phoenix-Protocol/
 ├── /templates/
 │   ├── email.html
 │   └── welcome.html
-├── /content/
-│   ├── prompts.js
-│   └── fallback.json
 ├── /config/
 │   ├── config.js
 │   └── .env

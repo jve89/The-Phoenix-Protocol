@@ -14,8 +14,8 @@ const createCheckoutSession = async (email, plan) => {
       payment_method_types: ['card'],
       line_items: [{ price_data: { currency: 'usd', product_data: { name: 'The Phoenix Protocol' }, unit_amount: parseInt(plan) * 100 }, quantity: 1 }],
       mode: 'payment',
-      success_url: `https://3000-jve89-thephoenixprotoc-nlh9a38871c.ws-eu120.gitpod.io/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://3000-jve89-thephoenixprotoc-nlh9a38871c.ws-eu120.gitpod.io/`,
+      success_url: `https://thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://thephoenixprotocol.app/`,
       customer_email: email,
     });
     return session.url;
