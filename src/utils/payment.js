@@ -14,8 +14,8 @@ const createCheckoutSession = async (email, plan) => {
       payment_method_types: ['card'],
       line_items: [{ price_data: { currency: 'usd', product_data: { name: 'The Phoenix Protocol' }, unit_amount: parseInt(plan) * 100 }, quantity: 1 }],
       mode: 'payment',
-      success_url: `https://thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://thephoenixprotocol.app/`,
+      success_url: `https://the-phoenix-protocol-d0f5db370981.herokuapp.com/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://the-phoenix-protocol-d0f5db370981.herokuapp.com/`,
       customer_email: email,
     });
     return session.url;
