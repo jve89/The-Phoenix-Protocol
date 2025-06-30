@@ -3,12 +3,13 @@ const dotenv = require('dotenv');
 const routes = require('./routes/routes');
 const { startCron } = require('./utils/cron');
 
-dotenv.config({ path: './.env' }); // Explicit root path
+dotenv.config({ path: './.env' });
 if (!process.env.STRIPE_SECRET_KEY) console.error('Stripe key not loaded');
 
 const app = express();
 
-app.use((req, res, next) => { // Your HTTPS redirect
+// Optional HTTPS redirect
+app.use((req, res, next) => {
   if (req.headers['x-forwarded-proto'] !== 'https') {
     return res.redirect(`https://${req.headers.host}${req.url}`);
   }
@@ -23,5 +24,5 @@ app.use('/api', routes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  startCron(); // Start the cron job
+  startCron(); // Explicitly start the cron only when server is ready
 });
