@@ -79,8 +79,14 @@ const generateAndCacheDailyGuides = async () => {
     fs.writeFileSync(cachePath, JSON.stringify(data, null, 2));
     console.log(`[generateAndCacheDailyGuides] Premium guides cached at ${cachePath}`);
 
+    // ✅ Added clear confirmations for your peace of mind:
+    console.log('[generateAndCacheDailyGuides] Male guide generated:', data.male.title);
+    console.log('[generateAndCacheDailyGuides] Female guide generated:', data.female.title);
+    console.log('[generateAndCacheDailyGuides] Neutral guide generated:', data.neutral.title);
+    console.log('[generateAndCacheDailyGuides] ✅ Done generating today\'s premium guides.');
+
   } catch (error) {
-    console.error('[generateAndCacheDailyGuides] Error during generation:', error.message);
+    console.error('[generateAndCacheDailyGuides] ❌ Error during generation:', error.message);
   }
 };
 
