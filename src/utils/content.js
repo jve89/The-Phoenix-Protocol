@@ -45,7 +45,14 @@ const generateTip = async (gender) => {
 // 🚀 NEW: Generate and cache today's premium guides
 const generateAndCacheDailyGuides = async () => {
   const today = new Date().toISOString().split('T')[0];
-  const cachePath = path.join(__dirname, '../../content/daily_cache', `${today}.json`);
+  const cacheDir = path.join(__dirname, '../../content/daily_cache');
+  const cachePath = path.join(cacheDir, `${today}.json`);
+
+  // Ensure the directory exists
+  if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir, { recursive: true });
+    console.log(`[generateAndCacheDailyGuides] Created missing cache directory: ${cacheDir}`);
+  }
 
   // Avoid regenerating if already exists
   if (fs.existsSync(cachePath)) {
@@ -78,12 +85,7 @@ const generateAndCacheDailyGuides = async () => {
 
     fs.writeFileSync(cachePath, JSON.stringify(data, null, 2));
     console.log(`[generateAndCacheDailyGuides] Premium guides cached at ${cachePath}`);
-
-    // ✅ Added clear confirmations for your peace of mind:
-    console.log('[generateAndCacheDailyGuides] Male guide generated:', data.male.title);
-    console.log('[generateAndCacheDailyGuides] Female guide generated:', data.female.title);
-    console.log('[generateAndCacheDailyGuides] Neutral guide generated:', data.neutral.title);
-    console.log('[generateAndCacheDailyGuides] ✅ Done generating today\'s premium guides.');
+    console.log('[generateAndCacheDailyGuides] ✅ Generation and caching complete.');
 
   } catch (error) {
     console.error('[generateAndCacheDailyGuides] ❌ Error during generation:', error.message);
