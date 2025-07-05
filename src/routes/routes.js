@@ -7,17 +7,25 @@ const { sendEmail } = require('../utils/email');
 
 const router = express.Router();
 
-// 🚩 TEMPORARY DEBUG ROUTE: Download live users.db for inspection
+// 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
 // REMOVE AFTER DEBUGGING
-router.get('/api/debug/download-users-db', (req, res) => {
-  const dbPath = path.join(__dirname, '../../users.db');
-  if (fs.existsSync(dbPath)) {
-    console.log('[DEBUG] Downloading users.db for local inspection.');
-    res.download(dbPath, 'users.db');
-  } else {
-    console.error('[DEBUG] users.db not found on server.');
-    res.status(404).send('Database file not found');
-  }
+router.get('/api/debug/list-users', (req, res) => {
+  const sqlite3 = require('sqlite3').verbose();
+  const db = new sqlite3.Database('users.db', sqlite3.OPEN_READONLY, (err) => {
+    if (err) {
+      console.error('[DEBUG] Failed to open database:', err);
+      return res.status(500).json({ error: 'Database open error' });
+    }
+  });
+
+  db.all(`SELECT * FROM users`, [], (err, rows) => {
+    if (err) {
+      console.error('[DEBUG] Query error:', err);
+      return res.status(500).json({ error: 'Query error' });
+    }
+    res.json(rows);
+    db.close();
+  });
 });
 
 // 🚀 Handle user signup
