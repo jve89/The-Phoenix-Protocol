@@ -1,29 +1,42 @@
-The-Phoenix-Protocol/
-├── /public/
-│   ├── index.html
-│   ├── style.css
-│   ├── script.js
-│   └── success.html
-├── /src/
-│   ├── /routes/
-│   │   └── routes.js
-│   ├── /utils/
-│   │   ├── content.js
-│   │   ├── email.js
-│   │   ├── cron.js
-│   │   └── payment.js
-│   ├── /db/
-│   │   └── db.js
-│   └── server.js
-├── /templates/
-│   ├── email.html
-│   └── welcome.html
-├── /config/
-│   ├── config.js
-│   └── .env
+.
+├── config
+│   └── config.js
+├── content
+│   ├── fallback.json
+│   └── prompts.js
+├── .env
+├── envtest.log
 ├── filetree.txt
-├── package.json
 ├── .gitignore
 ├── .gitpod.yml
+├── LICENSE
+├── package.json
+├── package-lock.json
+├── Procfile
+├── public
+│   ├── index.html
+│   ├── script.js
+│   ├── style.css
+│   └── success.html
 ├── README.md
 ├── setup.md
+├── src
+│   ├── db
+│   │   └── db.js
+│   ├── routes
+│   │   └── routes.js
+│   ├── server.js
+│   └── utils
+│       ├── content.js
+│       ├── cron.js
+│       ├── email.js
+│       └── payment.js
+├── templates
+│   ├── email.html
+│   └── welcome.html
+├── test_grok.js
+├── test.log
+├── users.db
+└── users.db\20050
+
+8 directories, 31 files
