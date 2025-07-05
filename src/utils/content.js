@@ -1,5 +1,6 @@
 require('dotenv').config();
 const axios = require('axios');
+const fs = require('fs');
 
 const generateTip = async (gender) => {
   const prompts = require('../../content/prompts');
@@ -21,14 +22,25 @@ const generateTip = async (gender) => {
       }
     });
 
+    // Optional: log Grok usage for long-term monitoring
+    /*
+    const grokLog = `[${new Date().toISOString()}] Grok used: ${prompt.slice(0, 50)}...\n`;
+    fs.appendFileSync('grok_used.log', grokLog);
+    */
+
     return response.data.choices[0].message.content.trim();
 
   } catch (error) {
     console.error('Grok API error:', error.response?.data || error.message);
 
     const fallbacks = require('../../content/fallback.json');
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)].generic ||
-      'Stay strong today with a moment of self-care.';
+    const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+
+    const fallbackLog = `[${new Date().toISOString()}] Fallback used: ${fallback.title}\n`;
+    fs.appendFileSync('fallback_used.log', fallbackLog);
+    console.log(fallbackLog.trim());
+
+    return fallback.content || 'Stay strong today with a moment of self-care.';
   }
 };
 
