@@ -3,12 +3,10 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Heroku requires SSL with self-signed certs
-  },
+  ssl: { rejectUnauthorized: false },
 });
 
-// Create table if it doesn't exist
+// Ensure the users table exists
 (async () => {
   try {
     await pool.query(`
@@ -27,35 +25,6 @@ const pool = new Pool({
   }
 })();
 
-// Provide a lightweight compatibility API similar to sqlite3
 module.exports = {
-  run: async (query, params, callback) => {
-    try {
-      await pool.query(query, params);
-      if (callback) callback(null);
-    } catch (err) {
-      console.error('❌ DB run error:', err);
-      if (callback) callback(err);
-    }
-  },
-
-  get: async (query, params, callback) => {
-    try {
-      const result = await pool.query(query, params);
-      if (callback) callback(null, result.rows[0]);
-    } catch (err) {
-      console.error('❌ DB get error:', err);
-      if (callback) callback(err);
-    }
-  },
-
-  all: async (query, params, callback) => {
-    try {
-      const result = await pool.query(query, params);
-      if (callback) callback(null, result.rows);
-    } catch (err) {
-      console.error('❌ DB all error:', err);
-      if (callback) callback(err);
-    }
-  },
+  query: (text, params) => pool.query(text, params),
 };
