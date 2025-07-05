@@ -1,10 +1,26 @@
 const express = require('express');
+const path = require('path');
+const fs = require('fs');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 
 const router = express.Router();
 
+// 🚩 TEMPORARY DEBUG ROUTE: Download live users.db for inspection
+// REMOVE AFTER DEBUGGING
+router.get('/api/debug/download-users-db', (req, res) => {
+  const dbPath = path.join(__dirname, '../../users.db');
+  if (fs.existsSync(dbPath)) {
+    console.log('[DEBUG] Downloading users.db for local inspection.');
+    res.download(dbPath, 'users.db');
+  } else {
+    console.error('[DEBUG] users.db not found on server.');
+    res.status(404).send('Database file not found');
+  }
+});
+
+// 🚀 Handle user signup
 router.post('/signup', (req, res) => {
   console.log('Signup request received:', req.body);
   const { email, name, gender, plan } = req.body;
@@ -69,6 +85,7 @@ router.post('/signup', (req, res) => {
   });
 });
 
+// 🚀 Create Stripe checkout session
 router.post('/create-checkout-session', async (req, res) => {
   const { email, plan } = req.body;
 
