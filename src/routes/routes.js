@@ -1,140 +1,115 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const db = require('../db/db');
+const db = require('../db/db'); // now Postgres
 const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 
 const router = express.Router();
 
-// 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
-// REMOVE AFTER DEBUGGING
-router.get('/api/debug/list-users', (req, res) => {
+/**
+ * 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
+ * REMOVE AFTER DEBUGGING
+ */
+router.get('/api/debug/list-users', async (req, res) => {
     console.log('[DEBUG] List users route triggered');
 
     try {
-        const sqlite3 = require('sqlite3').verbose();
-        const dbPath = path.join(__dirname, '../../users.db');
-        console.log('[DEBUG] DB Path:', dbPath);
-
-        if (!fs.existsSync(dbPath)) {
-            console.error('[DEBUG] Database file does not exist at', dbPath);
-            return res.status(404).json({ error: 'Database file not found' });
-        }
-
-        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
-            if (err) {
-                console.error('[DEBUG] Failed to open database:', err);
-                return res.status(500).json({ error: 'Database open error' });
-            }
-        });
-
-        db.all(`SELECT * FROM users`, [], (err, rows) => {
-            if (err) {
-                console.error('[DEBUG] Query error:', err);
-                return res.status(500).json({ error: 'Query error', details: err.message });
-            }
-            console.log(`[DEBUG] Retrieved ${rows.length} user(s) from database`);
-            res.status(200).json(rows);
-            db.close((err) => {
-                if (err) console.error('[DEBUG] Error closing database:', err);
-                else console.log('[DEBUG] Database connection closed after debug dump.');
-            });
-        });
+        const { rows } = await db.query(`SELECT * FROM users ORDER BY id ASC`);
+        console.log(`[DEBUG] Retrieved ${rows.length} user(s) from Postgres`);
+        res.status(200).json(rows);
     } catch (err) {
-        console.error('[DEBUG] Unexpected error in debug route:', err);
-        res.status(500).json({ error: 'Internal server error', details: err.message });
+        console.error('[DEBUG] Query error in /api/debug/list-users:', err);
+        res.status(500).json({ error: 'Database query error', details: err.message });
     }
 });
 
 // 🚀 Handle user signup
 router.post('/signup', (req, res) => {
-  console.log('Signup request received:', req.body);
-  const { email, name, gender, plan } = req.body;
+    console.log('Signup request received:', req.body);
+    const { email, name, gender, plan } = req.body;
 
-  console.log('Validating signup fields:', { email, gender, plan });
+    console.log('Validating signup fields:', { email, gender, plan });
 
-  if (
-    !email || !gender || !plan ||
-    typeof email !== 'string' || typeof gender !== 'string' || typeof plan !== 'string' ||
-    email.trim() === '' || gender.trim() === '' || plan.trim() === ''
-  ) {
-    console.error('❌ Signup validation failed:', { email, gender, plan });
-    return res.status(400).json({ error: 'Email, gender, and plan are required and cannot be empty.' });
-  }
-
-  db.get(`SELECT email FROM users WHERE email = ?`, [email.trim()], (err, row) => {
-    if (err) {
-      console.error('❌ Database read error during signup:', err);
-      return res.status(500).json({ error: 'Sign-up failed: Database issue' });
-    }
-    if (row) {
-      console.warn('⚠️ Email already registered:', email.trim());
-      return res.status(400).json({ error: 'Email already registered' });
+    if (
+        !email || !gender || !plan ||
+        typeof email !== 'string' || typeof gender !== 'string' || typeof plan !== 'string' ||
+        email.trim() === '' || gender.trim() === '' || plan.trim() === ''
+    ) {
+        console.error('❌ Signup validation failed:', { email, gender, plan });
+        return res.status(400).json({ error: 'Email, gender, and plan are required and cannot be empty.' });
     }
 
-    const days = parseInt(plan.trim());
-    let endDate = null;
-    if (!isNaN(days)) {
-      const d = new Date();
-      d.setDate(d.getDate() + days);
-      endDate = d.toISOString().split('T')[0]; // YYYY-MM-DD
-    }
+    db.query(`SELECT email FROM users WHERE email = $1`, [email.trim()])
+        .then(result => {
+            if (result.rows.length > 0) {
+                console.warn('⚠️ Email already registered:', email.trim());
+                return res.status(400).json({ error: 'Email already registered' });
+            }
 
-    db.run(
-      `INSERT INTO users (email, name, gender, plan, end_date) VALUES (?, ?, ?, ?, ?)`,
-      [email.trim(), name ? name.trim() : null, gender.trim(), plan.trim(), endDate],
-      (err) => {
-        if (err) {
-          console.error('❌ Database write error during signup:', err);
-          return res.status(500).json({ error: 'Sign-up failed: Database issue' });
-        }
+            const days = parseInt(plan.trim());
+            let endDate = null;
+            if (!isNaN(days)) {
+                const d = new Date();
+                d.setDate(d.getDate() + days);
+                endDate = d.toISOString().split('T')[0]; // YYYY-MM-DD
+            }
 
-        sendEmail(
-          email.trim(),
-          'Welcome to The Phoenix Protocol',
-          '<p>Thank you for signing up! Your journey begins now.</p>'
-        )
-          .then(() => console.log('✅ Welcome email sent to', email.trim()))
-          .catch(err => console.error('❌ Email sending error:', err));
+            db.query(
+                `INSERT INTO users (email, name, gender, plan, end_date) VALUES ($1, $2, $3, $4, $5)`,
+                [email.trim(), name ? name.trim() : null, gender.trim(), plan.trim(), endDate]
+            )
+                .then(() => {
+                    sendEmail(
+                        email.trim(),
+                        'Welcome to The Phoenix Protocol',
+                        '<p>Thank you for signing up! Your journey begins now.</p>'
+                    )
+                        .then(() => console.log('✅ Welcome email sent to', email.trim()))
+                        .catch(err => console.error('❌ Email sending error:', err));
 
-        createCheckoutSession(email.trim(), plan.trim())
-          .then(url => {
-            console.log('✅ Stripe checkout session created, redirecting user.');
-            res.status(200).json({ message: 'Sign-up successful', url });
-          })
-          .catch(err => {
-            console.error('❌ Stripe checkout session creation failed:', err);
-            res.status(500).json({ error: 'Payment setup failed' });
-          });
-      }
-    );
-  });
+                    createCheckoutSession(email.trim(), plan.trim())
+                        .then(url => {
+                            console.log('✅ Stripe checkout session created, redirecting user.');
+                            res.status(200).json({ message: 'Sign-up successful', url });
+                        })
+                        .catch(err => {
+                            console.error('❌ Stripe checkout session creation failed:', err);
+                            res.status(500).json({ error: 'Payment setup failed' });
+                        });
+                })
+                .catch(err => {
+                    console.error('❌ Database write error during signup:', err);
+                    res.status(500).json({ error: 'Sign-up failed: Database issue' });
+                });
+        })
+        .catch(err => {
+            console.error('❌ Database read error during signup:', err);
+            res.status(500).json({ error: 'Sign-up failed: Database issue' });
+        });
 });
 
 // 🚀 Create Stripe checkout session
 router.post('/create-checkout-session', async (req, res) => {
-  const { email, plan } = req.body;
+    const { email, plan } = req.body;
 
-  console.log('Creating checkout session:', { email, plan });
+    console.log('Creating checkout session:', { email, plan });
 
-  if (
-    !email || !plan ||
-    typeof email !== 'string' || typeof plan !== 'string' ||
-    email.trim() === '' || plan.trim() === ''
-  ) {
-    console.error('❌ Validation failed for /create-checkout-session:', { email, plan });
-    return res.status(400).json({ error: 'Email and plan are required and cannot be empty.' });
-  }
+    if (
+        !email || !plan ||
+        typeof email !== 'string' || typeof plan !== 'string' ||
+        email.trim() === '' || plan.trim() === ''
+    ) {
+        console.error('❌ Validation failed for /create-checkout-session:', { email, plan });
+        return res.status(400).json({ error: 'Email and plan are required and cannot be empty.' });
+    }
 
-  try {
-    const url = await createCheckoutSession(email.trim(), plan.trim());
-    console.log('✅ Stripe checkout session created for', email.trim());
-    res.json({ url });
-  } catch (error) {
-    console.error('❌ Checkout session creation error:', error.message);
-    res.status(500).json({ error: 'Payment setup failed' });
-  }
+    try {
+        const url = await createCheckoutSession(email.trim(), plan.trim());
+        console.log('✅ Stripe checkout session created for', email.trim());
+        res.json({ url });
+    } catch (error) {
+        console.error('❌ Checkout session creation error:', error.message);
+        res.status(500).json({ error: 'Payment setup failed' });
+    }
 });
 
 module.exports = router;
