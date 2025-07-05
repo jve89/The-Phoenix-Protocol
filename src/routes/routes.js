@@ -11,19 +11,24 @@ const router = express.Router();
 // REMOVE AFTER DEBUGGING
 router.get('/api/debug/list-users', (req, res) => {
   const sqlite3 = require('sqlite3').verbose();
-  const db = new sqlite3.Database('users.db', sqlite3.OPEN_READONLY);
-  db.on('error', (err) => {
-    console.error('[DEBUG] Failed to open database:', err);
-    return res.status(500).json({ error: 'Database open error' });
+  const debugDb = new sqlite3.Database('users.db', sqlite3.OPEN_READONLY, (err) => {
+    if (err) {
+      console.error('[DEBUG] Failed to open database:', err);
+      return res.status(500).json({ error: 'Database open error' });
+    }
   });
 
-  db.all(`SELECT * FROM users`, [], (err, rows) => {
+  debugDb.all(`SELECT * FROM users`, [], (err, rows) => {
     if (err) {
       console.error('[DEBUG] Query error:', err);
       return res.status(500).json({ error: 'Query error' });
     }
     res.json(rows);
-    db.close();
+    debugDb.close((err) => {
+      if (err) {
+        console.error('[DEBUG] Failed to close database:', err);
+      }
+    });
   });
 });
 
