@@ -1,46 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Phoenix Protocol</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-gray-100 font-sans">
-  <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center">
-    <h1 class="text-4xl font-bold">The Phoenix Protocol</h1>
-    <p class="mt-2 text-lg">Turn Heartbreak into Strength with Daily Motivation</p>
+<body class="bg-gray-50 font-sans leading-relaxed text-gray-800">
+  <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-12 px-4">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2">The Phoenix Protocol</h1>
+    <p class="text-lg md:text-xl">Turn Heartbreak Into Strength with Daily AI-Guided Healing</p>
   </header>
-  <section class="max-w-4xl mx-auto p-6">
-    <h2 class="text-2xl font-semibold mb-4 text-center">Why Choose The Phoenix Protocol?</h2>
-    <ul class="list-disc list-inside mb-6 space-y-2 text-lg">
-      <li>AI-crafted daily tips tailored to your healing journey</li>
-      <li>Expert strategies to rebuild confidence and move on</li>
-      <li>Affordable plans starting at $9.99/month</li>
+
+  <section class="max-w-xl mx-auto my-10 p-6 bg-white rounded-lg shadow">
+    <h2 class="text-2xl font-semibold text-center mb-4">Why Choose Us?</h2>
+    <ul class="list-disc list-inside space-y-2 text-lg mb-6">
+      <li>Daily AI-crafted emails for emotional recovery</li>
+      <li>Real strategies to rebuild confidence and peace</li>
+      <li>Affordable plans starting at just $9.99/month</li>
     </ul>
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h3 class="text-xl font-semibold mb-4 text-center">Join Thousands Healing Today</h3>
-      <p class="text-center italic mb-4">"This saved me after my breakup." – Sarah, 29</p>
-      <form id="signup-form" class="space-y-4">
-        <input type="email" name="email" placeholder="Your Email" class="w-full p-2 border rounded" required>
-        <input type="text" name="name" placeholder="Your Name (optional)" class="w-full p-2 border rounded">
-        <select name="gender" class="w-full p-2 border rounded" required>
-          <option value="" disabled selected>Choose your gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other/Prefer not to say</option>
-        </select>
-        <select name="plan" class="w-full p-2 border rounded" required>
-          <option value="" disabled selected>Choose a plan</option>
-          <option value="30">$9.99 (30 days)</option>
-          <option value="90">$24.99 (90 days)</option>
-          <option value="365">$79.99 (1 year)</option>
-        </select>
-        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded hover:bg-blue-700">Start Your Journey</button>
-      </form>
+
+    <div class="text-center mb-4">
+      <p class="italic">“This saved me after my breakup.” – Sarah, 29</p>
     </div>
+
+    <form id="signup-form" class="space-y-4">
+      <input type="email" name="email" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500" required />
+      <input type="text" name="name" placeholder="Your Name (optional)" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500" />
+      <select name="gender" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500" required>
+        <option value="" disabled selected>Select your gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other/Prefer not to say</option>
+      </select>
+      <select name="plan" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500" required>
+        <option value="" disabled selected>Select a plan</option>
+        <option value="30">$9.99 (30 days)</option>
+        <option value="90">$24.99 (90 days)</option>
+        <option value="365">$79.99 (1 year)</option>
+      </select>
+      <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded font-semibold hover:from-blue-700 hover:to-purple-700 transition">
+        Start Your Journey
+      </button>
+    </form>
   </section>
+
+  <footer class="text-center text-sm text-gray-500 my-6">
+    © 2025 The Phoenix Protocol. All rights reserved.
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
