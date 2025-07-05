@@ -18,6 +18,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         name: data.name,
         focus: data.focus,
         gender: data.gender,
+        plan: data.plan, // add this
       }),
     });
     const responseData = await signupResponse.json();
