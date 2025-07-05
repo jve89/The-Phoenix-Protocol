@@ -10,26 +10,41 @@ const router = express.Router();
 // 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
 // REMOVE AFTER DEBUGGING
 router.get('/api/debug/list-users', (req, res) => {
-  const sqlite3 = require('sqlite3').verbose();
-  const debugDb = new sqlite3.Database('users.db', sqlite3.OPEN_READONLY, (err) => {
-    if (err) {
-      console.error('[DEBUG] Failed to open database:', err);
-      return res.status(500).json({ error: 'Database open error' });
-    }
-  });
+    console.log('[DEBUG] List users route triggered');
 
-  debugDb.all(`SELECT * FROM users`, [], (err, rows) => {
-    if (err) {
-      console.error('[DEBUG] Query error:', err);
-      return res.status(500).json({ error: 'Query error' });
+    try {
+        const sqlite3 = require('sqlite3').verbose();
+        const dbPath = path.join(__dirname, '../../users.db');
+        console.log('[DEBUG] DB Path:', dbPath);
+
+        if (!fs.existsSync(dbPath)) {
+            console.error('[DEBUG] Database file does not exist at', dbPath);
+            return res.status(404).json({ error: 'Database file not found' });
+        }
+
+        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
+            if (err) {
+                console.error('[DEBUG] Failed to open database:', err);
+                return res.status(500).json({ error: 'Database open error' });
+            }
+        });
+
+        db.all(`SELECT * FROM users`, [], (err, rows) => {
+            if (err) {
+                console.error('[DEBUG] Query error:', err);
+                return res.status(500).json({ error: 'Query error', details: err.message });
+            }
+            console.log(`[DEBUG] Retrieved ${rows.length} user(s) from database`);
+            res.status(200).json(rows);
+            db.close((err) => {
+                if (err) console.error('[DEBUG] Error closing database:', err);
+                else console.log('[DEBUG] Database connection closed after debug dump.');
+            });
+        });
+    } catch (err) {
+        console.error('[DEBUG] Unexpected error in debug route:', err);
+        res.status(500).json({ error: 'Internal server error', details: err.message });
     }
-    res.json(rows);
-    debugDb.close((err) => {
-      if (err) {
-        console.error('[DEBUG] Failed to close database:', err);
-      }
-    });
-  });
 });
 
 // 🚀 Handle user signup
