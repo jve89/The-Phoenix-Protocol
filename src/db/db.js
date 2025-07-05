@@ -6,7 +6,6 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE,
     name TEXT,
-    focus TEXT,
     gender TEXT,
     plan TEXT,
     end_date TEXT
