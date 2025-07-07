@@ -20,7 +20,7 @@ function startCron() {
   logCron('✅ Cron system started and monitoring triggers.');
 
   // 1️⃣ Generate & cache premium guides daily at 15:55 UTC
-  cron.schedule('55 15 * * *', async () => {
+  cron.schedule('50 15 * * *', async () => {
     const time = new Date().toISOString();
     console.log(`[CRON] Generating and caching premium guides: ${time}`);
     logCron(`🚀 Generating and caching premium guides at ${time}`);

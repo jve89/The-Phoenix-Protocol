@@ -24,6 +24,5 @@ app.use('/api', routes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  // startCron(); // ⛔ DISABLED: Using Heroku Scheduler for generation/sending instead of in-app cron.
-  // Enable this line if you decide to switch to in-app cron management in the future.
+  startCron(); 
 });
