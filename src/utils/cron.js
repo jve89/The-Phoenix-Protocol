@@ -8,7 +8,7 @@ const { generateAndCacheDailyGuides, loadTodayGuide } = require('./content');
 const fs = require('fs');
 const path = require('path');
 
-const logPath = path.join(__dirname, '../../logs/cron_activity.log');
+const logPath = path.join(__dirname, '../../logs/generate_today_guide_debug.log');
 
 function logCron(message) {
   const entry = `[${new Date().toISOString()}] ${message}\n`;

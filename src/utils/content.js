@@ -107,8 +107,8 @@ const generateAndCacheDailyGuides = async () => {
   }
 };
 
-// 🚀 NEW: Load today's cached guide for given gender
-const loadTodayGuide = (gender) => {
+// 🚀 Load today's full cached guide object
+const loadTodayGuide = () => {
   const today = new Date().toISOString().split('T')[0];
   const cachePath = path.join(__dirname, '../../content/daily_cache', `${today}.json`);
 
@@ -118,9 +118,7 @@ const loadTodayGuide = (gender) => {
       return null;
     }
     const data = JSON.parse(fs.readFileSync(cachePath, 'utf-8'));
-    if (gender === 'male' && data.male) return data.male;
-    if (gender === 'female' && data.female) return data.female;
-    return data.neutral;
+    return data; // Return the entire guide object
   } catch (error) {
     console.error('[loadTodayGuide] Error loading cached guide:', error.message);
     return null;
