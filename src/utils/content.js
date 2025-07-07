@@ -35,7 +35,7 @@ const generateTip = async (gender) => {
     const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
 
     const fallbackLog = `[${new Date().toISOString()}] Fallback used: ${fallback.title || 'No title'}\n`;
-    fs.appendFileSync('fallback_used.log', fallbackLog);
+    fs.appendFileSync(path.join(__dirname, '../../logs/fallback_used.log'), fallbackLog);
     console.log(fallbackLog.trim());
 
     return fallback.content || 'Stay strong today with a moment of self-care.';

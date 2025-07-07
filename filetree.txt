@@ -2,6 +2,8 @@
 ├── config
 │   └── config.js
 ├── content
+│   ├── daily_cache
+│   │   └── 2025-07-05.json
 │   ├── fallback.json
 │   └── prompts.js
 ├── .env
@@ -30,13 +32,16 @@
 │       ├── content.js
 │       ├── cron.js
 │       ├── email.js
-│       └── payment.js
+│       ├── generate_today_guide.js
+│       ├── payment.js
+│       └── send_today_guide.js
 ├── templates
 │   ├── email.html
+│   ├── premium_guide_email.html
 │   └── welcome.html
 ├── test_grok.js
 ├── test.log
 ├── users.db
 └── users.db\20050
 
-8 directories, 31 files
+9 directories, 35 files

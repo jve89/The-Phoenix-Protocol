@@ -4,7 +4,6 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
   const data = {
     email: formData.get('email'),
     name: formData.get('name'),
-    focus: formData.get('focus'),
     gender: formData.get('gender'),
     plan: formData.get('plan'),
   };
@@ -16,7 +15,6 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
       body: JSON.stringify({
         email: data.email,
         name: data.name,
-        focus: data.focus,
         gender: data.gender,
         plan: data.plan, // add this
       }),
