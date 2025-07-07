@@ -42,30 +42,45 @@ const generateTip = async (gender) => {
   }
 };
 
-// 🚀 NEW: Generate and cache today's premium guides
+// 🚀 Patched generateAndCacheDailyGuides with debug logging
 const generateAndCacheDailyGuides = async () => {
   const today = new Date().toISOString().split('T')[0];
   const cacheDir = path.join(__dirname, '../../content/daily_cache');
   const cachePath = path.join(cacheDir, `${today}.json`);
+  const debugLogPath = path.join(__dirname, '../../logs/generate_today_guide_debug.log');
 
-  // Ensure the directory exists
-  if (!fs.existsSync(cacheDir)) {
-    fs.mkdirSync(cacheDir, { recursive: true });
-    console.log(`[generateAndCacheDailyGuides] Created missing cache directory: ${cacheDir}`);
-  }
-
-  // Avoid regenerating if already exists
-  if (fs.existsSync(cachePath)) {
-    console.log(`[generateAndCacheDailyGuides] Cache for ${today} already exists, skipping generation.`);
-    return;
-  }
-
-  console.log(`[generateAndCacheDailyGuides] Generating premium guides for ${today}...`);
+  const debugLog = (msg) => {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${msg}\n`;
+    fs.appendFileSync(debugLogPath, logEntry, 'utf8');
+    console.log(msg);
+  };
 
   try {
+    debugLog(`🚀 Starting premium guide generation for ${today}`);
+
+    // Ensure the directory exists
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+      debugLog(`Created missing cache directory: ${cacheDir}`);
+    }
+
+    // Skip if file exists
+    if (fs.existsSync(cachePath)) {
+      debugLog(`Cache for ${today} already exists at ${cachePath}, skipping generation.`);
+      return;
+    }
+
+    debugLog(`Generating Grok-based tips...`);
+
     const maleGuide = await generateTip('male');
+    debugLog(`✅ Male guide generated: ${maleGuide.slice(0, 100)}...`);
+
     const femaleGuide = await generateTip('female');
+    debugLog(`✅ Female guide generated: ${femaleGuide.slice(0, 100)}...`);
+
     const neutralGuide = await generateTip('prefer not to say');
+    debugLog(`✅ Neutral guide generated: ${neutralGuide.slice(0, 100)}...`);
 
     const data = {
       date: today,
@@ -84,11 +99,11 @@ const generateAndCacheDailyGuides = async () => {
     };
 
     fs.writeFileSync(cachePath, JSON.stringify(data, null, 2));
-    console.log(`[generateAndCacheDailyGuides] Premium guides cached at ${cachePath}`);
-    console.log('[generateAndCacheDailyGuides] ✅ Generation and caching complete.');
+    debugLog(`✅ Premium guides cached at ${cachePath}`);
+    debugLog(`🎉 Generation and caching complete.`);
 
   } catch (error) {
-    console.error('[generateAndCacheDailyGuides] ❌ Error during generation:', error.message);
+    debugLog(`❌ Error during guide generation: ${error.stack || error.message}`);
   }
 };
 

@@ -12,6 +12,7 @@
 ├── .gitignore
 ├── .gitpod.yml
 ├── LICENSE
+├── logs
 ├── package.json
 ├── package-lock.json
 ├── Procfile
@@ -44,4 +45,4 @@
 ├── users.db
 └── users.db\20050
 
-9 directories, 35 files
+10 directories, 35 files
