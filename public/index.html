@@ -5,75 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Phoenix Protocol</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
 <body class="bg-white font-sans">
 
   <!-- Top Bar -->
-  <header class="flex justify-between items-center p-4 max-w-6xl mx-auto">
-    <div>
-      <img src="logo.svg" alt="The Phoenix Protocol Logo" class="h-24 w-auto">
-    </div>
-    <nav>
-      <!-- Future navigation links -->
+  <header class="flex justify-between items-center py-4 px-6 max-w-6xl mx-auto">
+    <!-- Logo enlarged -->
+    <img src="logo.svg" alt="The Phoenix Protocol Logo" class="h-20 w-auto">
+
+    <!-- Navigation Tabs -->
+    <nav class="hidden md:flex space-x-8 text-[#393f4a] font-medium">
+      <a href="#about" class="hover:text-[#8c7878] transition">About</a>
+      <a href="#howitworks" class="hover:text-[#8c7878] transition">How It Works</a>
+      <a href="#pricing" class="hover:text-[#8c7878] transition">Pricing</a>
+      <a href="#testimonials" class="hover:text-[#8c7878] transition">Testimonials</a>
     </nav>
+
+    <!-- Top Bar Sign Up Button -->
+    <a href="#pricing" class="hidden md:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
+      Sign Up
+    </a>
   </header>
 
   <!-- Hero Section -->
-  <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center p-8 md:p-16 space-y-8 md:space-y-0 md:space-x-12">
-      <div class="flex-1 text-center md:text-left">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Daily AI-Guided Breakup Recovery</h1>
-        <p class="text-lg md:text-xl mb-6">Transform heartbreak into personal power with premium daily guidance designed to help you heal and rebuild confidence.</p>
-        <a href="#pricing" class="inline-block bg-gray-800 text-white font-semibold px-6 py-3 rounded shadow hover:bg-gray-900 transition">Start Your Recovery Today</a>
+  <section class="bg-white">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between p-8 md:p-16 space-y-8 md:space-y-0 md:space-x-12">
+      <!-- Text Section -->
+      <div class="flex-1 text-center md:text-left md:max-w-lg">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-[#393f4a]">Daily AI-Guided Breakup Recovery</h1>
+        <p class="text-lg md:text-xl mb-8 text-[#393f4a]">Transform heartbreak into personal power with premium daily guidance designed to help you heal and rebuild confidence.</p>
+        <!-- Hero CTA Button -->
+        <a href="#pricing" class="inline-block bg-indigo-600 text-white font-semibold px-6 py-3 rounded shadow-lg hover:bg-indigo-700 transition">
+          Start Your Recovery Today
+        </a>
       </div>
-      <div class="flex-1">
-        <img src="hero.jpg" alt="Hero image" class="rounded-lg shadow-lg w-full">
+
+      <!-- Image Section -->
+      <div class="flex-1 max-w-md">
+        <img src="hero.jpg" alt="Confident man post-breakup recovery" class="rounded-xl shadow-lg w-full object-cover">
       </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section class="max-w-6xl mx-auto py-16 px-6 text-center">
-    <h2 class="text-3xl font-semibold mb-8 text-[#393f4a]">How It Works</h2>
-    <div class="grid md:grid-cols-3 gap-6 text-left">
-      <div class="bg-gray-50 p-6 rounded-lg shadow">
-        <h3 class="text-xl font-bold mb-2 text-[#393f4a]">1. Sign Up</h3>
-        <p class="text-[#8c7878]">Choose your focus and sign up to begin receiving your daily recovery guide.</p>
+  <section id="howitworks" class="max-w-5xl mx-auto py-20 px-6">
+    <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] text-center mb-12">How It Works</h2>
+    <div class="grid md:grid-cols-3 gap-8 text-left">
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">1. Choose a Plan</h3>
+        <p class="text-[#8c7878]">Select your preferred plan and sign up with your email to get started.</p>
       </div>
-      <div class="bg-gray-50 p-6 rounded-lg shadow">
-        <h3 class="text-xl font-bold mb-2 text-[#393f4a]">2. Daily Guidance</h3>
-        <p class="text-[#8c7878]">Receive clear, structured daily emails with actionable insights and mindset shifts.</p>
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">2. Receive Daily Guidance</h3>
+        <p class="text-[#8c7878]">Get clear, structured daily emails to support your recovery, one step at a time.</p>
       </div>
-      <div class="bg-gray-50 p-6 rounded-lg shadow">
-        <h3 class="text-xl font-bold mb-2 text-[#393f4a]">3. Rebuild Confidence</h3>
-        <p class="text-[#8c7878]">Follow practical steps to regain confidence and transform heartbreak into strength.</p>
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">3. Rebuild Your Confidence</h3>
+        <p class="text-[#8c7878]">Apply practical steps each day to regain confidence and move forward with strength.</p>
       </div>
     </div>
   </section>
 
-  <!-- Benefits -->
-  <section class="bg-white py-16 px-6">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-3xl font-semibold mb-8 text-[#393f4a]">Why Choose The Phoenix Protocol?</h2>
-      <div class="grid md:grid-cols-3 gap-6 text-left">
-        <div class="bg-gray-50 p-6 rounded-lg shadow">
-          <h3 class="text-lg font-bold mb-2 text-[#393f4a]">🧭 Clear Guidance</h3>
-          <p class="text-[#8c7878]">No fluff, only actionable steps you can implement immediately.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded-lg shadow">
-          <h3 class="text-lg font-bold mb-2 text-[#393f4a]">🤖 AI + Human Touch</h3>
-          <p class="text-[#8c7878]">AI-generated, human-verified insights to ensure practical value.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded-lg shadow">
-          <h3 class="text-lg font-bold mb-2 text-[#393f4a]">💸 One-Time Payment</h3>
-          <p class="text-[#8c7878]">No subscriptions, no hidden fees. One payment, lifetime value.</p>
-        </div>
+  <!-- Why Choose The Phoenix Protocol -->
+  <section id="why-choose" class="max-w-5xl mx-auto py-20 px-6">
+    <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] text-center mb-12">Why Choose The Phoenix Protocol?</h2>
+    <div class="grid md:grid-cols-3 gap-8 text-left">
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">🧭 Clear Guidance</h3>
+        <p class="text-[#8c7878]">No fluff, only actionable steps you can implement immediately.</p>
+      </div>
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">🤖 AI + Human Touch</h3>
+        <p class="text-[#8c7878]">AI-generated, human-verified insights to ensure practical value.</p>
+      </div>
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">💸 One-Time Payment</h3>
+        <p class="text-[#8c7878]">No subscriptions, no hidden fees. One payment, lifetime value.</p>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="bg-gray-50 py-16 px-6">
+  <section id="testimonials" class="bg-gray-50 py-16 px-6">
     <div class="max-w-3xl mx-auto text-center">
       <h2 class="text-3xl font-semibold mb-8 text-[#393f4a]">What Others Say</h2>
       <div class="space-y-6">
@@ -86,7 +104,7 @@
   <!-- Pricing -->
   <section id="pricing" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-16 px-6 text-center">
     <h2 class="text-3xl font-semibold mb-8">Choose Your Plan</h2>
-    <p class="mb-8">One-time payment, no subscriptions. Get lifetime access to your daily recovery journey.</p>
+    <p class="mb-8">Simple one-time payment, no subscriptions. Get daily recovery guides for the duration you choose.</p>
     <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 text-left">
       <div class="bg-white p-6 rounded-lg shadow flex flex-col justify-between">
         <div>
@@ -94,7 +112,8 @@
           <p class="mb-4 text-gray-500">$19 one-time payment for 30 days of guidance.</p>
         </div>
         <a href="#"
-          class="block bg-gray-800 text-white text-center font-semibold py-2 rounded hover:bg-gray-900 transition">Buy Now</a>
+          class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition"
+          data-plan="19">Buy Now</a>
       </div>
       <div class="bg-white p-6 rounded-lg shadow flex flex-col justify-between">
         <div>
@@ -102,7 +121,8 @@
           <p class="mb-4 text-gray-500">$49 one-time payment for 90 days of guidance.</p>
         </div>
         <a href="#"
-          class="block bg-gray-800 text-white text-center font-semibold py-2 rounded hover:bg-gray-900 transition">Buy Now</a>
+          class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition"
+          data-plan="49">Buy Now</a>
       </div>
       <div class="bg-white p-6 rounded-lg shadow flex flex-col justify-between">
         <div>
@@ -110,15 +130,16 @@
           <p class="mb-4 text-gray-500">$99 one-time payment for 365 days of guidance.</p>
         </div>
         <a href="#"
-          class="block bg-gray-800 text-white text-center font-semibold py-2 rounded hover:bg-gray-900 transition">Buy Now</a>
+          class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition"
+          data-plan="99">Buy Now</a>
       </div>
     </div>
   </section>
 
 
   <!-- About -->
-  <section class="max-w-4xl mx-auto py-16 px-6 text-center">
-    <img src="founder.jpg" alt="Johan van Erkel" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+  <section id="about" class="max-w-4xl mx-auto py-16 px-6 text-center">
+    <img src="founder.png" alt="Johan van Erkel" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover object-center">
     <h2 class="text-2xl font-semibold mb-2 text-[#393f4a]">Johan van Erkel</h2>
     <p class="text-[#8c7878] mb-4">Founder of The Phoenix Protocol</p>
     <p class="max-w-xl mx-auto text-[#8c7878]">After going through my own difficult breakup, I created The Phoenix Protocol to provide daily, structured guidance so you don’t have to navigate heartbreak alone. Every guide helps you rebuild your confidence and regain peace, one day at a time.</p>
@@ -134,6 +155,41 @@
     © 2025 The Phoenix Protocol. All rights reserved.
   </footer>
 
+  <script>
+  document.querySelectorAll('.buy-button').forEach(button => {
+    button.addEventListener('click', async (e) => {
+      e.preventDefault();
 
+      const plan = button.getAttribute('data-plan');
+      const email = prompt('Please enter your email to proceed:');
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email.');
+        return;
+      }
+
+      button.textContent = 'Redirecting...';
+
+      try {
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, plan })
+        });
+
+        const data = await response.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Error creating checkout session. Please try again.');
+          button.textContent = 'Buy Now';
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to server. Please try again.');
+        button.textContent = 'Buy Now';
+      }
+    });
+  });
+  </script>
 </body>
 </html>
