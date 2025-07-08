@@ -12,6 +12,14 @@ const logPath = path.join(__dirname, '../../logs/generate_today_guide_debug.log'
 
 function logCron(message) {
   const entry = `[${new Date().toISOString()}] ${message}\n`;
+  const logDir = path.dirname(logPath);
+
+  // ✅ Ensure the logs directory exists to prevent ENOENT crash
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+    console.log(`✅ Created missing logs directory at ${logDir}`);
+  }
+
   fs.appendFileSync(logPath, entry);
 }
 
@@ -19,7 +27,7 @@ function startCron() {
   console.log('[CRON] Subscription expiry, guide generation, and premium email schedule active.');
   logCron('✅ Cron system started and monitoring triggers.');
 
-  // 1️⃣ Generate & cache premium guides daily at 15:55 UTC
+  // 1️⃣ Generate & cache premium guides daily at 15:50 UTC
   cron.schedule('50 15 * * *', async () => {
     const time = new Date().toISOString();
     console.log(`[CRON] Generating and caching premium guides: ${time}`);
