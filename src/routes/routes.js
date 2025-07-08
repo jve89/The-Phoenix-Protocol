@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
+const { loadTemplate } = require('../utils/loadTemplate');
 
 const router = express.Router();
 
@@ -59,10 +60,12 @@ router.post('/signup', async (req, res) => {
       [email.trim(), name ? name.trim() : null, gender.trim(), plan.trim(), endDate]
     );
 
+    // ✅ Load and send styled welcome email
+    const welcomeTemplate = loadTemplate('welcome.html');
     sendEmail(
       email.trim(),
       'Welcome to The Phoenix Protocol',
-      '<p>Thank you for signing up! Your journey begins now.</p>'
+      welcomeTemplate
     )
       .then(() => console.log('✅ Welcome email sent to', email.trim()))
       .catch(err => console.error('❌ Email sending error:', err));
