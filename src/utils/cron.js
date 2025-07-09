@@ -133,11 +133,16 @@ function startCron() {
           console.log(`[CRON] Downgraded ${user.email} to free plan.`);
           logCron(`✅ Downgraded ${user.email} to free plan.`);
 
+          // Load farewell email template
+          const farewellPath = path.join(__dirname, '../../templates/farewell_email.html');
+          const farewellHtml = fs.readFileSync(farewellPath, 'utf-8');
+
           await sendEmail(
             user.email,
-            'Your Subscription Has Ended',
-            '<p>Your premium plan has ended, and you are now on the free plan. Renew anytime for continued premium guidance.</p>'
+            'Thank You for Using The Phoenix Protocol',
+            farewellHtml
           );
+
           console.log(`[CRON] Expiry notice sent to ${user.email}`);
           logCron(`📧 Expiry notice sent to ${user.email}`);
         } catch (err) {

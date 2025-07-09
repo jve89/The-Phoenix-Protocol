@@ -29,6 +29,9 @@
 │   ├── index.html
 │   ├── logo.jpg
 │   ├── logo.png
+│   ├── logo-purple.jpg
+│   ├── logo-purple.png
+│   ├── logo-purple.svg
 │   ├── logo.svg
 │   ├── script.js
 │   ├── style.css
@@ -39,7 +42,8 @@
 │   ├── db
 │   │   └── db.js
 │   ├── routes
-│   │   └── routes.js
+│   │   ├── routes.js
+│   │   └── webhooks.js
 │   ├── server.js
 │   └── utils
 │       ├── content.js
@@ -58,4 +62,4 @@
 ├── users.db
 └── users.db\20050
 
-10 directories, 48 files
+10 directories, 52 files
