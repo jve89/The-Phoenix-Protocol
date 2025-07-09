@@ -1,13 +1,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
+const webhookRoutes = require('./routes/webhooks');
 const { startCron } = require('./utils/cron');
 
 // ✅ Global error handlers for uncaught runtime crashes
 process.on('uncaughtException', err => {
   console.error('🔥 Uncaught Exception:', err);
 });
-
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🔥 Unhandled Rejection:', reason);
 });
@@ -34,6 +34,9 @@ app.use((req, res, next) => {
 });
 
 const port = process.env.PORT || 3000;
+
+// ✅ Stripe webhooks BEFORE express.json()
+app.use('/webhook', webhookRoutes);
 
 app.use(express.json());
 app.use(express.static('public'));

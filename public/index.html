@@ -155,6 +155,7 @@
   <script>
   "use strict";
   document.addEventListener("DOMContentLoaded", () => {
+    // 🖼️ Hero carousel functionality
     const images = ['hero.jpg', 'hero_female.jpg'];
     let currentIndex = 0;
     const carouselImage = document.getElementById('hero-carousel-image');
@@ -170,33 +171,15 @@
       }, 30000);
     }
 
+    // 🛒 Redirect Buy Now buttons to checkout.html with preselected plan
     document.querySelectorAll('.buy-button').forEach(button => {
-      button.addEventListener('click', async (e) => {
+      button.addEventListener('click', (e) => {
         e.preventDefault();
         const plan = button.getAttribute('data-plan');
-        const email = prompt('Please enter your email to proceed:');
-        if (!email || !email.includes('@')) {
-          alert('Please enter a valid email.');
-          return;
-        }
-        button.textContent = 'Redirecting...';
-        try {
-          const response = await fetch('/api/create-checkout-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, plan })
-          });
-          const data = await response.json();
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            alert('Error creating checkout session. Please try again.');
-            button.textContent = 'Buy Now';
-          }
-        } catch (err) {
-          console.error(err);
-          alert('Error connecting to server. Please try again.');
-          button.textContent = 'Buy Now';
+        if (plan) {
+          window.location.href = `checkout.html?plan=${plan}`;
+        } else {
+          alert('Plan not found, please try again.');
         }
       });
     });

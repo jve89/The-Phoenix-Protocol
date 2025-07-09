@@ -3,7 +3,8 @@
 │   └── config.js
 ├── content
 │   ├── daily_cache
-│   │   └── 2025-07-05.json
+│   │   ├── 2025-07-05.json
+│   │   └── 2025-07-07.json
 │   ├── fallback.json
 │   └── prompts.js
 ├── .env
@@ -13,11 +14,22 @@
 ├── .gitpod.yml
 ├── LICENSE
 ├── logs
+│   ├── generate_today_guide_debug.log
+│   ├── generate_today_guide.log
+│   └── send_today_guide.log
 ├── package.json
 ├── package-lock.json
 ├── Procfile
 ├── public
+│   ├── checkout.html
+│   ├── founder.jpg
+│   ├── founder.png
+│   ├── hero_female.jpg
+│   ├── hero.jpg
 │   ├── index.html
+│   ├── logo.jpg
+│   ├── logo.png
+│   ├── logo.svg
 │   ├── script.js
 │   ├── style.css
 │   └── success.html
@@ -34,6 +46,7 @@
 │       ├── cron.js
 │       ├── email.js
 │       ├── generate_today_guide.js
+│       ├── loadTemplate.js
 │       ├── payment.js
 │       └── send_today_guide.js
 ├── templates
@@ -45,4 +58,4 @@
 ├── users.db
 └── users.db\20050
 
-10 directories, 35 files
+10 directories, 48 files

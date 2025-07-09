@@ -12,6 +12,8 @@
     <form id="checkout-form" class="space-y-4">
       <input type="email" id="email" name="email" placeholder="Your Email" required
              class="w-full p-3 border rounded focus:outline-none focus:border-blue-500" />
+      <input type="email" id="confirm-email" name="confirm-email" placeholder="Confirm Your Email" required
+             class="w-full p-3 border rounded focus:outline-none focus:border-blue-500" />
       <select id="gender" name="gender" required
               class="w-full p-3 border rounded focus:outline-none focus:border-blue-500">
         <option value="" disabled selected>Select your gender</option>
@@ -43,8 +45,14 @@
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
+      const confirmEmail = document.getElementById('confirm-email').value.trim();
       const gender = document.getElementById('gender').value;
       const plan = document.getElementById('plan').value;
+
+      if (email !== confirmEmail) {
+        alert('Email addresses do not match. Please double-check your email.');
+        return;
+      }
 
       try {
         const response = await fetch('/api/signup', {
