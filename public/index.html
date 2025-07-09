@@ -45,9 +45,12 @@
         </a>
       </div>
 
-      <!-- Image Section -->
-      <div class="flex-1 max-w-md">
-        <img src="hero.jpg" alt="Confident man post-breakup recovery" class="rounded-xl shadow-lg w-full object-cover">
+      <!-- Image Section with Carousel -->
+      <div class="flex-1 max-w-md relative overflow-hidden rounded-xl shadow-lg">
+        <img id="hero-carousel-image"
+            src="hero.jpg"
+            alt="Post-breakup recovery hero"
+            class="rounded-xl w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-100">
       </div>
     </div>
   </section>
@@ -111,30 +114,21 @@
           <h3 class="text-lg font-bold mb-2 text-gray-800">30 Days</h3>
           <p class="mb-4 text-gray-500">$19 one-time payment for 30 days of guidance.</p>
         </div>
-        <a href="checkout.html?plan=19"
-          class="block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">
-          Buy Now
-        </a>
+        <a href="#" data-plan="19" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
       </div>
       <div class="bg-white p-6 rounded-lg shadow flex flex-col justify-between">
         <div>
           <h3 class="text-lg font-bold mb-2 text-gray-800">90 Days</h3>
           <p class="mb-4 text-gray-500">$49 one-time payment for 90 days of guidance.</p>
         </div>
-        <a href="checkout.html?plan=49"
-          class="block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">
-          Buy Now
-        </a>
+        <a href="#" data-plan="49" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
       </div>
       <div class="bg-white p-6 rounded-lg shadow flex flex-col justify-between">
         <div>
           <h3 class="text-lg font-bold mb-2 text-gray-800">365 Days</h3>
           <p class="mb-4 text-gray-500">$99 one-time payment for 365 days of guidance.</p>
         </div>
-        <a href="checkout.html?plan=99"
-          class="block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">
-          Buy Now
-        </a>
+        <a href="#" data-plan="99" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
       </div>
     </div>
   </section>
@@ -159,40 +153,55 @@
   </footer>
 
   <script>
-  document.querySelectorAll('.buy-button').forEach(button => {
-    button.addEventListener('click', async (e) => {
-      e.preventDefault();
+  "use strict";
+  document.addEventListener("DOMContentLoaded", () => {
+    const images = ['hero.jpg', 'hero_female.jpg'];
+    let currentIndex = 0;
+    const carouselImage = document.getElementById('hero-carousel-image');
 
-      const plan = button.getAttribute('data-plan');
-      const email = prompt('Please enter your email to proceed:');
-      if (!email || !email.includes('@')) {
-        alert('Please enter a valid email.');
-        return;
-      }
+    if (carouselImage) {
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % images.length;
+        carouselImage.classList.add('opacity-0');
+        setTimeout(() => {
+          carouselImage.src = images[currentIndex];
+          carouselImage.classList.remove('opacity-0');
+        }, 1000);
+      }, 30000);
+    }
 
-      button.textContent = 'Redirecting...';
-
-      try {
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, plan })
-        });
-
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          alert('Error creating checkout session. Please try again.');
+    document.querySelectorAll('.buy-button').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const plan = button.getAttribute('data-plan');
+        const email = prompt('Please enter your email to proceed:');
+        if (!email || !email.includes('@')) {
+          alert('Please enter a valid email.');
+          return;
+        }
+        button.textContent = 'Redirecting...';
+        try {
+          const response = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, plan })
+          });
+          const data = await response.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            alert('Error creating checkout session. Please try again.');
+            button.textContent = 'Buy Now';
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Error connecting to server. Please try again.');
           button.textContent = 'Buy Now';
         }
-      } catch (err) {
-        console.error(err);
-        alert('Error connecting to server. Please try again.');
-        button.textContent = 'Buy Now';
-      }
+      });
     });
   });
   </script>
+
 </body>
 </html>
