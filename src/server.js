@@ -1,3 +1,5 @@
+// src/server.js
+
 const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
@@ -25,7 +27,7 @@ if (!process.env.STRIPE_SECRET_KEY) console.error('Stripe key not loaded');
 
 const app = express();
 
-// Optional HTTPS redirect
+// ✅ Optional HTTPS redirect
 app.use((req, res, next) => {
   if (req.headers['x-forwarded-proto'] !== 'https') {
     return res.redirect(`https://${req.headers.host}${req.url}`);
@@ -35,14 +37,15 @@ app.use((req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
-// ✅ Stripe webhooks BEFORE express.json()
+// ✅ Stripe webhook BEFORE express.json() to preserve raw body
 app.use('/webhook', webhookRoutes);
 
+// ✅ Normal JSON parsing and routes
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/api', routes);
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
   startCron();
 });
