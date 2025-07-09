@@ -6,8 +6,11 @@ const db = require('../db/db');
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 
+const { refundLatestChargeForEmail } = require('../utils/payment');
+
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+// Stripe requires raw body for signature verification
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -21,9 +24,16 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
   console.log(`✅ Received webhook event: ${event.type}`);
 
-  // Handle email bounce notifications
-  if (event.type === 'customer.subscription.updated' || event.type === 'charge.failed') {
-    const customerEmail = event.data.object.customer_email || event.data.object.billing_details?.email;
+  if (
+    event.type === 'invoice.payment_failed' ||
+    event.type === 'charge.failed' ||
+    event.type === 'customer.subscription.deleted' ||
+    event.type === 'customer.subscription.updated'
+  ) {
+    const customerEmail =
+      event.data.object.customer_email ||
+      event.data.object.billing_details?.email ||
+      null;
 
     if (customerEmail) {
       try {
@@ -35,24 +45,18 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
           await db.query(`UPDATE users SET bounces = $1 WHERE id = $2`, [newBounces, user.id]);
           console.log(`📌 Updated bounce count for ${customerEmail} to ${newBounces}`);
 
-          // Auto-refund if bounce threshold reached
           if (newBounces >= 5) {
-            const paymentIntentId = event.data.object.payment_intent;
-            if (paymentIntentId) {
-              try {
-                const refund = await stripe.refunds.create({
-                  payment_intent: paymentIntentId,
-                });
-                console.log(`💸 Refunded ${customerEmail} automatically due to 5 bounces:`, refund.id);
-              } catch (refundErr) {
-                console.error(`❌ Failed to refund ${customerEmail}:`, refundErr.message);
-              }
-            }
+            console.log(`⚠️ Bounce threshold reached for ${customerEmail}. Initiating refund.`);
+            await refundLatestChargeForEmail(customerEmail);
           }
+        } else {
+          console.warn(`⚠️ No user found for bounced email: ${customerEmail}`);
         }
       } catch (dbErr) {
         console.error('❌ Database error during bounce tracking:', dbErr.message);
       }
+    } else {
+      console.warn(`⚠️ No customer email found in webhook event for ${event.type}`);
     }
   }
 

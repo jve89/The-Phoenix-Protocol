@@ -41,4 +41,35 @@ const createCheckoutSession = async (email, plan) => {
   }
 };
 
-module.exports = { createCheckoutSession };
+const refundLatestChargeForEmail = async (email) => {
+  try {
+    // Find the customer by email
+    const customers = await stripe.customers.list({ email, limit: 1 });
+    if (!customers.data.length) {
+      console.warn(`⚠️ No customer found for ${email}, cannot refund.`);
+      return;
+    }
+    const customer = customers.data[0];
+
+    // Find the latest charge for the customer
+    const charges = await stripe.charges.list({
+      customer: customer.id,
+      limit: 1,
+    });
+    if (!charges.data.length) {
+      console.warn(`⚠️ No charge found for ${email}, cannot refund.`);
+      return;
+    }
+    const charge = charges.data[0];
+
+    // Issue the refund
+    await stripe.refunds.create({ charge: charge.id });
+    console.log(`✅ Issued refund for ${email}, charge ${charge.id}`);
+
+  } catch (error) {
+    console.error(`❌ Error issuing refund for ${email}:`, error);
+  }
+};
+
+
+module.exports = { createCheckoutSession, refundLatestChargeForEmail };
