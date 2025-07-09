@@ -3,6 +3,7 @@ const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
+const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 
 const router = express.Router();
 
@@ -62,13 +63,22 @@ router.post('/signup', async (req, res) => {
 
     // ✅ Load and send styled welcome email
     const welcomeTemplate = loadTemplate('welcome.html');
-    sendEmail(
+    await sendEmail(
       email.trim(),
       'Welcome to The Phoenix Protocol',
       welcomeTemplate
-    )
-      .then(() => console.log('✅ Welcome email sent to', email.trim()))
-      .catch(err => console.error('❌ Email sending error:', err));
+    );
+    console.log('✅ Welcome email sent to', email.trim());
+
+    // 🚀 Schedule sending first premium guide 10 minutes later
+    setTimeout(async () => {
+      try {
+        await sendFirstGuideImmediately(email.trim(), gender.trim());
+        console.log(`✅ First premium guide sent to ${email.trim()} after 10-minute delay`);
+      } catch (err) {
+        console.error(`❌ Error sending first premium guide to ${email.trim()}:`, err);
+      }
+    }, 600000); // 600,000 ms = 10 minutes
 
     const url = await createCheckoutSession(email.trim(), plan.trim());
     console.log('✅ Stripe checkout session created, redirecting user.');

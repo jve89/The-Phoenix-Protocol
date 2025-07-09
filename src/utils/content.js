@@ -3,43 +3,51 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-// Uses your existing Grok prompt generator
-const prompts = require('../../content/prompts');
+// Uses your existing Grok prompt generators
+const malePrompts = require('../../content/prompts/male');
+const femalePrompts = require('../../content/prompts/female');
+const neutralPrompts = require('../../content/prompts/neutral');
 
 // Generates one premium guide for a gender
 const generateTip = async (gender) => {
-  const prompt = prompts[Math.floor(Math.random() * prompts.length)](gender);
+    let promptList;
 
-  try {
-    console.log('[generateTip] Using prompt:', prompt.slice(0, 120), '...');
+    if (gender === 'male') promptList = malePrompts;
+    else if (gender === 'female') promptList = femalePrompts;
+    else promptList = neutralPrompts;
 
-    const response = await axios.post('https://api.x.ai/v1/chat/completions', {
-      messages: [{ role: "user", content: prompt }],
-      model: process.env.GROK_MODEL || "grok-3-latest",
-      stream: false,
-      temperature: 0.7,
-      max_tokens: 1000 // supports ~500-word outputs
-    }, {
-      headers: {
-        'Authorization': `Bearer ${process.env.GROK_API_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    const prompt = promptList[Math.floor(Math.random() * promptList.length)](gender);
 
-    return response.data.choices[0].message.content.trim();
+    try {
+        console.log('[generateTip] Using prompt:', prompt.slice(0, 120), '...');
 
-  } catch (error) {
-    console.error('Grok API error:', error.response?.data || error.message);
+        const response = await axios.post('https://api.x.ai/v1/chat/completions', {
+            messages: [{ role: "user", content: prompt }],
+            model: process.env.GROK_MODEL || "grok-3-latest",
+            stream: false,
+            temperature: 0.7,
+            max_tokens: 1000 // supports ~500-word outputs
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.GROK_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
-    const fallbacks = require('../../content/fallback.json');
-    const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        return response.data.choices[0].message.content.trim();
 
-    const fallbackLog = `[${new Date().toISOString()}] Fallback used: ${fallback.title || 'No title'}\n`;
-    fs.appendFileSync(path.join(__dirname, '../../logs/fallback_used.log'), fallbackLog);
-    console.log(fallbackLog.trim());
+    } catch (error) {
+        console.error('Grok API error:', error.response?.data || error.message);
 
-    return fallback.content || 'Stay strong today with a moment of self-care.';
-  }
+        const fallbacks = require('../../content/fallback.json');
+        const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+
+        const fallbackLog = `[${new Date().toISOString()}] Fallback used: ${fallback.title || 'No title'}\n`;
+        fs.appendFileSync(path.join(__dirname, '../../logs/fallback_used.log'), fallbackLog);
+        console.log(fallbackLog.trim());
+
+        return fallback.content || 'Stay strong today with a moment of self-care.';
+    }
 };
 
 // 🚀 Patched generateAndCacheDailyGuides with debug logging

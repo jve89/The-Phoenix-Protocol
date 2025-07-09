@@ -4,7 +4,8 @@
 ├── content
 │   ├── daily_cache
 │   │   ├── 2025-07-05.json
-│   │   └── 2025-07-07.json
+│   │   ├── 2025-07-07.json
+│   │   └── 2025-07-09.json
 │   ├── fallback.json
 │   └── prompts.js
 ├── .env
@@ -55,11 +56,14 @@
 │       └── send_today_guide.js
 ├── templates
 │   ├── email.html
+│   ├── farewell_email.html
 │   ├── premium_guide_email.html
 │   └── welcome.html
+├── test_farewell.js
 ├── test_grok.js
 ├── test.log
+├── test_send_premium.js
 ├── users.db
 └── users.db\20050
 
-10 directories, 52 files
+10 directories, 56 files
