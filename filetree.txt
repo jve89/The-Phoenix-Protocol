@@ -7,6 +7,10 @@
 │   │   ├── 2025-07-07.json
 │   │   └── 2025-07-09.json
 │   ├── fallback.json
+│   ├── prompts
+│   │   ├── female.js
+│   │   ├── male.js
+│   │   └── neutral.js
 │   └── prompts.js
 ├── .env
 ├── envtest.log
@@ -53,6 +57,7 @@
 │       ├── generate_today_guide.js
 │       ├── loadTemplate.js
 │       ├── payment.js
+│       ├── send_first_guide_immediately.js
 │       └── send_today_guide.js
 ├── templates
 │   ├── email.html
@@ -66,4 +71,4 @@
 ├── users.db
 └── users.db\20050
 
-10 directories, 56 files
+11 directories, 60 files
