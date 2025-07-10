@@ -11,7 +11,7 @@ const createCheckoutSession = async (email, plan) => {
 
   console.log(`Creating checkout session for email: ${email}, plan: ${plan}`);
 
-  const pricingMap = { "30": 3000, "90": 9000, "365": 36500 }; // amounts in cents
+  const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // amounts in cents
   const amount = pricingMap[plan];
   if (!amount) {
     throw new Error('Invalid plan');
