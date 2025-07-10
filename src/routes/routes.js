@@ -1,3 +1,5 @@
+// src/routes/routes.js
+
 const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
@@ -31,13 +33,19 @@ router.post('/signup', async (req, res) => {
 
   console.log('Validating signup fields:', { email, gender, plan });
 
+  const validPlans = ["30", "90", "365"];
   if (
     !email || !gender || !plan ||
     typeof email !== 'string' || typeof gender !== 'string' || typeof plan !== 'string' ||
     email.trim() === '' || gender.trim() === '' || plan.trim() === ''
   ) {
-    console.error('❌ Signup validation failed:', { email, gender, plan });
+    console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan });
     return res.status(400).json({ error: 'Email, gender, and plan are required and cannot be empty.' });
+  }
+
+  if (!validPlans.includes(plan.trim())) {
+    console.error('❌ Signup validation failed: Invalid plan provided:', plan.trim());
+    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365 days.' });
   }
 
   try {
@@ -95,13 +103,19 @@ router.post('/create-checkout-session', async (req, res) => {
   const { email, plan } = req.body;
   console.log('Creating checkout session:', { email, plan });
 
+  const validPlans = ["30", "90", "365"];
   if (
     !email || !plan ||
     typeof email !== 'string' || typeof plan !== 'string' ||
     email.trim() === '' || plan.trim() === ''
   ) {
-    console.error('❌ Validation failed for /create-checkout-session:', { email, plan });
+    console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan });
     return res.status(400).json({ error: 'Email and plan are required and cannot be empty.' });
+  }
+
+  if (!validPlans.includes(plan.trim())) {
+    console.error('❌ Validation failed for /create-checkout-session: Invalid plan provided.', plan.trim());
+    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365 days.' });
   }
 
   try {

@@ -49,7 +49,11 @@ function startCron() {
     logCron(`🚀 Sending premium guides at ${time}`);
 
     try {
-      const { rows: users } = await db.query(`SELECT email, gender FROM users WHERE plan != 'free'`);
+      const { rows: users } = await db.query(`
+        SELECT email, gender FROM users
+        WHERE plan IN ('30', '90', '365') AND (created_at IS NULL OR created_at::date != CURRENT_DATE)
+      `);
+
       if (!users.length) {
         console.log('[CRON] No active users to send guides to.');
         logCron('⚠️ No active users found, skipping send.');
