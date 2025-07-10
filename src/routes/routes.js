@@ -15,7 +15,6 @@ const router = express.Router();
  */
 router.get('/api/debug/list-users', async (req, res) => {
   console.log('[DEBUG] List users route triggered');
-
   try {
     const result = await db.query(`SELECT * FROM users ORDER BY id ASC`);
     console.log(`[DEBUG] Retrieved ${result.rows.length} user(s) from Postgres`);
@@ -49,44 +48,78 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    const checkResult = await db.query(`SELECT email FROM users WHERE email = $1`, [email.trim()]);
+    const checkResult = await db.query(`SELECT plan FROM users WHERE email = $1`, [email.trim()]);
 
     if (checkResult.rows.length > 0) {
-      console.warn('⚠️ Email already registered:', email.trim());
-      return res.status(400).json({ error: 'Email already registered' });
-    }
+      const existingPlan = checkResult.rows[0].plan;
+      if (existingPlan === 'free') {
+        console.log(`✅ Existing user on 'free' plan re-subscribing: ${email.trim()}`);
 
-    const days = parseInt(plan.trim());
-    let endDate = null;
-    if (!isNaN(days)) {
-      const d = new Date();
-      d.setDate(d.getDate() + days);
-      endDate = d.toISOString().split('T')[0]; // YYYY-MM-DD
-    }
+        const days = parseInt(plan.trim());
+        let endDate = null;
+        if (!isNaN(days)) {
+          const d = new Date();
+          d.setDate(d.getDate() + days);
+          endDate = d.toISOString().split('T')[0];
+        }
 
-    await db.query(
-      `INSERT INTO users (email, name, gender, plan, end_date) VALUES ($1, $2, $3, $4, $5)`,
-      [email.trim(), name ? name.trim() : null, gender.trim(), plan.trim(), endDate]
-    );
+        await db.query(
+          `UPDATE users SET plan = $1, end_date = $2 WHERE email = $3`,
+          [plan.trim(), endDate, email.trim()]
+        );
 
-    // ✅ Load and send styled welcome email
-    const welcomeTemplate = loadTemplate('welcome.html');
-    await sendEmail(
-      email.trim(),
-      'Welcome to The Phoenix Protocol',
-      welcomeTemplate
-    );
-    console.log('✅ Welcome email sent to', email.trim());
+        const welcomeBackTemplate = loadTemplate('welcome_back.html');
+        await sendEmail(
+          email.trim(),
+          'Welcome Back to The Phoenix Protocol',
+          welcomeBackTemplate
+        );
+        console.log('✅ Welcome back email sent to', email.trim());
 
-    // 🚀 Schedule sending first premium guide 10 minutes later
-    setTimeout(async () => {
-      try {
-        await sendFirstGuideImmediately(email.trim(), gender.trim());
-        console.log(`✅ First premium guide sent to ${email.trim()} after 10-minute delay`);
-      } catch (err) {
-        console.error(`❌ Error sending first premium guide to ${email.trim()}:`, err);
+        setTimeout(async () => {
+          try {
+            await sendFirstGuideImmediately(email.trim(), gender.trim());
+            console.log(`✅ First premium guide re-sent to ${email.trim()} after 10-minute delay`);
+          } catch (err) {
+            console.error(`❌ Error sending first premium guide to ${email.trim()}:`, err);
+          }
+        }, 600000); // 10 minutes
+
+      } else {
+        console.warn('⚠️ Email already registered and active:', email.trim());
+        return res.status(400).json({ error: 'You already have an active plan.' });
       }
-    }, 600000); // 600,000 ms = 10 minutes
+    } else {
+      const days = parseInt(plan.trim());
+      let endDate = null;
+      if (!isNaN(days)) {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        endDate = d.toISOString().split('T')[0];
+      }
+
+      await db.query(
+        `INSERT INTO users (email, name, gender, plan, end_date) VALUES ($1, $2, $3, $4, $5)`,
+        [email.trim(), name ? name.trim() : null, gender.trim(), plan.trim(), endDate]
+      );
+
+      const welcomeTemplate = loadTemplate('welcome.html');
+      await sendEmail(
+        email.trim(),
+        'Welcome to The Phoenix Protocol',
+        welcomeTemplate
+      );
+      console.log('✅ Welcome email sent to', email.trim());
+
+      setTimeout(async () => {
+        try {
+          await sendFirstGuideImmediately(email.trim(), gender.trim());
+          console.log(`✅ First premium guide sent to ${email.trim()} after 10-minute delay`);
+        } catch (err) {
+          console.error(`❌ Error sending first premium guide to ${email.trim()}:`, err);
+        }
+      }, 600000); // 10 minutes
+    }
 
     const url = await createCheckoutSession(email.trim(), plan.trim());
     console.log('✅ Stripe checkout session created, redirecting user.');
