@@ -11,7 +11,11 @@ const createCheckoutSession = async (email, plan) => {
 
   console.log(`Creating checkout session for email: ${email}, plan: ${plan}`);
 
-  const amount = parseInt(plan);
+  const pricingMap = { "30": 3000, "90": 9000, "365": 36500 }; // amounts in cents
+  const amount = pricingMap[plan];
+  if (!amount) {
+    throw new Error('Invalid plan');
+  }
   if (isNaN(amount) || amount <= 0) {
     console.error('Invalid plan amount received:', plan);
     throw new Error('Invalid plan amount');
@@ -24,7 +28,7 @@ const createCheckoutSession = async (email, plan) => {
         price_data: {
           currency: 'usd',
           product_data: { name: 'The Phoenix Protocol' },
-          unit_amount: amount * 100, // Stripe expects cents
+          unit_amount: amount, 
         },
         quantity: 1,
       }],
