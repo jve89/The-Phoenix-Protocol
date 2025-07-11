@@ -1,11 +1,8 @@
-image: gitpod/workspace-full
+image:
+  file: ./Dockerfile
 
 tasks:
-  - init: |
-      sudo apt update
-      sudo apt install -y postgresql-client
-      npm install
-      curl https://cli-assets.heroku.com/install.sh | sh
+  - name: Start Phoenix Protocol SaaS
     command: node src/server.js
 
 ports:
