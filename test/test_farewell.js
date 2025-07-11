@@ -1,6 +1,6 @@
 // test_farewell.js
 
-const { sendEmail } = require('./src/utils/email');
+const { sendEmail } = require('../src/utils/email');
 const fs = require('fs');
 const path = require('path');
 

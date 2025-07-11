@@ -19,15 +19,38 @@
     <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-20 w-auto">
 
     <!-- Navigation Tabs -->
-    <nav class="hidden md:flex space-x-8 text-[#393f4a] font-medium">
-      <a href="#about" class="hover:text-[#8c7878] transition">About</a>
+    <nav class="hidden lg:flex space-x-8 text-[#393f4a] font-medium">
+
       <a href="#howitworks" class="hover:text-[#8c7878] transition">How It Works</a>
+      <a href="#teaser" class="hover:text-[#8c7878] transition">What You Get</a>
+      <a href="#why-choose" class="hover:text-[#8c7878] transition">Why Us</a>
+      <a href="#testimonials" class="hover:text-[#8c7878] transition">Reviews</a>
       <a href="#pricing" class="hover:text-[#8c7878] transition">Pricing</a>
-      <a href="#testimonials" class="hover:text-[#8c7878] transition">Testimonials</a>
+      <a href="#about" class="hover:text-[#8c7878] transition">About</a>
     </nav>
 
+    <!-- Mobile Hamburger -->
+    <div class="lg:hidden flex items-center">
+      <button id="menu-btn" class="text-[#393f4a] focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden flex-col space-y-4 bg-white absolute top-16 left-0 w-full px-6 py-4 shadow-lg z-50">
+      <a href="#howitworks" class="block text-[#393f4a] hover:text-[#8c7878]">How It Works</a>
+      <a href="#teaser" class="block text-[#393f4a] hover:text-[#8c7878]">What You Get</a>
+      <a href="#why-choose" class="block text-[#393f4a] hover:text-[#8c7878]">Why Us</a>
+      <a href="#testimonials" class="block text-[#393f4a] hover:text-[#8c7878]">Reviews</a>
+      <a href="#pricing" class="block text-[#393f4a] hover:text-[#8c7878]">Pricing</a>
+      <a href="#about" class="block text-[#393f4a] hover:text-[#8c7878]">About</a>
+    </div>
+
     <!-- Top Bar Sign Up Button -->
-    <a href="#pricing" class="hidden md:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
+    <a href="#pricing" class="hidden lg:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
       Sign Up
     </a>
   </header>
@@ -56,47 +79,76 @@
   </section>
 
   <!-- How It Works -->
-  <section id="howitworks" class="max-w-5xl mx-auto py-20 px-6">
-    <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] text-center mb-12">How It Works</h2>
-    <div class="grid md:grid-cols-3 gap-8 text-left">
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">1. Choose a Plan</h3>
-        <p class="text-[#8c7878]">Select your preferred plan and sign up with your email to get started.</p>
-      </div>
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">2. Receive Daily Guidance</h3>
-        <p class="text-[#8c7878]">Get clear, structured daily emails to support your recovery, one step at a time.</p>
-      </div>
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">3. Rebuild Your Confidence</h3>
-        <p class="text-[#8c7878]">Apply practical steps each day to regain confidence and move forward with strength.</p>
+  <section id="howitworks" class="bg-gray-50 py-16 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">How It Works</h2>
+      <div class="grid md:grid-cols-3 gap-8 text-left mt-8">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">1. Choose a Plan</h3>
+          <p>Select your preferred plan and sign up with your email to get started.</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">2. Receive Daily Guidance</h3>
+          <p>Get clear, structured daily emails to support your recovery, one step at a time.</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">3. Rebuild Your Confidence</h3>
+          <p>Apply practical steps each day to regain confidence and move forward with strength.</p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- Guide Teaser Section -->
+  <section id="teaser" class="py-16 px-6 bg-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">What You’ll Receive</h2>
+      <p class="text-[#8c7878] mb-12">Get a glimpse of the clear, structured guidance you'll receive to help transform your heartbreak into strength.</p>
+      <div class="grid md:grid-cols-3 gap-8 text-left">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">Day 1: Clarity & No Contact</h3>
+          <p>Today, you’ll learn why maintaining distance is essential to heal and regain perspective, and receive actionable steps to initiate your clean break effectively.</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">Day 5: Managing Emotional Waves</h3>
+          <p>We explore emotional turbulence, teaching you grounding practices to stay centred when waves of sadness or anger hit unexpectedly during recovery.</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">Day 14: Rebuilding Self-Worth</h3>
+          <p>Discover how to rebuild your sense of self-worth with practical daily actions, helping you reconnect with your confidence and long-term goals.</p>
+        </div>
+      </div>
+      <a href="sample-guide.html" class="inline-block mt-12 bg-gray-800 text-white font-semibold px-6 py-3 rounded shadow hover:bg-gray-900 transition">
+        View a Sample Guide
+      </a>
+    </div>
+  </section>
+
   <!-- Why Choose The Phoenix Protocol -->
-  <section id="why-choose" class="max-w-5xl mx-auto py-20 px-6">
-    <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] text-center mb-12">Why Choose The Phoenix Protocol?</h2>
-    <div class="grid md:grid-cols-3 gap-8 text-left">
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">🧭 Clear Guidance</h3>
-        <p class="text-[#8c7878]">No fluff, only actionable steps you can implement immediately.</p>
-      </div>
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">🤖 AI + Human Touch</h3>
-        <p class="text-[#8c7878]">AI-generated, human-verified insights to ensure practical value.</p>
-      </div>
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 class="text-xl font-semibold text-[#393f4a] mb-3">💸 One-Time Payment</h3>
-        <p class="text-[#8c7878]">No subscriptions, no hidden fees. One payment, lifetime value.</p>
+  <section id="why-choose" class="bg-gray-50 py-16 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">Why Choose The Phoenix Protocol?</h2>
+      <div class="grid md:grid-cols-3 gap-8 text-left mt-8">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">🧭 Clear Guidance</h3>
+          <p>No fluff, only actionable steps you can implement immediately.</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">🤖 AI + Human Touch</h3>
+          <p>AI-generated, human-verified insights to ensure practical value.</p>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-sm">
+          <h3 class="text-xl font-semibold mb-3">💸 One-Time Payment</h3>
+          <p>No subscriptions, no hidden fees. One payment, lifetime value.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section id="testimonials" class="bg-gray-50 py-16 px-6">
+  <section id="testimonials" class="bg-white py-16 px-6">
     <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl font-semibold mb-8 text-[#393f4a]">What Others Say</h2>
+      <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">What Others Say</h2>
       <div class="space-y-6">
         <p class="italic text-[#8c7878]">“The Phoenix Protocol gave me clarity during my breakup, and I felt supported every day.”</p>
         <p class="italic text-[#8c7878]">“Every morning I woke up to a message that helped me reframe my thoughts and heal.”</p>
@@ -153,38 +205,49 @@
   </footer>
 
   <script>
-  "use strict";
-  document.addEventListener("DOMContentLoaded", () => {
-    // 🖼️ Hero carousel functionality
-    const images = ['hero.jpg', 'hero_female.jpg'];
-    let currentIndex = 0;
-    const carouselImage = document.getElementById('hero-carousel-image');
+    "use strict";
+    document.addEventListener("DOMContentLoaded", () => {
+      // 🖼️ Hero carousel functionality
+      const images = ['hero.jpg', 'hero_female.jpg'];
+      let currentIndex = 0;
+      const carouselImage = document.getElementById('hero-carousel-image');
 
-    if (carouselImage) {
-      setInterval(() => {
-        currentIndex = (currentIndex + 1) % images.length;
-        carouselImage.classList.add('opacity-0');
-        setTimeout(() => {
-          carouselImage.src = images[currentIndex];
-          carouselImage.classList.remove('opacity-0');
-        }, 1000);
-      }, 30000);
-    }
+      if (carouselImage) {
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % images.length;
+          carouselImage.classList.add('opacity-0');
+          setTimeout(() => {
+            carouselImage.src = images[currentIndex];
+            carouselImage.classList.remove('opacity-0');
+          }, 1000);
+        }, 30000);
+      }
 
-    // 🛒 Redirect Buy Now buttons to checkout.html with preselected plan
-    document.querySelectorAll('.buy-button').forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        const plan = button.getAttribute('data-plan');
-        if (plan) {
-          window.location.href = `checkout.html?plan=${plan}`;
-        } else {
-          alert('Plan not found, please try again.');
-        }
+      // 🛒 Redirect Buy Now buttons to checkout.html with preselected plan
+      document.querySelectorAll('.buy-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          const plan = button.getAttribute('data-plan');
+          if (plan) {
+            window.location.href = `checkout.html?plan=${plan}`;
+          } else {
+            alert('Plan not found, please try again.');
+          }
+        });
       });
+
+      // 🍔 Mobile menu toggle
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
     });
-  });
   </script>
+
 
 </body>
 </html>

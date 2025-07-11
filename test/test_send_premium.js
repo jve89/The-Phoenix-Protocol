@@ -3,7 +3,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { sendEmail } = require('./src/utils/email');
+const { sendEmail } = require('../src/utils/email');
 
 // Load latest available cached guide (even if yesterday)
 const cacheDir = path.join(__dirname, 'content/daily_cache');

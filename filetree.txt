@@ -1,74 +1,56 @@
-.
-├── config
-│   └── config.js
-├── content
-│   ├── daily_cache
-│   │   ├── 2025-07-05.json
-│   │   ├── 2025-07-07.json
-│   │   └── 2025-07-09.json
-│   ├── fallback.json
-│   ├── prompts
-│   │   ├── female.js
-│   │   ├── male.js
-│   │   └── neutral.js
-│   └── prompts.js
-├── .env
-├── envtest.log
-├── filetree.txt
-├── .gitignore
-├── .gitpod.yml
-├── LICENSE
-├── logs
-│   ├── generate_today_guide_debug.log
-│   ├── generate_today_guide.log
-│   └── send_today_guide.log
-├── package.json
-├── package-lock.json
-├── Procfile
-├── public
-│   ├── checkout.html
-│   ├── founder.jpg
-│   ├── founder.png
-│   ├── hero_female.jpg
-│   ├── hero.jpg
-│   ├── index.html
-│   ├── logo.jpg
-│   ├── logo.png
-│   ├── logo-purple.jpg
-│   ├── logo-purple.png
-│   ├── logo-purple.svg
-│   ├── logo.svg
-│   ├── script.js
-│   ├── style.css
-│   └── success.html
-├── README.md
-├── setup.md
-├── src
-│   ├── db
-│   │   └── db.js
-│   ├── routes
-│   │   ├── routes.js
-│   │   └── webhooks.js
-│   ├── server.js
-│   └── utils
-│       ├── content.js
-│       ├── cron.js
-│       ├── email.js
-│       ├── generate_today_guide.js
-│       ├── loadTemplate.js
-│       ├── payment.js
-│       ├── send_first_guide_immediately.js
-│       └── send_today_guide.js
-├── templates
-│   ├── email.html
-│   ├── farewell_email.html
-│   ├── premium_guide_email.html
-│   └── welcome.html
-├── test_farewell.js
-├── test_grok.js
-├── test.log
-├── test_send_premium.js
-├── users.db
-└── users.db\20050
-
-11 directories, 60 files
+./Dockerfile
+./LICENSE
+./Procfile
+./README.md
+./config/config.js
+./content/daily_cache/2025-07-05.json
+./content/daily_cache/2025-07-07.json
+./content/daily_cache/2025-07-09.json
+./content/fallback.json
+./content/prompts.js
+./content/prompts/female.js
+./content/prompts/male.js
+./content/prompts/neutral.js
+./filetree.txt
+./package-lock.json
+./package.json
+./public/checkout.html
+./public/founder.jpg
+./public/founder.png
+./public/hero.jpg
+./public/hero_female.jpg
+./public/index.html
+./public/logo-purple.jpg
+./public/logo-purple.png
+./public/logo-purple.svg
+./public/logo.jpg
+./public/logo.png
+./public/logo.svg
+./public/script.js
+./public/style.css
+./public/success.html
+./setup.md
+./src/db/db.js
+./src/routes/routes.js
+./src/routes/webhooks.js
+./src/server.js
+./src/utils/content.js
+./src/utils/cron.js
+./src/utils/email.js
+./src/utils/generate_today_guide.js
+./src/utils/loadTemplate.js
+./src/utils/payment.js
+./src/utils/send_first_guide_immediately.js
+./src/utils/send_today_guide.js
+./templates/email.html
+./templates/farewell_email.html
+./templates/premium_guide_email.html
+./templates/welcome.html
+./templates/welcome_back.html
+./test_farewell.js
+./test_grok.js
+./test_send_premium.js
+./users.db
+./users.db
+./.env
+./test_welcome_back.js

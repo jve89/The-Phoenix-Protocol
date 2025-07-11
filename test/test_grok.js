@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { generateTip } = require('./src/utils/content');
+const { generateTip } = require('../src/utils/content');
 
 async function testGrokTip() {
     console.log('[TEST] Generating Grok tip...');
