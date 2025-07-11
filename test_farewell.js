@@ -1,22 +1,26 @@
 // test_farewell.js
 
+const { sendEmail } = require('./src/utils/email');
 const fs = require('fs');
 const path = require('path');
-const { sendEmail } = require('./src/utils/email');
 
 (async () => {
   try {
-    const farewellPath = path.join(__dirname, 'templates/farewell_email.html');
+    const recipient = 'johanvanerkel@gmail.com';
+
+    const farewellPath = path.join(__dirname, 'templates', 'farewell_email.html');
     const farewellHtml = fs.readFileSync(farewellPath, 'utf-8');
 
     await sendEmail(
-      'johanvanerkel@gmail.com', // replace with your test email
+      recipient,
       'Thank You for Using The Phoenix Protocol',
       farewellHtml
     );
 
-    console.log('✅ Farewell email sent successfully.');
-  } catch (err) {
-    console.error('❌ Error sending farewell email:', err);
+    console.log(`✅ Farewell email sent successfully to ${recipient}`);
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Failed to send farewell email:', error);
+    process.exit(1);
   }
 })();
