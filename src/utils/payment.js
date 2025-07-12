@@ -36,6 +36,7 @@ const createCheckoutSession = async (email, plan) => {
       success_url: `https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://www.thephoenixprotocol.app/checkout.html`,
       customer_email: email,
+      customer_creation: 'always', // ✅ Ensure Stripe creates a persistent customer ID
     });
     console.log('Stripe checkout session created:', session.id);
     return session.url;
@@ -74,6 +75,5 @@ const refundLatestChargeForEmail = async (email) => {
     console.error(`❌ Error issuing refund for ${email}:`, error);
   }
 };
-
 
 module.exports = { createCheckoutSession, refundLatestChargeForEmail };
