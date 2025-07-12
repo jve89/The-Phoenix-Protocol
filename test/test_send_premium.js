@@ -20,8 +20,8 @@ const guidePath = path.join(cacheDir, latestFile);
 const todayGuide = JSON.parse(fs.readFileSync(guidePath, 'utf-8'));
 
 // Load premium email template
-const templatePath = path.join(__dirname, '../templates/premium_guide_email.html');
-const template = fs.readFileSync(templatePath, 'utf-8');
+const { loadTemplate } = require('../src/utils/loadTemplate');
+const template = loadTemplate('premium_guide_email.html');
 
 // Set gender for test (adjust if desired)
 const testGender = 'neutral';

@@ -34,8 +34,8 @@ function log(message) {
       process.exit(1);
     }
 
-    const templatePath = path.join(__dirname, '../../templates/premium_guide_email.html');
-    const template = fs.readFileSync(templatePath, 'utf8');
+    const { loadTemplate } = require('./loadTemplate');
+    const template = loadTemplate('premium_guide_email.html');
 
     for (const user of users) {
       try {

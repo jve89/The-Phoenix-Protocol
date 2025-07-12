@@ -26,8 +26,8 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
       return;
     }
 
-    const templatePath = path.join(__dirname, '../../templates/premium_guide_email.html');
-    const template = fs.readFileSync(templatePath, 'utf8');
+    const { loadTemplate } = require('./loadTemplate');
+    const template = loadTemplate('premium_guide_email.html');
 
     let guide;
     if (userGender === 'male') guide = todayGuide.male;
