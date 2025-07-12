@@ -37,6 +37,18 @@ app.use((req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
+// ✅ Keep Heroku awake by self-pinging every 5 minutes
+if (process.env.NODE_ENV === 'production') {
+  setInterval(() => {
+    const url = process.env.SELF_PING_URL || 'https://www.thephoenixprotocol.app/';
+    require('https').get(url, res => {
+      console.log(`[PING] Self-pinged ${url} — Status: ${res.statusCode}`);
+    }).on('error', err => {
+      console.error('[PING] Error during self-ping:', err.message);
+    });
+  }, 1000 * 60 * 5); // Every 5 minutes
+}
+
 // ✅ Stripe webhook BEFORE express.json() to preserve raw body
 app.use('/webhook', webhookRoutes);
 
