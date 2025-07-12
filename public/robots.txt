@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://www.thephoenixprotocol.com/sitemap.xml
+Sitemap: https://www.thephoenixprotocol.app/sitemap.xml
