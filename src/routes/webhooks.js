@@ -11,7 +11,7 @@ const { refundLatestChargeForEmail } = require('../utils/payment');
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // Stripe requires raw body for signature verification
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
