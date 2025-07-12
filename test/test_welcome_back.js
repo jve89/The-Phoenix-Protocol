@@ -8,7 +8,7 @@ const path = require('path');
   try {
     const recipient = 'johanvanerkel@gmail.com';
 
-    const welcomePath = path.join(__dirname, 'templates', 'welcome_back.html');
+    const welcomePath = path.join(__dirname, '..', 'templates', 'welcome_back.html');
     const welcomeHtml = fs.readFileSync(welcomePath, 'utf-8');
 
     await sendEmail(

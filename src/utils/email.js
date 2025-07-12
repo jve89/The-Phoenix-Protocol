@@ -2,7 +2,7 @@ const sgMail = require('@sendgrid/mail');
 require('dotenv').config({ path: './.env' });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-const fromEmail = 'no-reply@thephoenixprotocol.app'; // Real sender
+const fromEmail = { name: 'The Phoenix Protocol', email: 'no-reply@thephoenixprotocol.app' };
 
 const sendEmail = async (to, subject, html) => {
   const msg = { to, from: fromEmail, subject, html };
