@@ -3,10 +3,11 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const { marked } = require('marked');
 const { sendEmail } = require('../src/utils/email');
 
 // Load latest available cached guide (even if yesterday)
-const cacheDir = path.join(__dirname, 'content/daily_cache');
+const cacheDir = path.join(__dirname, '../content/daily_cache');
 const files = fs.readdirSync(cacheDir).filter(f => f.endsWith('.json'));
 if (!files.length) {
   console.error('❌ No cached guide found in daily_cache.');
@@ -19,7 +20,7 @@ const guidePath = path.join(cacheDir, latestFile);
 const todayGuide = JSON.parse(fs.readFileSync(guidePath, 'utf-8'));
 
 // Load premium email template
-const templatePath = path.join(__dirname, 'templates/premium_guide_email.html');
+const templatePath = path.join(__dirname, '../templates/premium_guide_email.html');
 const template = fs.readFileSync(templatePath, 'utf-8');
 
 // Set gender for test (adjust if desired)
@@ -31,11 +32,8 @@ if (!guide) {
   process.exit(1);
 }
 
-// Format guide content into paragraphs
-const formattedContent = guide.content
-  .split(/\n{2,}/)
-  .map(paragraph => `<p>${paragraph.trim()}</p>`)
-  .join('\n');
+// Parse Markdown to HTML
+const formattedContent = marked.parse(guide.content || '');
 
 // Inject into template
 const htmlContent = template

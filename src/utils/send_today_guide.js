@@ -6,6 +6,7 @@ const path = require('path');
 const db = require('../db/db');
 const { sendEmail } = require('./email');
 const { loadTodayGuide } = require('./content');
+const { marked } = require('marked');
 
 const logPath = path.join(__dirname, '../../logs/send_today_guide.log');
 
@@ -48,10 +49,7 @@ function log(message) {
           continue;
         }
 
-        const formattedContent = guide.content
-          .split(/\n{2,}/)
-          .map(p => `<p>${p.trim()}</p>`)
-          .join('\n');
+        const formattedContent = marked.parse(guide.content || '');
 
         const htmlContent = template
           .replace('{{title}}', guide.title)
