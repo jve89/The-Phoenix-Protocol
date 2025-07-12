@@ -24,6 +24,31 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
   console.log(`✅ Received webhook event: ${event.type}`);
 
+  // ✅ 1. Handle successful checkout
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const email = session.customer_email;
+    const customerId = session.customer;
+    const paymentIntent = session.payment_intent;
+
+    try {
+      const { rowCount } = await db.query(
+        `UPDATE users SET payment_status = $1, stripe_customer_id = $2, stripe_payment_intent = $3 WHERE email = $4`,
+        ['success', customerId, paymentIntent, email]
+      );
+
+      if (rowCount > 0) {
+        console.log(`✅ Payment confirmed via webhook for ${email}`);
+      } else {
+        console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
+      }
+
+    } catch (err) {
+      console.error(`❌ Failed to update user after payment confirmation:`, err.message);
+    }
+  }
+
+  // ✅ 2. Handle failure/bounce scenarios
   if (
     event.type === 'invoice.payment_failed' ||
     event.type === 'charge.failed' ||

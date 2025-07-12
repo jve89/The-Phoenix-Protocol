@@ -33,8 +33,8 @@ const createCheckoutSession = async (email, plan) => {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `https://the-phoenix-protocol-d0f5db370981.herokuapp.com/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://the-phoenix-protocol-d0f5db370981.herokuapp.com/`,
+      success_url: `https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://www.thephoenixprotocol.app/checkout.html`,
       customer_email: email,
     });
     console.log('Stripe checkout session created:', session.id);
