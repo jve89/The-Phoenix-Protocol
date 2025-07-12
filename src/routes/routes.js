@@ -9,6 +9,13 @@ const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immedia
 
 const router = express.Router();
 
+// ✅ Lightweight backend health check (for UptimeRobot)
+router.get('/api/ping', (req, res) => {
+  const timestamp = new Date().toISOString();
+  console.log(`[PING] /api/ping called at ${timestamp}`);
+  res.status(200).json({ status: 'ok', timestamp });
+});
+
 /**
  * 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
  * REMOVE AFTER DEBUGGING
