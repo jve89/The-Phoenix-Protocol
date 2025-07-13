@@ -16,6 +16,12 @@ router.get('/ping', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp });
 });
 
+// ✅ Cron healthcheck endpoint (shows last run time)
+router.get('/cron/status', (req, res) => {
+  const lastRun = global.lastCronTimestamp || 'Unknown';
+  res.status(200).json({ cronLastRun: lastRun });
+});
+
 /**
  * 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
  * REMOVE AFTER DEBUGGING

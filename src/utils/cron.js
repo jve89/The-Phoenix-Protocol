@@ -24,6 +24,7 @@ function logCron(message) {
 }
 
 function startCron() {
+  global.lastCronTimestamp = new Date().toISOString();  // ✅ For /cron/status route
   console.log('[CRON] Subscription expiry, guide generation, and premium email schedule active.');
   logCron('✅ Cron system started and monitoring triggers.');
 
