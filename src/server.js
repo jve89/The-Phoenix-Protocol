@@ -4,6 +4,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
 const webhookRoutes = require('./routes/webhooks');
+const unsubscribeRoute = require('./routes/unsubscribe');
 const { startCron } = require('./utils/cron');
 
 // ✅ Global error handlers for uncaught runtime crashes
@@ -26,6 +27,8 @@ console.log('DATABASE_URL:', process.env.DATABASE_URL ? '✅ Present' : '❌ Mis
 if (!process.env.STRIPE_SECRET_KEY) console.error('Stripe key not loaded');
 
 const app = express();
+
+app.use('/', unsubscribeRoute);
 
 // ✅ Optional HTTPS redirect
 app.use((req, res, next) => {

@@ -4,6 +4,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const db = require('../db/db');
+const jwt = require('jsonwebtoken');
 const { sendEmail } = require('./email');
 const { loadTodayGuide } = require('./content');
 const { marked } = require('marked');
@@ -51,9 +52,18 @@ function log(message) {
 
         const formattedContent = marked.parse(guide.content || '');
 
+        // 🟣 Generate unsubscribe token
+        const token = jwt.sign(
+          { email: user.email },
+          process.env.JWT_SECRET,
+          { expiresIn: '14d' }
+        );
+
+        // 🟣 Replace both content + token
         const htmlContent = template
           .replace('{{title}}', guide.title)
-          .replace('{{content}}', formattedContent);
+          .replace('{{content}}', formattedContent)
+          .replace('{{unsubscribe_token}}', token);  // <-- NEW LINE
 
         await sendEmail(user.email, guide.title, htmlContent);
         log(`✅ Sent premium guide to ${user.email}`);
