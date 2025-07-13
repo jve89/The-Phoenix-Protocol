@@ -63,7 +63,9 @@ function log(message) {
         const htmlContent = template
           .replace('{{title}}', guide.title)
           .replace('{{content}}', formattedContent)
-          .replace('{{unsubscribe_token}}', token);  // <-- NEW LINE
+          .replace(/{{unsubscribe_token}}/g, encodeURIComponent(token));
+
+        log(`🔗 Unsubscribe URL for ${user.email}: https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`);
 
         await sendEmail(user.email, guide.title, htmlContent);
         log(`✅ Sent premium guide to ${user.email}`);

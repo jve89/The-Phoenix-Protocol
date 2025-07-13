@@ -35,13 +35,17 @@ if (!guide) {
 // Parse Markdown to HTML
 const formattedContent = marked.parse(guide.content || '');
 
-// Inject into template
-const htmlContent = template
-  .replace('{{title}}', guide.title)
-  .replace('{{content}}', formattedContent);
-
 // TEST EMAIL: replace with your email
 const testEmail = 'johanvanerkel@gmail.com';
+
+// Inject into template
+const jwt = require('jsonwebtoken');
+const token = jwt.sign({ email: testEmail }, process.env.JWT_SECRET, { expiresIn: '14d' });
+
+const htmlContent = template
+  .replace('{{title}}', guide.title)
+  .replace('{{content}}', formattedContent)
+  .replace(/{{unsubscribe_token}}/g, encodeURIComponent(token));
 
 // Send email
 sendEmail(
