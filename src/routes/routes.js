@@ -10,7 +10,7 @@ const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immedia
 const router = express.Router();
 
 // ✅ Lightweight backend health check (for UptimeRobot)
-router.get('/api/ping', (req, res) => {
+router.get('/ping', (req, res) => {
   const timestamp = new Date().toISOString();
   console.log(`[PING] /api/ping called at ${timestamp}`);
   res.status(200).json({ status: 'ok', timestamp });
@@ -20,14 +20,14 @@ router.get('/api/ping', (req, res) => {
  * 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
  * REMOVE AFTER DEBUGGING
  */
-router.get('/api/debug/list-users', async (req, res) => {
+router.get('/debug/list-users', async (req, res) => {
   console.log('[DEBUG] List users route triggered');
   try {
     const result = await db.query(`SELECT * FROM users ORDER BY id ASC`);
     console.log(`[DEBUG] Retrieved ${result.rows.length} user(s) from Postgres`);
     res.status(200).json(result.rows);
   } catch (err) {
-    console.error('[DEBUG] Query error in /api/debug/list-users:', err);
+    console.error('[DEBUG] Query error in /debug/list-users:', err);
     res.status(500).json({ error: 'Database query error', details: err.message });
   }
 });
