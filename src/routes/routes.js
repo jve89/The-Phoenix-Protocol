@@ -6,8 +6,20 @@ const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
+const { retryAllPendingEmails } = require('../utils/retry_email_queue');
 
 const router = express.Router();
+
+// ✅ Manual retry route for email failures (debug only)
+router.get('/debug/retry-emails', async (req, res) => {
+  try {
+    await retryAllPendingEmails();
+    res.status(200).json({ status: 'Retry attempt complete' });
+  } catch (err) {
+    console.error('[DEBUG] Email retry route error:', err.message);
+    res.status(500).json({ error: 'Retry failed', details: err.message });
+  }
+});
 
 // ✅ Lightweight backend health check (for UptimeRobot)
 router.get('/ping', (req, res) => {

@@ -98,9 +98,16 @@ function startCron() {
 
           const subject = guide.title || 'Your Daily Phoenix Protocol Guide';
 
-          await sendEmail(user.email, subject, htmlContent);
-          console.log(`[CRON] Guide sent to ${user.email}`);
-          logCron(`✅ Guide sent to ${user.email}`);
+          try {
+            await sendEmail(user.email, subject, htmlContent);
+            console.log(`[CRON] Guide sent to ${user.email}`);
+            logCron(`✅ Guide sent to ${user.email}`);
+          } catch (err) {
+            console.error(`[CRON] Error sending to ${user.email}:`, err.message);
+            logCron(`❌ Error sending to ${user.email}: ${err.message}`);
+            const { logFailure } = require('./retry_email_queue');
+            logFailure(user.email, subject, htmlContent);
+          }
         } catch (err) {
           console.error(`[CRON] Error sending to ${user.email}:`, err.message);
           logCron(`❌ Error sending to ${user.email}: ${err.message}`);
