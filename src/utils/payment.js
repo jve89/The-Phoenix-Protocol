@@ -3,22 +3,19 @@ require('dotenv').config({ path: './.env' });
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 
-const createCheckoutSession = async (email, plan) => {
+const createCheckoutSession = async (email, plan, gender = null, goal_stage = null) => {
   if (!process.env.STRIPE_SECRET_KEY) {
     console.error('Stripe secret key not found in environment');
     throw new Error('Missing Stripe API key');
   }
 
-  console.log(`Creating checkout session for email: ${email}, plan: ${plan}`);
+  console.log(`Creating checkout session for email: ${email}, plan: ${plan}, gender: ${gender}, goal_stage: ${goal_stage}`);
 
   const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // amounts in cents
   const amount = pricingMap[plan];
-  if (!amount) {
+  if (!amount || isNaN(amount) || amount <= 0) {
+    console.error('Invalid plan amount:', plan);
     throw new Error('Invalid plan');
-  }
-  if (isNaN(amount) || amount <= 0) {
-    console.error('Invalid plan amount received:', plan);
-    throw new Error('Invalid plan amount');
   }
 
   try {
@@ -28,7 +25,7 @@ const createCheckoutSession = async (email, plan) => {
         price_data: {
           currency: 'usd',
           product_data: { name: 'The Phoenix Protocol' },
-          unit_amount: amount, 
+          unit_amount: amount,
         },
         quantity: 1,
       }],
@@ -36,10 +33,18 @@ const createCheckoutSession = async (email, plan) => {
       success_url: `https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://www.thephoenixprotocol.app/checkout.html`,
       customer_email: email,
-      customer_creation: 'always', // ✅ Ensure Stripe creates a persistent customer ID
+      customer_creation: 'always',
+      metadata: {
+        email,
+        plan,
+        gender: gender || '',
+        goal_stage: goal_stage || ''
+      }
     });
+
     console.log('Stripe checkout session created:', session.id);
     return session.url;
+
   } catch (error) {
     console.error('Stripe error:', error.message, error);
     throw new Error('Payment setup failed');

@@ -24,8 +24,8 @@ const { loadTemplate } = require('../src/utils/loadTemplate');
 const template = loadTemplate('premium_guide_email.html');
 
 // Set gender for test (adjust if desired)
-const testGender = 'neutral';
-const guide = todayGuide[testGender];
+const testVariant = 'neutral_moveon'; // or any of the 6: male_reconnect, etc.
+const guide = todayGuide[testVariant];
 
 if (!guide) {
   console.error(`❌ No guide found for gender ${testGender}.`);

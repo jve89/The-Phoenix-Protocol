@@ -16,7 +16,7 @@ function log(message) {
   console.log(message);
 }
 
-const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to say') => {
+const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to say', goalStage = 'reconnect') => {
   try {
     log(`🚀 Sending first premium guide immediately to ${userEmail}`);
 
@@ -29,13 +29,11 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
     const { loadTemplate } = require('./loadTemplate');
     const template = loadTemplate('premium_guide_email.html');
 
-    let guide;
-    if (userGender === 'male') guide = todayGuide.male;
-    else if (userGender === 'female') guide = todayGuide.female;
-    else guide = todayGuide.neutral;
+    const variant = `${userGender}_${goalStage}`;
+    const guide = todayGuide[variant];
 
     if (!guide) {
-      log(`⚠️ Missing guide for ${userGender}. Skipping ${userEmail}.`);
+      log(`⚠️ Missing guide for ${variant}. Skipping ${userEmail}.`);
       return;
     }
 
@@ -54,12 +52,12 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
 
 // CLI usage: node src/utils/send_first_guide_immediately.js user@example.com female
 if (require.main === module) {
-  const [userEmail, userGender] = process.argv.slice(2);
-  if (!userEmail) {
-    console.error('Usage: node src/utils/send_first_guide_immediately.js user@example.com [gender]');
+  const [userEmail, userGender, goalStage] = process.argv.slice(2);
+  if (!userEmail || !userGender || !goalStage) {
+    console.error('Usage: node src/utils/send_first_guide_immediately.js user@example.com gender goal_stage');
     process.exit(1);
   }
-  sendFirstGuideImmediately(userEmail, userGender);
+  sendFirstGuideImmediately(userEmail, userGender, goalStage);
 }
 
 module.exports = { sendFirstGuideImmediately };

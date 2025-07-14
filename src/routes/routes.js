@@ -168,7 +168,7 @@ router.post('/signup', async (req, res) => {
 
 // 🚀 Create Stripe checkout session
 router.post('/create-checkout-session', async (req, res) => {
-  const { email, plan } = req.body;
+  const { email, plan, gender, goal_stage } = req.body;
   console.log('Creating checkout session:', { email, plan });
 
   const validPlans = ["30", "90", "365"];
@@ -187,7 +187,12 @@ router.post('/create-checkout-session', async (req, res) => {
   }
 
   try {
-    const url = await createCheckoutSession(email.trim(), plan.trim());
+    const url = await createCheckoutSession(
+      email.trim(), 
+      plan.trim(),
+      gender?.trim() || null,
+      goal_stage?.trim() || null,
+    );
     console.log('✅ Stripe checkout session created for', email.trim());
     res.json({ url });
   } catch (error) {

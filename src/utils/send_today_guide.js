@@ -22,7 +22,7 @@ function log(message) {
   try {
     log('🚀 Starting premium guide send pipeline...');
 
-    const { rows: users } = await db.query(`SELECT email, gender FROM users WHERE plan = 'premium'`);
+    const { rows: users } = await db.query(`SELECT email, gender, goal_stage FROM users WHERE plan = 'premium'`);
     if (!users.length) {
       log('⚠️ No premium users found. Exiting.');
       process.exit(0);
@@ -40,13 +40,11 @@ function log(message) {
 
     for (const user of users) {
       try {
-        let guide;
-        if (user.gender === 'male') guide = todayGuide.male;
-        else if (user.gender === 'female') guide = todayGuide.female;
-        else guide = todayGuide.neutral;
+        const variant = `${user.gender}_${user.goal_stage}`;
+        const guide = todayGuide[variant];
 
         if (!guide) {
-          log(`⚠️ Missing guide for ${user.gender}. Skipping ${user.email}.`);
+          log(`⚠️ Missing guide for ${variant}. Skipping ${user.email}.`);
           continue;
         }
 

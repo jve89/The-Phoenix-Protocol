@@ -1,25 +1,30 @@
+// src/utils/content.js
+
 require('dotenv').config();
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const { format, subDays } = require('date-fns');
 
-const malePrompts = require('../../content/prompts/male');
-const femalePrompts = require('../../content/prompts/female');
-const neutralPrompts = require('../../content/prompts/neutral');
+// All 6 prompt variants will be required dynamically
+const fallbackPrompts = require('../../content/fallback.json');
 
-// Generates one premium guide for a gender
-const generateTip = async (gender) => {
+const generateTip = async (gender, goalStage) => {
+  const variant = `${gender}_${goalStage}`;
+  const promptFilePath = path.join(__dirname, `../../content/prompts/${variant}.js`);
+
   let promptList;
+  try {
+    promptList = require(promptFilePath);
+  } catch (err) {
+    console.error(`❌ Missing or invalid prompt file: ${promptFilePath}`);
+    return `Your guide is temporarily unavailable — please check back tomorrow.`;
+  }
 
-  if (gender === 'male') promptList = malePrompts;
-  else if (gender === 'female') promptList = femalePrompts;
-  else promptList = neutralPrompts;
-
-  const prompt = promptList[Math.floor(Math.random() * promptList.length)](gender);
+  const prompt = promptList[Math.floor(Math.random() * promptList.length)](gender, goalStage);
 
   try {
-    console.log('[generateTip] Using prompt:', prompt.slice(0, 120), '...');
+    console.log(`[generateTip] ${variant} → Prompt:`, prompt.slice(0, 100), '...');
 
     const response = await axios.post('https://api.x.ai/v1/chat/completions', {
       messages: [{ role: "user", content: prompt }],
@@ -37,20 +42,16 @@ const generateTip = async (gender) => {
     return response.data.choices[0].message.content.trim();
 
   } catch (error) {
-    console.error('Grok API error:', error.response?.data || error.message);
+    console.error(`❌ Grok error for ${variant}:`, error.response?.data || error.message);
 
-    const fallbacks = require('../../content/fallback.json');
-    const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-
-    const fallbackLog = `[${new Date().toISOString()}] Fallback used: ${fallback.title || 'No title'}\n`;
+    const fallback = fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
+    const fallbackLog = `[${new Date().toISOString()}] Fallback used for ${variant}: ${fallback.title || 'Untitled'}\n`;
     fs.appendFileSync(path.join(__dirname, '../../logs/fallback_used.log'), fallbackLog);
-    console.log(fallbackLog.trim());
 
-    return fallback.content || 'Stay strong today with a moment of self-care.';
+    return fallback.content || 'Today, focus on yourself and take a deep breath.';
   }
 };
 
-// ✅ Generates and saves one JSON file per day
 const generateAndCacheDailyGuides = async () => {
   const today = format(new Date(), 'yyyy-MM-dd');
   const cacheDir = path.join(__dirname, '../../content/daily_cache');
@@ -59,82 +60,66 @@ const generateAndCacheDailyGuides = async () => {
 
   const debugLog = (msg) => {
     const timestamp = new Date().toISOString();
-    const logEntry = `[${timestamp}] ${msg}\n`;
-    fs.appendFileSync(debugLogPath, logEntry, 'utf8');
+    fs.appendFileSync(debugLogPath, `[${timestamp}] ${msg}\n`, 'utf8');
     console.log(msg);
   };
 
   try {
-    debugLog(`🚀 Starting premium guide generation for ${today}`);
+    debugLog(`🚀 Starting full guide generation for ${today}`);
 
-    if (!fs.existsSync(cacheDir)) {
-      fs.mkdirSync(cacheDir, { recursive: true });
-      debugLog(`Created missing cache directory: ${cacheDir}`);
-    }
+    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
 
     if (fs.existsSync(cachePath)) {
-      debugLog(`Cache for ${today} already exists at ${cachePath}, skipping generation.`);
+      debugLog(`⚠️ Skipped: Cache for ${today} already exists`);
       return;
     }
 
-    debugLog(`Generating Grok-based tips...`);
+    const combos = [
+      ['male', 'reconnect'],
+      ['male', 'moveon'],
+      ['female', 'reconnect'],
+      ['female', 'moveon'],
+      ['neutral', 'reconnect'],
+      ['neutral', 'moveon']
+    ];
 
-    const maleGuide = await generateTip('male');
-    const femaleGuide = await generateTip('female');
-    const neutralGuide = await generateTip('prefer not to say');
+    const cache = { date: today };
 
-    const data = {
-      date: today,
-      male: {
-        title: maleGuide.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide',
-        content: maleGuide
-      },
-      female: {
-        title: femaleGuide.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide',
-        content: femaleGuide
-      },
-      neutral: {
-        title: neutralGuide.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide',
-        content: neutralGuide
-      }
-    };
+    for (const [gender, goalStage] of combos) {
+      const variant = `${gender}_${goalStage}`;
+      debugLog(`🧠 Generating: ${variant}`);
 
-    fs.writeFileSync(cachePath, JSON.stringify(data, null, 2));
-    debugLog(`✅ Premium guides cached at ${cachePath}`);
-    debugLog(`🎉 Generation and caching complete.`);
-  } catch (error) {
-    debugLog(`❌ Error during guide generation: ${error.stack || error.message}`);
+      const content = await generateTip(gender, goalStage);
+      const title = content.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide';
+
+      cache[variant] = { title, content };
+    }
+
+    fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2));
+    debugLog(`✅ Cached guides written to ${cachePath}`);
+    debugLog(`🎉 All 6 variants generated successfully.`);
+
+  } catch (err) {
+    debugLog(`❌ Fatal error in guide generation: ${err.stack || err.message}`);
   }
 };
 
-// ✅ Load guide for any date
 const loadGuideByDate = (dateStr) => {
   const cachePath = path.join(__dirname, '../../content/daily_cache', `${dateStr}.json`);
   try {
     if (!fs.existsSync(cachePath)) return null;
-    const data = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-    return data;
+    return JSON.parse(fs.readFileSync(cachePath, 'utf8'));
   } catch (error) {
     console.error(`[loadGuideByDate] Failed to load ${dateStr}:`, error.message);
     return null;
   }
 };
 
-// ✅ Tries today → fallback to yesterday
 const loadTodayGuide = () => {
   const today = format(new Date(), 'yyyy-MM-dd');
   const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
 
-  const todayGuide = loadGuideByDate(today);
-  if (todayGuide) return todayGuide;
-
-  const fallback = loadGuideByDate(yesterday);
-  if (fallback) {
-    console.warn(`⚠️ Today's guide missing — falling back to ${yesterday}`);
-    return fallback;
-  }
-
-  return null;
+  return loadGuideByDate(today) || loadGuideByDate(yesterday) || null;
 };
 
 module.exports = {

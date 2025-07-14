@@ -31,14 +31,26 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
     const customerId = session.customer;
     const paymentIntent = session.payment_intent;
 
+    // 🧠 Extract custom metadata from Stripe
+    const gender = session.metadata?.gender || 'neutral';
+    const goalStage = session.metadata?.goal_stage || 'reconnect';
+    const plan = session.metadata?.plan || '30'; // fallback to default plan if missing
+
     try {
       const { rowCount } = await db.query(
-        `UPDATE users SET payment_status = $1, stripe_customer_id = $2, stripe_payment_intent = $3 WHERE email = $4`,
-        ['success', customerId, paymentIntent, email]
+        `UPDATE users SET 
+          plan = $1,
+          payment_status = $2,
+          stripe_customer_id = $3,
+          stripe_payment_intent = $4,
+          gender = $5,
+          goal_stage = $6
+        WHERE email = $7`,
+        [plan, 'success', customerId, paymentIntent, gender, goalStage, email]
       );
 
       if (rowCount > 0) {
-        console.log(`✅ Payment confirmed via webhook for ${email}`);
+        console.log(`✅ Payment confirmed via webhook for ${email} (gender=${gender}, goal_stage=${goalStage})`);
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
       }
