@@ -55,6 +55,23 @@
         <option value="female">Female</option>
         <option value="other">Rather not say</option>
       </select>
+      <fieldset class="border rounded p-3">
+        <legend class="text-sm font-semibold text-gray-700 mb-2">What best describes your current goal?</legend>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-2">
+            <input type="radio" name="goal_stage" value="reconnect" required class="text-purple-600 focus:ring-purple-500" />
+            <span>I'd like to get back with my ex</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="radio" name="goal_stage" value="move_on" required class="text-purple-600 focus:ring-purple-500" />
+            <span>I'm ready to move on</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="radio" name="goal_stage" value="" required class="text-purple-600 focus:ring-purple-500" />
+            <span>I'd rather not say</span>
+          </label>
+        </div>
+      </fieldset>
       <select id="plan" name="plan" required
               class="w-full p-3 border rounded focus:outline-none focus:border-blue-500">
         <option value="30">30 Days - $19</option>
@@ -91,26 +108,30 @@
 
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const email = document.getElementById('email').value.trim();
       const confirmEmail = document.getElementById('confirm-email').value.trim();
       const gender = document.getElementById('gender').value;
       const plan = document.getElementById('plan').value;
+      const goal_stage = document.querySelector('input[name="goal_stage"]:checked')?.value;
 
       if (email !== confirmEmail) {
         alert('Email addresses do not match. Please double-check your email.');
         return;
       }
 
-      console.log('Submitting signup with plan:', plan); // ✅ Useful debug line for live testing
+      console.log({ email, gender, plan, goal_stage }); // ✅ Debug line
 
       try {
         const response = await fetch('/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, gender, plan })
+          body: JSON.stringify({ email, gender, plan, goal_stage })
         });
+
         const data = await response.json();
         if (data.url) {
+          console.log('✅ Payload accepted, Stripe URL:', data.url);
           window.location.href = data.url;
         } else {
           alert('Error creating checkout session. Please try again.');

@@ -53,9 +53,9 @@ router.get('/debug/list-users', async (req, res) => {
 // 🚀 Handle user signup
 router.post('/signup', async (req, res) => {
   console.log('Signup request received:', req.body);
-  const { email, name, gender, plan } = req.body;
+  const { email, name, gender, plan, goal_stage } = req.body;
 
-  console.log('Validating signup fields:', { email, gender, plan });
+  console.log('🧪 Full incoming req.body:', req.body);
 
   const validPlans = ["30", "90", "365"];
   if (
@@ -89,8 +89,8 @@ router.post('/signup', async (req, res) => {
         }
 
         await db.query(
-          `UPDATE users SET plan = $1, end_date = $2 WHERE email = $3`,
-          [plan.trim(), endDate, email.trim()]
+          `UPDATE users SET plan = $1, end_date = $2, goal_stage = $3 WHERE email = $4`,
+          [plan.trim(), endDate, goal_stage || null, email.trim()]
         );
 
         const welcomeBackTemplate = loadTemplate('welcome_back.html');
@@ -123,9 +123,19 @@ router.post('/signup', async (req, res) => {
         endDate = d.toISOString().split('T')[0];
       }
 
+      const insertValues = [
+        email.trim(),
+        name ? name.trim() : null,
+        gender.trim(),
+        plan.trim(),
+        endDate,
+        goal_stage || null
+      ];
+      console.log('🧩 Insert values:', insertValues);
+
       await db.query(
-        `INSERT INTO users (email, name, gender, plan, end_date) VALUES ($1, $2, $3, $4, $5)`,
-        [email.trim(), name ? name.trim() : null, gender.trim(), plan.trim(), endDate]
+        `INSERT INTO users (email, name, gender, plan, end_date, goal_stage) VALUES ($1, $2, $3, $4, $5, $6)`,
+        insertValues
       );
 
       const welcomeTemplate = loadTemplate('welcome.html');

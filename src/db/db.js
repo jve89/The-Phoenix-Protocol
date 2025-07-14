@@ -20,6 +20,15 @@ const pool = new Pool({
       )
     `);
     console.log('✅ Users table ready in Postgres');
+    
+    // Diagnostic DB host + name check
+    try {
+      const result = await pool.query('SELECT inet_server_addr() AS host, current_database() AS db');
+      console.log('✅ Connected to DB:', result.rows[0]);
+    } catch (err) {
+      console.error('❌ Failed to check DB connection details:', err);
+    }
+
   } catch (error) {
     console.error('❌ Failed to initialize Postgres table:', error);
   }
