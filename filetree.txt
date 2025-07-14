@@ -16,7 +16,6 @@
 ./content/prompts/female_moveon.js
 ./content/prompts/neutral_reconnect.js
 ./content/prompts/neutral_moveon.js
-./content/prompts.js
 ./filetree.txt
 ./logs/email_retry_failures.json
 ./logs/generate_today_guide_debug.log

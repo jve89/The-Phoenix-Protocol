@@ -1,10 +1,12 @@
-// src/utils/cron.js
-
 require('dotenv').config();
+
 const cron = require('node-cron');
 const db = require('../db/db');
 const { sendEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide } = require('./content');
+const { loadTemplate } = require('./loadTemplate');
+const { logFailure } = require('./retry_email_queue');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -14,7 +16,7 @@ function logCron(message) {
   const entry = `[${new Date().toISOString()}] ${message}\n`;
   const logDir = path.dirname(logPath);
 
-  // ✅ Ensure the logs directory exists to prevent ENOENT crash
+
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
     console.log(`✅ Created missing logs directory at ${logDir}`);
@@ -24,11 +26,11 @@ function logCron(message) {
 }
 
 function startCron() {
-  global.lastCronTimestamp = new Date().toISOString();  // ✅ For /cron/status route
+  global.lastCronTimestamp = new Date().toISOString();
   console.log('[CRON] Subscription expiry, guide generation, and premium email schedule active.');
   logCron('✅ Cron system started and monitoring triggers.');
 
-  // 1️⃣ Generate & cache premium guides daily at 15:50 UTC
+  // 1️⃣ Generate & cache daily guides at 15:50 UTC
   cron.schedule('50 15 * * *', async () => {
     const time = new Date().toISOString();
     console.log(`[CRON] Generating and caching premium guides: ${time}`);
@@ -43,7 +45,7 @@ function startCron() {
     }
   });
 
-  // 2️⃣ Send premium guide to all active users daily at 16:00 UTC
+  // 2️⃣ Send premium guides at 16:00 UTC
   cron.schedule('0 16 * * *', async () => {
     const time = new Date().toISOString();
     console.log(`[CRON] Sending premium guides: ${time}`);
@@ -51,7 +53,7 @@ function startCron() {
 
     try {
       const { rows: users } = await db.query(`
-        SELECT email, gender FROM users
+        SELECT email, gender, goal_stage FROM users
         WHERE plan IN ('30', '90', '365') AND (created_at IS NULL OR created_at::date != CURRENT_DATE)
       `);
 
@@ -68,30 +70,26 @@ function startCron() {
         return;
       }
 
-      // Load premium email HTML template
-      const templatePath = path.join(__dirname, '../../templates/premium_guide_email.html');
-      const template = fs.readFileSync(templatePath, 'utf-8');
+      const template = loadTemplate('premium_guide_email.html');
 
       for (const user of users) {
         try {
-          let guide;
-          if (user.gender === 'male') guide = todayGuide.male;
-          else if (user.gender === 'female') guide = todayGuide.female;
-          else guide = todayGuide.neutral;
+          const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
+          const guide = todayGuide[variant];
 
           if (!guide) {
-            console.error(`[CRON] Missing guide for gender ${user.gender}, skipping ${user.email}`);
-            logCron(`⚠️ Missing guide for gender ${user.gender}, skipping ${user.email}`);
+            console.warn(`[CRON] Missing guide for variant: ${variant}. Skipping ${user.email}`);
+            logCron(`⚠️ Missing guide for ${variant}, skipping ${user.email}`);
             continue;
           }
 
-          // Format guide content into clean paragraphs
+
           const formattedContent = guide.content
             .split(/\n{2,}/)
             .map(paragraph => `<p>${paragraph.trim()}</p>`)
             .join('\n');
 
-          // Inject into template
+
           const htmlContent = template
             .replace('{{title}}', guide.title)
             .replace('{{content}}', formattedContent);
@@ -103,23 +101,22 @@ function startCron() {
             console.log(`[CRON] Guide sent to ${user.email}`);
             logCron(`✅ Guide sent to ${user.email}`);
           } catch (err) {
-            console.error(`[CRON] Error sending to ${user.email}:`, err.message);
-            logCron(`❌ Error sending to ${user.email}: ${err.message}`);
-            const { logFailure } = require('./retry_email_queue');
+            console.error(`[CRON] Send error for ${user.email}: ${err.message}`);
+            logCron(`❌ Send error for ${user.email}: ${err.message}`);
             logFailure(user.email, subject, htmlContent);
           }
         } catch (err) {
-          console.error(`[CRON] Error sending to ${user.email}:`, err.message);
-          logCron(`❌ Error sending to ${user.email}: ${err.message}`);
+          console.error(`[CRON] Processing error for ${user.email}: ${err.message}`);
+          logCron(`❌ Processing error for ${user.email}: ${err.message}`);
         }
       }
     } catch (err) {
-      console.error('[CRON] Error fetching users or sending guides:', err.message);
-      logCron(`❌ Error fetching users or sending guides: ${err.message}`);
+      console.error('[CRON] User fetch/send error:', err.message);
+      logCron(`❌ User fetch/send error: ${err.message}`);
     }
   });
 
-  // 3️⃣ Downgrade expired subscriptions at midnight UTC
+  // 3️⃣ Downgrade expired subscriptions at 00:00 UTC
   cron.schedule('0 0 * * *', async () => {
     const time = new Date().toISOString();
     console.log(`[CRON] Checking for expired subscriptions: ${time}`);
@@ -145,7 +142,7 @@ function startCron() {
           console.log(`[CRON] Downgraded ${user.email} to free plan.`);
           logCron(`✅ Downgraded ${user.email} to free plan.`);
 
-          // Load farewell email template
+
           const farewellPath = path.join(__dirname, '../../templates/farewell_email.html');
           const farewellHtml = fs.readFileSync(farewellPath, 'utf-8');
 
@@ -158,13 +155,13 @@ function startCron() {
           console.log(`[CRON] Expiry notice sent to ${user.email}`);
           logCron(`📧 Expiry notice sent to ${user.email}`);
         } catch (err) {
-          console.error(`[CRON] Error processing downgrade for ${user.email}:`, err.message);
-          logCron(`❌ Error processing downgrade for ${user.email}: ${err.message}`);
+          console.error(`[CRON] Downgrade error for ${user.email}:`, err.message);
+          logCron(`❌ Downgrade error for ${user.email}: ${err.message}`);
         }
       }
     } catch (err) {
-      console.error('[CRON] Error during subscription expiry check:', err.message);
-      logCron(`❌ Error during subscription expiry check: ${err.message}`);
+      console.error('[CRON] Expiry check error:', err.message);
+      logCron(`❌ Expiry check error: ${err.message}`);
     }
   });
 }
