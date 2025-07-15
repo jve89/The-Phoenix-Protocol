@@ -21,13 +21,22 @@ const generateTip = async (gender, goalStage) => {
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
 
-  const promptFnOrStr = promptList[Math.floor(Math.random() * promptList.length)];
-  const prompt = typeof promptFnOrStr === 'function'
-    ? promptFnOrStr(gender, goalStage)
-    : promptFnOrStr;
+  const promptObj = promptList[Math.floor(Math.random() * promptList.length)];
+
+  let prompt;
+  if (typeof promptObj === 'object' && typeof promptObj.prompt === 'function') {
+    prompt = promptObj.prompt(gender, goalStage);
+  } else if (typeof promptObj === 'string') {
+    prompt = promptObj;
+  } else if (typeof promptObj === 'function') {
+    prompt = promptObj(gender, goalStage);
+  } else {
+    console.error(`❌ Invalid prompt format for ${variant}: Expected object with .prompt(), string, or function.`);
+    return `Your guide is temporarily unavailable — please check back tomorrow.`;
+  }
 
   try {
-    console.log(`[generateTip] ${variant} → Prompt:`, prompt.slice(0, 100), '...');
+    console.log(`[generateTip] ${variant} → Prompt:`, String(prompt).slice(0, 100), '...');
 
     const response = await axios.post('https://api.x.ai/v1/chat/completions', {
       messages: [{ role: "user", content: prompt }],
