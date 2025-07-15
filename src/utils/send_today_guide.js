@@ -22,7 +22,7 @@ function log(message) {
   try {
     log('🚀 Starting premium guide send pipeline...');
 
-    const { rows: users } = await db.query(`SELECT email, gender, goal_stage FROM users WHERE plan = 'premium'`);
+    const { rows: users } = await db.query(`SELECT email, gender, goal_stage FROM users WHERE plan IN ('30', '90', '365')`);
     if (!users.length) {
       log('⚠️ No premium users found. Exiting.');
       process.exit(0);
@@ -48,7 +48,7 @@ function log(message) {
           continue;
         }
 
-        const formattedContent = marked.parse(guide.content || '');
+        const formattedContent = marked.parse((guide.content || '').trim());
 
         // 🟣 Generate unsubscribe token
         const token = jwt.sign(

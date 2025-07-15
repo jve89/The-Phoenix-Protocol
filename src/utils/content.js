@@ -87,12 +87,12 @@ const generateAndCacheDailyGuides = async () => {
     }
 
     const combos = [
-      ['male', 'reconnect'],
       ['male', 'moveon'],
-      ['female', 'reconnect'],
+      ['male', 'reconnect'],
       ['female', 'moveon'],
-      ['neutral', 'reconnect'],
-      ['neutral', 'moveon']
+      ['female', 'reconnect'],
+      ['neutral', 'moveon'],
+      ['neutral', 'reconnect']
     ];
 
     const cache = { date: today };
