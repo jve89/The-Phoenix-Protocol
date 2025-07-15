@@ -43,6 +43,8 @@ function startCron() {
       console.error('[CRON] Guide generation error:', err.message);
       logCron(`❌ Guide generation error: ${err.message}`);
     }
+  }, {
+    timezone: 'Etc/UTC'
   });
 
   // 2️⃣ Send premium guides at 16:00 UTC
@@ -83,12 +85,10 @@ function startCron() {
             continue;
           }
 
-
           const formattedContent = guide.content
             .split(/\n{2,}/)
             .map(paragraph => `<p>${paragraph.trim()}</p>`)
             .join('\n');
-
 
           const htmlContent = template
             .replace('{{title}}', guide.title)
@@ -114,6 +114,8 @@ function startCron() {
       console.error('[CRON] User fetch/send error:', err.message);
       logCron(`❌ User fetch/send error: ${err.message}`);
     }
+  }, {
+    timezone: 'Etc/UTC'
   });
 
   // 3️⃣ Downgrade expired subscriptions at 00:00 UTC
