@@ -21,7 +21,10 @@ const generateTip = async (gender, goalStage) => {
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
 
-  const prompt = promptList[Math.floor(Math.random() * promptList.length)](gender, goalStage);
+  const promptFnOrStr = promptList[Math.floor(Math.random() * promptList.length)];
+  const prompt = typeof promptFnOrStr === 'function'
+    ? promptFnOrStr(gender, goalStage)
+    : promptFnOrStr;
 
   try {
     console.log(`[generateTip] ${variant} → Prompt:`, prompt.slice(0, 100), '...');
