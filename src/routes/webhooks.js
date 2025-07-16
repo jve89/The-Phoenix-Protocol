@@ -35,7 +35,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
     const plan = session.metadata?.plan || '30';
 
     try {
-      // ✅ Deduplication check BEFORE any updates
+      // ✅ Deduplication check BEFORE anything else
       const { rows } = await db.query(
         `SELECT email FROM users WHERE session_id = $1`,
         [sessionId]
