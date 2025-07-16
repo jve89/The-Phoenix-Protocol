@@ -6,8 +6,11 @@ const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 const { retryAllPendingEmails } = require('../utils/retry_email_queue');
+const guideRoutes = require('./guides');
 
 const router = express.Router();
+
+router.use(guideRoutes);
 
 // ✅ Manual retry route for email failures (debug only)
 router.get('/debug/retry-emails', async (req, res) => {

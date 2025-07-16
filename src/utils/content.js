@@ -1,12 +1,27 @@
 require('dotenv').config();
 const axios = require('axios');
-const fs = require('fs');
 const path = require('path');
 const { format, subDays } = require('date-fns');
 const db = require('../db/db');
-
 const fallbackPrompts = require('../../content/fallback.json');
 
+// 🔧 Centralised log writer for dashboard
+async function logEvent(source, level, message) {
+  await db.query(`
+    INSERT INTO guide_generation_logs (source, level, message)
+    VALUES ($1, $2, $3)
+  `, [source, level, message]);
+}
+
+// 📦 Save fallback usage
+async function logFallback(variant, title) {
+  await db.query(`
+    INSERT INTO fallback_logs (variant, fallback_title)
+    VALUES ($1, $2)
+  `, [variant, title]);
+}
+
+// 🧠 Generate one tip
 const generateTip = async (gender, goalStage) => {
   const variant = `${gender}_${goalStage}`;
   const promptFilePath = path.join(__dirname, `../../content/prompts/${variant}.js`);
@@ -14,31 +29,31 @@ const generateTip = async (gender, goalStage) => {
   let promptList;
   try {
     promptList = require(promptFilePath);
-  } catch (err) {
-    console.error(`❌ Missing or invalid prompt file: ${promptFilePath}`);
+  } catch {
+    await logEvent('content', 'error', `Missing or invalid prompt file: ${variant}`);
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
 
   const promptObj = promptList[Math.floor(Math.random() * promptList.length)];
-
   let prompt;
-  if (typeof promptObj === 'object' && typeof promptObj.prompt === 'function') {
+
+  if (typeof promptObj?.prompt === 'function') {
     prompt = promptObj.prompt(gender, goalStage);
   } else if (typeof promptObj === 'string') {
     prompt = promptObj;
   } else if (typeof promptObj === 'function') {
     prompt = promptObj(gender, goalStage);
   } else {
-    console.error(`❌ Invalid prompt format for ${variant}`);
+    await logEvent('content', 'error', `Invalid prompt format for ${variant}`);
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
 
   try {
     console.log(`[generateTip] ${variant} → Prompt:`, String(prompt).slice(0, 100), '...');
 
-    const response = await axios.post('https://api.x.ai/v1/chat/completions', {
-      messages: [{ role: "user", content: prompt }],
-      model: process.env.GROK_MODEL || "grok-3-latest",
+    const res = await axios.post('https://api.x.ai/v1/chat/completions', {
+      messages: [{ role: 'user', content: prompt }],
+      model: process.env.GROK_MODEL || 'grok-3-latest',
       stream: false,
       temperature: 0.7,
       max_tokens: 1000
@@ -49,67 +64,47 @@ const generateTip = async (gender, goalStage) => {
       }
     });
 
-    return response.data.choices[0].message.content.trim();
+    return res.data.choices[0].message.content.trim();
 
-  } catch (error) {
-    console.error(`❌ Grok error for ${variant}:`, error.response?.data || error.message);
-
+  } catch (err) {
+    await logEvent('content', 'error', `Grok error for ${variant}: ${err.message}`);
     const fallback = fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
-    const fallbackLog = `[${new Date().toISOString()}] Fallback used for ${variant}: ${fallback.title || 'Untitled'}\n`;
-    fs.appendFileSync(path.join(__dirname, '../../logs/fallback_used.log'), fallbackLog);
-
+    await logFallback(variant, fallback.title || 'Untitled');
     return fallback.content || 'Today, focus on yourself and take a deep breath.';
   }
 };
 
+// 📅 Generate and cache all 6 variants
 const generateAndCacheDailyGuides = async () => {
   const today = format(new Date(), 'yyyy-MM-dd');
-  const debugLogPath = path.join(__dirname, '../../logs/generate_today_guide_debug.log');
+  await logEvent('content', 'info', `🚀 Starting guide generation for ${today}`);
 
-  const debugLog = (msg) => {
-    const timestamp = new Date().toISOString();
-    fs.appendFileSync(debugLogPath, `[${timestamp}] ${msg}\n`, 'utf8');
-    console.log(msg);
-  };
+  const combos = [
+    ['male', 'moveon'], ['male', 'reconnect'],
+    ['female', 'moveon'], ['female', 'reconnect'],
+    ['neutral', 'moveon'], ['neutral', 'reconnect']
+  ];
 
-  try {
-    debugLog(`🚀 Starting full guide generation for ${today}`);
+  const guideObject = { date: today };
 
-    const combos = [
-      ['male', 'moveon'],
-      ['male', 'reconnect'],
-      ['female', 'moveon'],
-      ['female', 'reconnect'],
-      ['neutral', 'moveon'],
-      ['neutral', 'reconnect']
-    ];
-
-    const cache = { date: today };
-
-    for (const [gender, goalStage] of combos) {
-      const variant = `${gender}_${goalStage}`;
-      debugLog(`🧠 Generating: ${variant}`);
-
-      const content = await generateTip(gender, goalStage);
-      const title = content.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide';
-
-      cache[variant] = { title, content };
-    }
-
-    await db.query(`
-      INSERT INTO daily_guides (date, guide)
-      VALUES ($1, $2)
-      ON CONFLICT (date) DO UPDATE SET guide = EXCLUDED.guide
-    `, [today, JSON.stringify(cache)]);
-
-    debugLog(`✅ Daily guide stored in database for ${today}`);
-    debugLog(`🎉 All 6 variants generated successfully.`);
-
-  } catch (err) {
-    debugLog(`❌ Fatal error in guide generation: ${err.stack || err.message}`);
+  for (const [gender, goalStage] of combos) {
+    const variant = `${gender}_${goalStage}`;
+    await logEvent('content', 'info', `🧠 Generating ${variant}`);
+    const content = await generateTip(gender, goalStage);
+    const title = content.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide';
+    guideObject[variant] = { title, content };
   }
+
+  await db.query(`
+    INSERT INTO daily_guides (date, guide)
+    VALUES ($1, $2)
+    ON CONFLICT (date) DO UPDATE SET guide = EXCLUDED.guide
+  `, [today, JSON.stringify(guideObject)]);
+
+  await logEvent('content', 'info', `✅ Daily guide stored for ${today}`);
 };
 
+// 📖 Load from DB by date
 const loadGuideByDate = async (dateStr) => {
   try {
     const { rows } = await db.query(
@@ -118,11 +113,12 @@ const loadGuideByDate = async (dateStr) => {
     );
     return rows.length ? rows[0].guide : null;
   } catch (err) {
-    console.error(`[loadGuideByDate] DB error for ${dateStr}:`, err.message);
+    await logEvent('content', 'error', `loadGuideByDate(${dateStr}): ${err.message}`);
     return null;
   }
 };
 
+// 📖 Load today's guide (fallback to yesterday)
 const loadTodayGuide = async () => {
   const today = format(new Date(), 'yyyy-MM-dd');
   const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
