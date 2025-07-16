@@ -79,13 +79,7 @@ router.post('/signup', async (req, res) => {
       if (existingPlan === 'free') {
         console.log(`✅ Existing user on 'free' plan re-subscribing: ${email.trim()}`);
 
-        const days = parseInt(plan.trim());
-        let endDate = null;
-        if (!isNaN(days)) {
-          const d = new Date();
-          d.setDate(d.getDate() + days);
-          endDate = d.toISOString().split('T')[0];
-        }
+        let endDate = null; // Will be set later by webhook
 
         await db.query(
           `UPDATE users SET plan = $1, end_date = $2, goal_stage = $3 WHERE email = $4`,
@@ -105,14 +99,9 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ error: 'You already have an active plan.' });
       }
     } else {
-      const days = parseInt(plan.trim());
-      let endDate = null;
-      if (!isNaN(days)) {
-        const d = new Date();
-        d.setDate(d.getDate() + days);
-        endDate = d.toISOString().split('T')[0];
-      }
-
+      
+      let endDate = null; // Will be set later by webhook
+      
       const insertValues = [
         email.trim(),
         name ? name.trim() : null,
