@@ -25,6 +25,19 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
   console.log(`✅ Received webhook event: ${event.type}`);
 
+  const allowedEvents = [
+    'checkout.session.completed',
+    'invoice.payment_failed',
+    'charge.failed',
+    'customer.subscription.deleted',
+    'customer.subscription.updated',
+  ];
+
+  if (!allowedEvents.includes(event.type)) {
+    console.log(`🔕 Ignored webhook: ${event.type}`);
+    return res.status(200).json({ received: true });
+  }
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const sessionId = session.id;

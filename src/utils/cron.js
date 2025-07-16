@@ -32,11 +32,13 @@ function startCron() {
 
   // 1️⃣ Generate & cache daily guides at 15:00 UTC
   cron.schedule('0 15 * * *', async () => {
+    const { sendDailyGuideBackup } = require('./backup');
     const time = new Date().toISOString();
     console.log(`[CRON] Generating and caching premium guides: ${time}`);
     logCron(`🚀 Generating and caching premium guides at ${time}`);
     try {
       await generateAndCacheDailyGuides();
+      await sendDailyGuideBackup(process.env.ADMIN_EMAIL);
       console.log('[CRON] Guide generation complete.');
       logCron('✅ Guide generation completed successfully.');
     } catch (err) {
@@ -65,12 +67,28 @@ function startCron() {
         return;
       }
 
-      const todayGuide = loadTodayGuide();
+      let todayGuide = loadTodayGuide();
+
       if (!todayGuide) {
-        console.error('[CRON] No cached guide found for today, aborting email send.');
-        logCron('❌ No cached guide found for today, aborting email send.');
-        return;
+        console.warn('[CRON] No cached guide found — attempting DB fallback...');
+        logCron('⚠️ No cached guide file — attempting DB fallback.');
+        try {
+          const { loadGuideByDate } = require('./content');
+          const today = new Date().toISOString().split('T')[0];
+          todayGuide = await loadGuideByDate(today);
+          if (todayGuide) {
+            console.log('[CRON] ✅ Loaded guide from DB fallback.');
+            logCron('✅ Guide loaded from DB fallback.');
+          } else {
+            throw new Error('No guide in DB either.');
+          }
+        } catch (fallbackErr) {
+          console.error('[CRON] ❌ No guide available in file or DB:', fallbackErr.message);
+          logCron(`❌ Guide missing in both file and DB: ${fallbackErr.message}`);
+          return;
+        }
       }
+
 
       const template = loadTemplate('premium_guide_email.html');
 

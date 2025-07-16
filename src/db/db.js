@@ -16,12 +16,13 @@ const pool = new Pool({
         name TEXT,
         gender TEXT,
         plan TEXT,
-        end_date TEXT
+        end_date TEXT,
+        session_id TEXT,
+        goal_stage TEXT
       )
     `);
     console.log('✅ Users table ready in Postgres');
-    
-    // Diagnostic DB host + name check
+
     try {
       const result = await pool.query('SELECT inet_server_addr() AS host, current_database() AS db');
       console.log('✅ Connected to DB:', result.rows[0]);
@@ -34,7 +35,7 @@ const pool = new Pool({
   }
 })();
 
-// ✅ New helper: fetch user by session_id
+// ✅ Fetch user by session_id
 async function getUserBySessionId(sessionId) {
   const result = await pool.query(
     'SELECT * FROM users WHERE session_id = $1',
@@ -45,5 +46,5 @@ async function getUserBySessionId(sessionId) {
 
 module.exports = {
   query: (text, params) => pool.query(text, params),
-  getUserBySessionId, // ✅ Exported here
+  getUserBySessionId,
 };
