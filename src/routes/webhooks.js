@@ -1,3 +1,5 @@
+// src/routes/webhooks.js
+
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
@@ -46,7 +48,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         return res.status(200).json({ received: true });
       }
 
-      // ✅ Update user
+      // ✅ Update user with Stripe info
       const { rowCount } = await db.query(
         `UPDATE users SET 
           plan = $1,
@@ -63,6 +65,18 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
       if (rowCount > 0) {
         console.log(`✅ Payment confirmed via webhook for ${email}`);
+
+        // ✅ Deduplication check: Has guide already been sent?
+        const { rows: existingUserRows } = await db.query(
+          `SELECT first_guide_sent_at FROM users WHERE email = $1`,
+          [email]
+        );
+        const alreadySent = existingUserRows[0]?.first_guide_sent_at !== null;
+
+        if (alreadySent) {
+          console.log(`🛑 First guide already sent to ${email}, skipping duplicate.`);
+          return res.status(200).json({ received: true });
+        }
 
         // ✅ Send the first guide after 5 minutes
         setTimeout(async () => {
