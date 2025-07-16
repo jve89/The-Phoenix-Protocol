@@ -200,4 +200,61 @@ router.get('/today', async (req, res) => {
   }
 });
 
+// ✅ Human-readable admin view of today's guide
+const { loadTodayGuide } = require('../utils/content');
+
+router.get('/admin/today', async (req, res) => {
+  const clientSecret = req.query.secret;
+  const expectedSecret = process.env.ADMIN_SECRET;
+
+  if (!expectedSecret || clientSecret !== expectedSecret) {
+    return res.status(401).send('<h2>❌ Unauthorized</h2>');
+  }
+
+  try {
+    const guide = await loadTodayGuide();
+
+    if (!guide) {
+      return res.status(404).send('<h2>⚠️ No guide available for today or yesterday.</h2>');
+    }
+
+    let html = `<h1>The Phoenix Protocol — Guide for ${guide.date}</h1><hr>`;
+
+    for (const [variant, data] of Object.entries(guide)) {
+      if (variant === 'date') continue;
+
+      const paragraphs = data.content
+        .split(/\n{2,}/)
+        .map(p => `<p>${p.trim()}</p>`)
+        .join('\n');
+
+      html += `
+        <h2>📘 ${variant}</h2>
+        <h3>${data.title}</h3>
+        ${paragraphs}
+        <hr>
+      `;
+    }
+
+    res.send(`
+      <html>
+        <head>
+          <title>Admin — Daily Guide</title>
+          <style>
+            body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; }
+            h1 { border-bottom: 2px solid #ccc; padding-bottom: 0.5rem; }
+            h2 { margin-top: 2rem; color: #333; }
+            p { margin: 0.75rem 0; }
+            hr { margin: 2rem 0; border: none; border-top: 1px solid #eee; }
+          </style>
+        </head>
+        <body>${html}</body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('[ADMIN] /admin/today error:', err.message);
+    res.status(500).send('<h2>❌ Internal error loading guide</h2>');
+  }
+});
+
 module.exports = router;
