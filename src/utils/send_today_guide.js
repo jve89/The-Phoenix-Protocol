@@ -22,7 +22,14 @@ function log(message) {
   try {
     log('🚀 Starting premium guide send pipeline...');
 
-    const { rows: users } = await db.query(`SELECT email, gender, goal_stage FROM users WHERE plan IN ('30', '90', '365')`);
+    // 🔒 Exclude: signups today OR already received today's guide
+    const { rows: users } = await db.query(`
+      SELECT email, gender, goal_stage FROM users
+      WHERE plan IN ('30', '90', '365')
+        AND (created_at IS NULL OR created_at::date != CURRENT_DATE)
+        AND (first_guide_sent_at IS NULL OR first_guide_sent_at::date != CURRENT_DATE)
+    `);
+
     if (!users.length) {
       log('⚠️ No premium users found. Exiting.');
       process.exit(0);

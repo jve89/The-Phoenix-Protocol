@@ -56,7 +56,7 @@ function startCron() {
     try {
       const { rows: users } = await db.query(`
         SELECT email, gender, goal_stage FROM users
-        WHERE plan IN ('30', '90', '365') AND (created_at IS NULL OR created_at::date != CURRENT_DATE)
+        WHERE plan IN ('30', '90', '365') AND (first_guide_sent_at IS NULL OR first_guide_sent_at::date != CURRENT_DATE)
       `);
 
       if (!users.length) {

@@ -3,6 +3,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const db = require('../db/db');
 const { sendEmail } = require('./email');
 const { loadTodayGuide } = require('./content');
 const { marked } = require('marked');
@@ -45,12 +46,24 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
 
     await sendEmail(userEmail, guide.title, htmlContent);
     log(`✅ Sent first premium guide to ${userEmail}`);
+
+    // ⏱️ Update database to mark the send time
+    try {
+      await db.query(
+        `UPDATE users SET first_guide_sent_at = CURRENT_TIMESTAMP WHERE email = $1`,
+        [userEmail]
+      );
+      log(`🕓 Saved first_guide_sent_at timestamp for ${userEmail}`);
+    } catch (dbErr) {
+      log(`❌ Failed to update first_guide_sent_at for ${userEmail}: ${dbErr.message}`);
+    }
+
   } catch (err) {
     log(`❌ Error sending first guide to ${userEmail}: ${err.stack || err}`);
   }
 };
 
-// CLI usage: node src/utils/send_first_guide_immediately.js user@example.com female
+// CLI usage: node src/utils/send_first_guide_immediately.js user@example.com female reconnect
 if (require.main === module) {
   const [userEmail, userGender, goalStage] = process.argv.slice(2);
   if (!userEmail || !userGender || !goalStage) {
