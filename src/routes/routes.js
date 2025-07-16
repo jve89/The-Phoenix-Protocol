@@ -175,4 +175,29 @@ router.post('/create-checkout-session', async (req, res) => {
   }
 });
 
+// ✅ GET /api/today — secured by x-admin-secret header
+const { loadTodayGuide } = require('../utils/content');
+
+router.get('/today', async (req, res) => {
+  const clientSecret = req.headers['x-admin-secret'];
+  const expectedSecret = process.env.ADMIN_SECRET;
+
+  if (!expectedSecret || clientSecret !== expectedSecret) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const guide = await loadTodayGuide();
+
+    if (!guide) {
+      return res.status(404).json({ error: 'No guide available for today or yesterday.' });
+    }
+
+    res.status(200).json(guide);
+  } catch (err) {
+    console.error('[API] /api/today error:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

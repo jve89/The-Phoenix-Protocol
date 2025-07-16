@@ -1,12 +1,10 @@
-// src/utils/content.js
-
 require('dotenv').config();
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const { format, subDays } = require('date-fns');
+const db = require('../db/db');
 
-// All 6 prompt variants will be required dynamically
 const fallbackPrompts = require('../../content/fallback.json');
 
 const generateTip = async (gender, goalStage) => {
@@ -31,7 +29,7 @@ const generateTip = async (gender, goalStage) => {
   } else if (typeof promptObj === 'function') {
     prompt = promptObj(gender, goalStage);
   } else {
-    console.error(`❌ Invalid prompt format for ${variant}: Expected object with .prompt(), string, or function.`);
+    console.error(`❌ Invalid prompt format for ${variant}`);
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
 
@@ -66,8 +64,6 @@ const generateTip = async (gender, goalStage) => {
 
 const generateAndCacheDailyGuides = async () => {
   const today = format(new Date(), 'yyyy-MM-dd');
-  const cacheDir = path.join(__dirname, '../../content/daily_cache');
-  const cachePath = path.join(cacheDir, `${today}.json`);
   const debugLogPath = path.join(__dirname, '../../logs/generate_today_guide_debug.log');
 
   const debugLog = (msg) => {
@@ -78,13 +74,6 @@ const generateAndCacheDailyGuides = async () => {
 
   try {
     debugLog(`🚀 Starting full guide generation for ${today}`);
-
-    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-
-    if (fs.existsSync(cachePath)) {
-      debugLog(`⚠️ Skipped: Cache for ${today} already exists`);
-      return;
-    }
 
     const combos = [
       ['male', 'moveon'],
@@ -107,8 +96,13 @@ const generateAndCacheDailyGuides = async () => {
       cache[variant] = { title, content };
     }
 
-    fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2));
-    debugLog(`✅ Cached guides written to ${cachePath}`);
+    await db.query(`
+      INSERT INTO daily_guides (date, guide)
+      VALUES ($1, $2)
+      ON CONFLICT (date) DO UPDATE SET guide = EXCLUDED.guide
+    `, [today, JSON.stringify(cache)]);
+
+    debugLog(`✅ Daily guide stored in database for ${today}`);
     debugLog(`🎉 All 6 variants generated successfully.`);
 
   } catch (err) {
@@ -116,22 +110,24 @@ const generateAndCacheDailyGuides = async () => {
   }
 };
 
-const loadGuideByDate = (dateStr) => {
-  const cachePath = path.join(__dirname, '../../content/daily_cache', `${dateStr}.json`);
+const loadGuideByDate = async (dateStr) => {
   try {
-    if (!fs.existsSync(cachePath)) return null;
-    return JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-  } catch (error) {
-    console.error(`[loadGuideByDate] Failed to load ${dateStr}:`, error.message);
+    const { rows } = await db.query(
+      `SELECT guide FROM daily_guides WHERE date = $1`,
+      [dateStr]
+    );
+    return rows.length ? rows[0].guide : null;
+  } catch (err) {
+    console.error(`[loadGuideByDate] DB error for ${dateStr}:`, err.message);
     return null;
   }
 };
 
-const loadTodayGuide = () => {
+const loadTodayGuide = async () => {
   const today = format(new Date(), 'yyyy-MM-dd');
   const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
 
-  return loadGuideByDate(today) || loadGuideByDate(yesterday) || null;
+  return await loadGuideByDate(today) || await loadGuideByDate(yesterday);
 };
 
 module.exports = {
