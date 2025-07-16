@@ -45,22 +45,25 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           stripe_payment_intent = $4,
           gender = $5,
           goal_stage = $6,
-          stripe_checkout_session_id = $7
-        WHERE email = $8`,
-        [plan, 'success', customerId, paymentIntent, gender, goalStage, session.id, email]
+          stripe_checkout_session_id = $7,
+          session_id = $8
+        WHERE email = $9`,
+        [plan, 'success', customerId, paymentIntent, gender, goalStage, session.id, session.id, email]
       );
 
       if (rowCount > 0) {
         console.log(`✅ Payment confirmed via webhook for ${email}`);
 
-        // Deduplication check — skip if session was already handled
+        // Deduplication check using persistent session_id
+        const sessionId = session.id;
+
         const { rows } = await db.query(
-          `SELECT stripe_checkout_session_id FROM users WHERE email = $1`,
-          [email]
+          `SELECT email FROM users WHERE session_id = $1`,
+          [sessionId]
         );
 
-        if (rows.length > 0 && rows[0].stripe_checkout_session_id === session.id) {
-          console.log(`⚠️ Duplicate webhook received for ${email} with session ${session.id}, skipping.`);
+        if (rows.length > 0) {
+          console.log(`⚠️ Duplicate webhook received for ${rows[0].email} with session ${sessionId}, skipping.`);
           return res.status(200).json({ received: true });
         }
 
@@ -77,7 +80,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
       }
-
+      
     } catch (err) {
       console.error(`❌ Failed to update user after payment confirmation:`, err.message);
     }

@@ -34,6 +34,16 @@ const pool = new Pool({
   }
 })();
 
+// ✅ New helper: fetch user by session_id
+async function getUserBySessionId(sessionId) {
+  const result = await pool.query(
+    'SELECT * FROM users WHERE session_id = $1',
+    [sessionId]
+  );
+  return result.rows[0];
+}
+
 module.exports = {
   query: (text, params) => pool.query(text, params),
+  getUserBySessionId, // ✅ Exported here
 };
