@@ -8,6 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-
 
 const { refundLatestChargeForEmail } = require('../utils/payment');
 const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
+const { sendWelcomeBackEmail } = require('../utils/send_welcome_back');
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -98,6 +99,10 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
         if (alreadySent && stillActive) {
           console.log(`🛑 ${email} already received guide and is still active. Skipping resend.`);
+          
+          // ✅ Send welcome back email
+          await sendWelcomeBackEmail(email);
+
           return res.status(200).json({ received: true });
         }
 
