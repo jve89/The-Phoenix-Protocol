@@ -54,8 +54,6 @@ router.post('/signup', async (req, res) => {
   console.log('Signup request received:', req.body);
   const { email, name, gender, plan, goal_stage } = req.body;
 
-  console.log('🧪 Full incoming req.body:', req.body);
-
   const validPlans = ["30", "90", "365"];
   if (
     !email || !gender || !plan ||
@@ -72,36 +70,37 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    const checkResult = await db.query(`SELECT plan FROM users WHERE email = $1`, [email.trim()]);
+    const { rows: existingUserRows } = await db.query(
+      `SELECT plan, end_date FROM users WHERE email = $1`,
+      [email.trim()]
+    );
 
-    if (checkResult.rows.length > 0) {
-      const existingPlan = checkResult.rows[0].plan;
-      if (existingPlan === 'free') {
-        console.log(`✅ Existing user on 'free' plan re-subscribing: ${email.trim()}`);
+    if (existingUserRows.length > 0) {
+      const user = existingUserRows[0];
+      const now = new Date();
+      const endDate = user.end_date ? new Date(user.end_date) : null;
+      const isActive = endDate && endDate >= now;
 
-        let endDate = null; // Will be set later by webhook
-
-        await db.query(
-          `UPDATE users SET plan = $1, end_date = $2, goal_stage = $3 WHERE email = $4`,
-          [plan.trim(), endDate, goal_stage || null, email.trim()]
-        );
-
-        const welcomeBackTemplate = loadTemplate('welcome_back.html');
-        await sendEmail(
-          email.trim(),
-          'Welcome Back to The Phoenix Protocol',
-          welcomeBackTemplate
-        );
-        console.log('✅ Welcome back email sent to', email.trim());
-
-      } else {
-        console.warn('⚠️ Email already registered and active:', email.trim());
+      if (isActive) {
+        console.warn(`⚠️ Signup blocked — existing active user: ${email.trim()}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
       }
+
+      console.log(`🔄 Re-signing expired user: ${email.trim()}`);
+      await db.query(
+        `UPDATE users SET plan = $1, end_date = NULL, goal_stage = $2 WHERE email = $3`,
+        [plan.trim(), goal_stage || null, email.trim()]
+      );
+
+      const welcomeBackTemplate = loadTemplate('welcome_back.html');
+      await sendEmail(
+        email.trim(),
+        'Welcome Back to The Phoenix Protocol',
+        welcomeBackTemplate
+      );
     } else {
-      
       let endDate = null; // Will be set later by webhook
-      
+
       const insertValues = [
         email.trim(),
         name ? name.trim() : null,
@@ -125,6 +124,7 @@ router.post('/signup', async (req, res) => {
       );
       console.log('✅ Welcome email sent to', email.trim());
     }
+
     const url = await createCheckoutSession(
       email.trim(),
       plan.trim(),
