@@ -66,15 +66,19 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
       if (rowCount > 0) {
         console.log(`✅ Payment confirmed via webhook for ${email}`);
 
-        // ✅ Deduplication check: Has guide already been sent?
+        // ✅ Fetch first_guide_sent_at and end_date
         const { rows: existingUserRows } = await db.query(
-          `SELECT first_guide_sent_at FROM users WHERE email = $1`,
+          `SELECT first_guide_sent_at, end_date FROM users WHERE email = $1`,
           [email]
         );
-        const alreadySent = existingUserRows[0]?.first_guide_sent_at !== null;
 
-        if (alreadySent) {
-          console.log(`🛑 First guide already sent to ${email}, skipping duplicate.`);
+        const { first_guide_sent_at, end_date } = existingUserRows[0] || {};
+        const alreadySent = !!first_guide_sent_at;
+        const now = new Date();
+        const stillActive = end_date && new Date(end_date) >= now;
+
+        if (alreadySent && stillActive) {
+          console.log(`🛑 ${email} already received guide and is still active. Skipping resend.`);
           return res.status(200).json({ received: true });
         }
 
