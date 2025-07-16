@@ -44,13 +44,25 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           stripe_customer_id = $3,
           stripe_payment_intent = $4,
           gender = $5,
-          goal_stage = $6
-        WHERE email = $7`,
-        [plan, 'success', customerId, paymentIntent, gender, goalStage, email]
+          goal_stage = $6,
+          stripe_checkout_session_id = $7
+        WHERE email = $8`,
+        [plan, 'success', customerId, paymentIntent, gender, goalStage, session.id, email]
       );
 
       if (rowCount > 0) {
         console.log(`✅ Payment confirmed via webhook for ${email}`);
+
+        // Deduplication check — skip if session was already handled
+        const { rows } = await db.query(
+          `SELECT stripe_checkout_session_id FROM users WHERE email = $1`,
+          [email]
+        );
+
+        if (rows.length > 0 && rows[0].stripe_checkout_session_id === session.id) {
+          console.log(`⚠️ Duplicate webhook received for ${email} with session ${session.id}, skipping.`);
+          return res.status(200).json({ received: true });
+        }
 
         // ✅ Send the first guide after 10 minutes
         setTimeout(async () => {
