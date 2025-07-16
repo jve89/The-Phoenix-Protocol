@@ -7,6 +7,7 @@ const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 
 const { refundLatestChargeForEmail } = require('../utils/payment');
+const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -31,10 +32,9 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
     const customerId = session.customer;
     const paymentIntent = session.payment_intent;
 
-    // 🧠 Extract custom metadata from Stripe
     const gender = session.metadata?.gender || 'neutral';
     const goalStage = session.metadata?.goal_stage || 'reconnect';
-    const plan = session.metadata?.plan || '30'; // fallback to default plan if missing
+    const plan = session.metadata?.plan || '30';
 
     try {
       const { rowCount } = await db.query(
@@ -50,7 +50,18 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
       );
 
       if (rowCount > 0) {
-        console.log(`✅ Payment confirmed via webhook for ${email} (gender=${gender}, goal_stage=${goalStage})`);
+        console.log(`✅ Payment confirmed via webhook for ${email}`);
+
+        // ✅ Send the first guide after 10 minutes
+        setTimeout(async () => {
+          try {
+            await sendFirstGuideImmediately(email, gender, goalStage);
+            console.log(`✅ First premium guide sent to ${email} after 10-minute delay`);
+          } catch (err) {
+            console.error(`❌ Error sending first premium guide to ${email}:`, err);
+          }
+        }, 600000); // 10 minutes
+
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
       }
