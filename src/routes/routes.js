@@ -176,8 +176,6 @@ router.post('/create-checkout-session', async (req, res) => {
 });
 
 // ✅ GET /api/today — secured by x-admin-secret header
-const { loadTodayGuide } = require('../utils/content');
-
 router.get('/today', async (req, res) => {
   const clientSecret = req.headers['x-admin-secret'];
   const expectedSecret = process.env.ADMIN_SECRET;
