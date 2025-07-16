@@ -47,38 +47,41 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         return res.status(200).json({ received: true });
       }
 
-      // ✅ Compute new end_date with stacking logic
-      const now = new Date();
-      let baseDate = new Date(now); // default fallback
-
-      const { rows: existingUserRows } = await db.query(
+      // ✅ Get current user info (to calculate stacking)
+      const { rows: existingRows } = await db.query(
         `SELECT end_date FROM users WHERE email = $1`,
         [email]
       );
 
-      if (existingUserRows.length > 0 && existingUserRows[0].end_date) {
-        const currentEnd = new Date(existingUserRows[0].end_date);
-        if (currentEnd > now) {
-          baseDate = currentEnd; // stack on top of current end_date
-        }
+      const existingEnd = existingRows[0]?.end_date ? new Date(existingRows[0].end_date) : null;
+      const now = new Date();
+
+      // ⏱ Determine correct plan length in days
+      const planDays = parseInt(plan, 10) || 30;
+      const msPerDay = 24 * 60 * 60 * 1000;
+
+      // 📦 Apply stacking logic
+      let baseDate = now;
+      if (existingEnd && existingEnd >= now) {
+        baseDate = existingEnd;
       }
+      const newEndDate = new Date(baseDate.getTime() + planDays * msPerDay);
+      const formattedEndDate = newEndDate.toISOString().split('T')[0]; // 'YYYY-MM-DD'
 
-      baseDate.setDate(baseDate.getDate() + days);
-      const endDate = baseDate.toISOString().split('T')[0]; // yyyy-mm-dd
-
+      // ✅ Update user with stacked end_date and metadata
       const { rowCount } = await db.query(
         `UPDATE users SET 
           plan = $1,
-          payment_status = $2,
-          stripe_customer_id = $3,
-          stripe_payment_intent = $4,
-          gender = $5,
-          goal_stage = $6,
-          stripe_checkout_session_id = $7,
-          session_id = $8,
-          end_date = $9
+          end_date = $2,
+          payment_status = $3,
+          stripe_customer_id = $4,
+          stripe_payment_intent = $5,
+          gender = $6,
+          goal_stage = $7,
+          stripe_checkout_session_id = $8,
+          session_id = $9
         WHERE email = $10`,
-        [plan, 'success', customerId, paymentIntent, gender, goalStage, sessionId, sessionId, endDate, email]
+        [plan, formattedEndDate, 'success', customerId, paymentIntent, gender, goalStage, sessionId, sessionId, email]
       );
 
       if (rowCount > 0) {
