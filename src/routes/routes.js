@@ -255,4 +255,80 @@ router.get('/admin/today', async (req, res) => {
   }
 });
 
+// ✅ Load guide JSON for a specific date — secure API
+router.get('/archive/:date', async (req, res) => {
+  const clientSecret = req.headers['x-admin-secret'];
+  const expectedSecret = process.env.ADMIN_SECRET;
+  const { date } = req.params;
+
+  if (!expectedSecret || clientSecret !== expectedSecret) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const guide = await loadGuideByDate(date);
+    if (!guide) {
+      return res.status(404).json({ error: `No guide available for ${date}.` });
+    }
+    res.status(200).json(guide);
+  } catch (err) {
+    console.error(`[API] /api/archive/${date} error:`, err.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ✅ Human-readable view of past guide — browser friendly
+router.get('/admin/archive', async (req, res) => {
+  const { date, secret } = req.query;
+  const expectedSecret = process.env.ADMIN_SECRET;
+
+  if (!expectedSecret || secret !== expectedSecret) {
+    return res.status(401).send('<h2>❌ Unauthorized</h2>');
+  }
+
+  try {
+    const guide = await loadGuideByDate(date);
+    if (!guide) {
+      return res.status(404).send(`<h2>⚠️ No guide available for ${date}.</h2>`);
+    }
+
+    let html = `<h1>The Phoenix Protocol — Guide for ${guide.date || date}</h1><hr>`;
+
+    for (const [variant, data] of Object.entries(guide)) {
+      if (variant === 'date') continue;
+
+      const paragraphs = data.content
+        .split(/\n{2,}/)
+        .map(p => `<p>${p.trim()}</p>`)
+        .join('\n');
+
+      html += `
+        <h2>📘 ${variant}</h2>
+        <h3>${data.title}</h3>
+        ${paragraphs}
+        <hr>
+      `;
+    }
+
+    res.send(`
+      <html>
+        <head>
+          <title>Admin — Guide Archive</title>
+          <style>
+            body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; }
+            h1 { border-bottom: 2px solid #ccc; padding-bottom: 0.5rem; }
+            h2 { margin-top: 2rem; color: #333; }
+            p { margin: 0.75rem 0; }
+            hr { margin: 2rem 0; border: none; border-top: 1px solid #eee; }
+          </style>
+        </head>
+        <body>${html}</body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('[ADMIN] /admin/archive error:', err.message);
+    res.status(500).send('<h2>❌ Internal error loading guide</h2>');
+  }
+});
+
 module.exports = router;
