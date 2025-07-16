@@ -136,8 +136,12 @@ router.post('/signup', async (req, res) => {
       );
       console.log('✅ Welcome email sent to', email.trim());
     }
-
-    const url = await createCheckoutSession(email.trim(), plan.trim());
+    const url = await createCheckoutSession(
+      email.trim(),
+      plan.trim(),
+      gender?.trim() || null,
+      goal_stage?.trim() || null
+    );
     console.log('✅ Stripe checkout session created, redirecting user.');
     res.status(200).json({ message: 'Sign-up successful', url });
 
