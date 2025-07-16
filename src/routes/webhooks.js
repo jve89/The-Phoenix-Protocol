@@ -1,5 +1,3 @@
-// src/routes/webhooks.js
-
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
@@ -11,7 +9,6 @@ const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immedia
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// Stripe requires raw body for signature verification
 router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -28,6 +25,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
   // ✅ 1. Handle successful checkout
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
+    const sessionId = session.id;
     const email = session.customer_email;
     const customerId = session.customer;
     const paymentIntent = session.payment_intent;
@@ -37,6 +35,18 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
     const plan = session.metadata?.plan || '30';
 
     try {
+      // ✅ Deduplication check BEFORE any updates
+      const { rows } = await db.query(
+        `SELECT email FROM users WHERE session_id = $1`,
+        [sessionId]
+      );
+
+      if (rows.length > 0) {
+        console.log(`⚠️ Duplicate webhook received for ${rows[0].email} with session ${sessionId}, skipping.`);
+        return res.status(200).json({ received: true });
+      }
+
+      // ✅ Update user
       const { rowCount } = await db.query(
         `UPDATE users SET 
           plan = $1,
@@ -48,41 +58,28 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           stripe_checkout_session_id = $7,
           session_id = $8
         WHERE email = $9`,
-        [plan, 'success', customerId, paymentIntent, gender, goalStage, session.id, session.id, email]
+        [plan, 'success', customerId, paymentIntent, gender, goalStage, sessionId, sessionId, email]
       );
 
       if (rowCount > 0) {
         console.log(`✅ Payment confirmed via webhook for ${email}`);
 
-        // Deduplication check using persistent session_id
-        const sessionId = session.id;
-
-        const { rows } = await db.query(
-          `SELECT email FROM users WHERE session_id = $1`,
-          [sessionId]
-        );
-
-        if (rows.length > 0) {
-          console.log(`⚠️ Duplicate webhook received for ${rows[0].email} with session ${sessionId}, skipping.`);
-          return res.status(200).json({ received: true });
-        }
-
-        // ✅ Send the first guide after 10 minutes
+        // ✅ Send the first guide after 5 minutes
         setTimeout(async () => {
           try {
             await sendFirstGuideImmediately(email, gender, goalStage);
-            console.log(`✅ First premium guide sent to ${email} after 10-minute delay`);
+            console.log(`✅ First premium guide sent to ${email} after 5-minute delay`);
           } catch (err) {
             console.error(`❌ Error sending first premium guide to ${email}:`, err);
           }
-        }, 600000); // 10 minutes
+        }, 300000); // 5 minutes
 
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
       }
-      
+
     } catch (err) {
-      console.error(`❌ Failed to update user after payment confirmation:`, err.message);
+      console.error(`❌ Failed to process checkout.session.completed:`, err.message);
     }
   }
 
@@ -100,12 +97,20 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
     if (customerEmail) {
       try {
-        const { rows } = await db.query(`SELECT id, bounces FROM users WHERE email = $1`, [customerEmail]);
+        const { rows } = await db.query(
+          `SELECT id, bounces FROM users WHERE email = $1`,
+          [customerEmail]
+        );
+
         if (rows.length > 0) {
           const user = rows[0];
           const newBounces = user.bounces + 1;
 
-          await db.query(`UPDATE users SET bounces = $1 WHERE id = $2`, [newBounces, user.id]);
+          await db.query(
+            `UPDATE users SET bounces = $1 WHERE id = $2`,
+            [newBounces, user.id]
+          );
+
           console.log(`📌 Updated bounce count for ${customerEmail} to ${newBounces}`);
 
           if (newBounces >= 5) {
