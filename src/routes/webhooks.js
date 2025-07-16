@@ -24,7 +24,6 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
   console.log(`✅ Received webhook event: ${event.type}`);
 
-  // ✅ 1. Handle successful checkout
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const sessionId = session.id;
@@ -35,9 +34,9 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
     const gender = session.metadata?.gender || 'neutral';
     const goalStage = session.metadata?.goal_stage || 'reconnect';
     const plan = session.metadata?.plan || '30';
+    const days = parseInt(plan, 10);
 
     try {
-      // ✅ Deduplication check BEFORE anything else
       const { rows } = await db.query(
         `SELECT email FROM users WHERE session_id = $1`,
         [sessionId]
@@ -48,7 +47,25 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         return res.status(200).json({ received: true });
       }
 
-      // ✅ Update user with Stripe info
+      // ✅ Compute new end_date with stacking logic
+      const now = new Date();
+      let baseDate = new Date(now); // default fallback
+
+      const { rows: existingUserRows } = await db.query(
+        `SELECT end_date FROM users WHERE email = $1`,
+        [email]
+      );
+
+      if (existingUserRows.length > 0 && existingUserRows[0].end_date) {
+        const currentEnd = new Date(existingUserRows[0].end_date);
+        if (currentEnd > now) {
+          baseDate = currentEnd; // stack on top of current end_date
+        }
+      }
+
+      baseDate.setDate(baseDate.getDate() + days);
+      const endDate = baseDate.toISOString().split('T')[0]; // yyyy-mm-dd
+
       const { rowCount } = await db.query(
         `UPDATE users SET 
           plan = $1,
@@ -58,23 +75,22 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           gender = $5,
           goal_stage = $6,
           stripe_checkout_session_id = $7,
-          session_id = $8
-        WHERE email = $9`,
-        [plan, 'success', customerId, paymentIntent, gender, goalStage, sessionId, sessionId, email]
+          session_id = $8,
+          end_date = $9
+        WHERE email = $10`,
+        [plan, 'success', customerId, paymentIntent, gender, goalStage, sessionId, sessionId, endDate, email]
       );
 
       if (rowCount > 0) {
         console.log(`✅ Payment confirmed via webhook for ${email}`);
 
-        // ✅ Fetch first_guide_sent_at and end_date
-        const { rows: existingUserRows } = await db.query(
+        const { rows: updatedUserRows } = await db.query(
           `SELECT first_guide_sent_at, end_date FROM users WHERE email = $1`,
           [email]
         );
 
-        const { first_guide_sent_at, end_date } = existingUserRows[0] || {};
+        const { first_guide_sent_at, end_date } = updatedUserRows[0] || {};
         const alreadySent = !!first_guide_sent_at;
-        const now = new Date();
         const stillActive = end_date && new Date(end_date) >= now;
 
         if (alreadySent && stillActive) {
@@ -82,13 +98,11 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           return res.status(200).json({ received: true });
         }
 
-        // ✅ Send the first guide after 5 minutes
         setTimeout(async () => {
           try {
             await sendFirstGuideImmediately(email, gender, goalStage);
             console.log(`✅ First premium guide sent to ${email} after 5-minute delay`);
 
-            // ⏱️ Record the send timestamp
             try {
               await db.query(
                 `UPDATE users SET first_guide_sent_at = CURRENT_TIMESTAMP WHERE email = $1`,
@@ -102,7 +116,6 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
             console.error(`❌ Error sending first premium guide to ${email}:`, err);
           }
         }, 300000); // 5 minutes
-
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
       }
