@@ -1,6 +1,3 @@
-// src/utils/send_first_guide_immediately.js
-
-require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const db = require('../db/db');
@@ -13,7 +10,9 @@ const logPath = path.join(__dirname, '../../logs/send_today_guide.log');
 function log(message) {
   const timestamp = new Date().toISOString();
   const entry = `[${timestamp}] ${message}\n`;
-  fs.appendFileSync(logPath, entry, 'utf8');
+  fs.appendFile(logPath, entry, 'utf8', err => {
+    if (err) console.error('Log write error:', err);
+  });
   console.log(message);
 }
 
@@ -21,7 +20,7 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
   try {
     log(`🚀 Sending first premium guide immediately to ${userEmail}`);
 
-    const todayGuide = loadTodayGuide();
+    const todayGuide = await loadTodayGuide();
     if (!todayGuide) {
       log('❌ No cached guide found for today. Cannot send first guide.');
       return;
@@ -29,10 +28,13 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
 
     const { loadTemplate } = require('./loadTemplate');
     const template = loadTemplate('premium_guide_email.html');
+    if (!template) {
+      log('❌ Email template loading failed.');
+      return;
+    }
 
     const variant = `${userGender}_${goalStage}`;
     const guide = todayGuide[variant];
-
     if (!guide) {
       log(`⚠️ Missing guide for ${variant}. Skipping ${userEmail}.`);
       return;
@@ -47,7 +49,6 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
     await sendEmail(userEmail, guide.title, htmlContent);
     log(`✅ Sent first premium guide to ${userEmail}`);
 
-    // ⏱️ Update database to mark the send time
     try {
       await db.query(
         `UPDATE users SET first_guide_sent_at = CURRENT_TIMESTAMP WHERE email = $1`,

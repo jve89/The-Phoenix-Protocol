@@ -1,19 +1,23 @@
-// src/routes/unsubscribe.js
-
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const db = require('../db/db');
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('❌ JWT_SECRET not set!');
+}
 
 // Step 1: Show unsubscribe confirmation page
 router.get('/unsubscribe', (req, res) => {
   const { token } = req.query;
-  if (!token) return res.status(400).send('Missing token');
+  if (!token) {
+    res.status(400).type('text/html').send('<h2>Missing token</h2>');
+    return;
+  }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    jwt.verify(token, JWT_SECRET);
     const html = `
       <html>
         <head>
@@ -42,22 +46,25 @@ router.get('/unsubscribe', (req, res) => {
         <body>
           <h1>Are you sure?</h1>
           <p>This will cancel your premium content and cannot be undone.</p>
-          <form method="POST" action="/unsubscribe?token=${token}">
+          <form method="POST" action="/unsubscribe?token=${encodeURIComponent(token)}">
             <button class="button" type="submit">Yes, unsubscribe me</button>
           </form>
         </body>
       </html>
     `;
-    res.send(html);
+    res.status(200).type('text/html').send(html);
   } catch (err) {
-    return res.status(400).send('Invalid or expired token.');
+    res.status(400).type('text/html').send('<h2>Invalid or expired token.</h2>');
   }
 });
 
 // Step 2: Process unsubscribe
 router.post('/unsubscribe', async (req, res) => {
   const { token } = req.query;
-  if (!token) return res.status(400).send('Missing token');
+  if (!token) {
+    res.status(400).type('text/html').send('<h2>Missing token</h2>');
+    return;
+  }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
@@ -69,7 +76,8 @@ router.post('/unsubscribe', async (req, res) => {
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).send('Email not found.');
+      res.status(404).type('text/html').send('<h2>Email not found.</h2>');
+      return;
     }
 
     const html = `
@@ -93,9 +101,9 @@ router.post('/unsubscribe', async (req, res) => {
         </body>
       </html>
     `;
-    res.send(html);
+    res.status(200).type('text/html').send(html);
   } catch (err) {
-    return res.status(400).send('Invalid or expired token.');
+    res.status(400).type('text/html').send('<h2>Invalid or expired token.</h2>');
   }
 });
 

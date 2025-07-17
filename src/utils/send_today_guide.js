@@ -1,6 +1,3 @@
-// src/utils/send_today_guide.js
-
-require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const db = require('../db/db');
@@ -14,7 +11,9 @@ const logPath = path.join(__dirname, '../../logs/send_today_guide.log');
 function log(message) {
   const timestamp = new Date().toISOString();
   const entry = `[${timestamp}] ${message}\n`;
-  fs.appendFileSync(logPath, entry, 'utf8');
+  fs.appendFile(logPath, entry, 'utf8', err => {
+    if (err) console.error('Log write error:', err);
+  });
   console.log(message);
 }
 
@@ -22,7 +21,6 @@ function log(message) {
   try {
     log('🚀 Starting premium guide send pipeline...');
 
-    // 🔒 Exclude: signups today OR already received today's guide
     const { rows: users } = await db.query(`
       SELECT email, gender, goal_stage FROM users
       WHERE plan IN ('30', '90', '365')
@@ -36,7 +34,7 @@ function log(message) {
     }
     log(`✅ Found ${users.length} premium user(s).`);
 
-    const todayGuide = loadTodayGuide();
+    const todayGuide = await loadTodayGuide();
     if (!todayGuide) {
       log('❌ No cached guide found for today. Exiting.');
       process.exit(1);
@@ -45,9 +43,16 @@ function log(message) {
     const { loadTemplate } = require('./loadTemplate');
     const template = loadTemplate('premium_guide_email.html');
 
+    if (!process.env.JWT_SECRET) {
+      log('❌ JWT_SECRET missing in environment');
+      process.exit(1);
+    }
+
     for (const user of users) {
       try {
-        const variant = `${user.gender}_${user.goal_stage}`;
+        const gender = user.gender || 'neutral';
+        const goalStage = user.goal_stage || 'reconnect';
+        const variant = `${gender}_${goalStage}`;
         const guide = todayGuide[variant];
 
         if (!guide) {
@@ -57,14 +62,12 @@ function log(message) {
 
         const formattedContent = marked.parse((guide.content || '').trim());
 
-        // 🟣 Generate unsubscribe token
         const token = jwt.sign(
           { email: user.email },
           process.env.JWT_SECRET,
           { expiresIn: '14d' }
         );
 
-        // 🟣 Replace both content + token
         const htmlContent = template
           .replace('{{title}}', guide.title)
           .replace('{{content}}', formattedContent)

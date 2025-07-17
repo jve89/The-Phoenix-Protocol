@@ -1,23 +1,25 @@
-// src/routes/webhooks.js
-
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
 const Stripe = require('stripe');
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+if (!stripeSecretKey) console.error('❌ STRIPE_SECRET_KEY not set');
+if (!stripeWebhookSecret) console.error('❌ STRIPE_WEBHOOK_SECRET not set');
+
+const stripe = new Stripe(stripeSecretKey, { apiVersion: '2023-10-16' });
 
 const { refundLatestChargeForEmail } = require('../utils/payment');
 const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 const { sendWelcomeBackEmail } = require('../utils/send_welcome_back');
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
 router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
   let event;
+  const sig = req.headers['stripe-signature'];
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, stripeWebhookSecret);
   } catch (err) {
     console.error('❌ Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -25,66 +27,49 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
   console.log(`✅ Received webhook event: ${event.type}`);
 
-  const allowedEvents = [
-    'checkout.session.completed',
-    'invoice.payment_failed',
-    'charge.failed',
-    'customer.subscription.deleted',
-    'customer.subscription.updated',
-  ];
+  try {
+    const allowedEvents = [
+      'checkout.session.completed',
+      'invoice.payment_failed',
+      'charge.failed',
+      'customer.subscription.deleted',
+      'customer.subscription.updated',
+    ];
 
-  if (!allowedEvents.includes(event.type)) {
-    console.log(`🔕 Ignored webhook: ${event.type}`);
-    return res.status(200).json({ received: true });
-  }
+    if (!allowedEvents.includes(event.type)) {
+      console.log(`🔕 Ignored webhook: ${event.type}`);
+      return res.status(200).json({ received: true });
+    }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const sessionId = session.id;
-    const email = session.customer_email;
-    const customerId = session.customer;
-    const paymentIntent = session.payment_intent;
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const sessionId = session.id;
+      const email = (session.customer_email || '').trim().toLowerCase();
+      const customerId = session.customer;
+      const paymentIntent = session.payment_intent;
 
-    const gender = session.metadata?.gender || 'neutral';
-    const goalStage = session.metadata?.goal_stage || 'reconnect';
-    const plan = session.metadata?.plan || '30';
-    const days = parseInt(plan, 10);
+      const gender = (session.metadata?.gender || 'neutral').trim();
+      const goalStage = (session.metadata?.goal_stage || 'reconnect').trim();
+      const plan = (session.metadata?.plan || '30').trim();
+      const days = parseInt(plan, 10);
 
-    try {
-      const { rows } = await db.query(
-        `SELECT email FROM users WHERE session_id = $1`,
-        [sessionId]
-      );
-
+      const { rows } = await db.query(`SELECT email FROM users WHERE session_id = $1`, [sessionId]);
       if (rows.length > 0) {
         console.log(`⚠️ Duplicate webhook received for ${rows[0].email} with session ${sessionId}, skipping.`);
         return res.status(200).json({ received: true });
       }
 
-      // ✅ Get current user info (to calculate stacking)
-      const { rows: existingRows } = await db.query(
-        `SELECT end_date FROM users WHERE email = $1`,
-        [email]
-      );
-
+      const { rows: existingRows } = await db.query(`SELECT end_date FROM users WHERE email = $1`, [email]);
       const existingEnd = existingRows[0]?.end_date ? new Date(existingRows[0].end_date) : null;
       const now = new Date();
 
-      // ⏱ Determine correct plan length in days
-      const planDays = parseInt(plan, 10) || 30;
-      const msPerDay = 24 * 60 * 60 * 1000;
-
-      // 📦 Apply stacking logic
       let baseDate = now;
-      if (existingEnd && existingEnd >= now) {
-        baseDate = existingEnd;
-      }
-      const newEndDate = new Date(baseDate.getTime() + planDays * msPerDay);
-      const formattedEndDate = newEndDate.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+      if (existingEnd && existingEnd >= now) baseDate = existingEnd;
+      const newEndDate = new Date(baseDate.getTime() + days * 24 * 60 * 60 * 1000);
+      const formattedEndDate = newEndDate.toISOString().split('T')[0];
 
-      // ✅ Update user with stacked end_date and metadata
       const { rowCount } = await db.query(
-        `UPDATE users SET 
+        `UPDATE users SET
           plan = $1,
           end_date = $2,
           payment_status = $3,
@@ -112,23 +97,18 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
         if (alreadySent && stillActive) {
           console.log(`🛑 ${email} already received guide and is still active. Skipping resend.`);
-          
-          // ✅ Send welcome back email
           await sendWelcomeBackEmail(email);
-
           return res.status(200).json({ received: true });
         }
 
+        // Delay sending first guide by 5 minutes (300000 ms)
         setTimeout(async () => {
           try {
             await sendFirstGuideImmediately(email, gender, goalStage);
             console.log(`✅ First premium guide sent to ${email} after 5-minute delay`);
 
             try {
-              await db.query(
-                `UPDATE users SET first_guide_sent_at = CURRENT_TIMESTAMP WHERE email = $1`,
-                [email]
-              );
+              await db.query(`UPDATE users SET first_guide_sent_at = CURRENT_TIMESTAMP WHERE email = $1`, [email]);
               console.log(`🕓 Saved first_guide_sent_at timestamp for ${email}`);
             } catch (timestampErr) {
               console.error(`❌ Failed to update first_guide_sent_at for ${email}:`, timestampErr.message);
@@ -136,43 +116,26 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           } catch (err) {
             console.error(`❌ Error sending first premium guide to ${email}:`, err);
           }
-        }, 300000); // 5 minutes
+        }, 300000);
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);
       }
-
-    } catch (err) {
-      console.error(`❌ Failed to process checkout.session.completed:`, err.message);
     }
-  }
 
-  // ✅ 2. Handle failure/bounce scenarios
-  if (
-    event.type === 'invoice.payment_failed' ||
-    event.type === 'charge.failed' ||
-    event.type === 'customer.subscription.deleted' ||
-    event.type === 'customer.subscription.updated'
-  ) {
-    const customerEmail =
-      event.data.object.customer_email ||
-      event.data.object.billing_details?.email ||
-      null;
+    if (
+      ['invoice.payment_failed', 'charge.failed', 'customer.subscription.deleted', 'customer.subscription.updated'].includes(event.type)
+    ) {
+      const customerEmail =
+        (event.data.object.customer_email || event.data.object.billing_details?.email || '').trim().toLowerCase() || null;
 
-    if (customerEmail) {
-      try {
-        const { rows } = await db.query(
-          `SELECT id, bounces FROM users WHERE email = $1`,
-          [customerEmail]
-        );
+      if (customerEmail) {
+        const { rows } = await db.query(`SELECT id, bounces FROM users WHERE email = $1`, [customerEmail]);
 
         if (rows.length > 0) {
           const user = rows[0];
           const newBounces = user.bounces + 1;
 
-          await db.query(
-            `UPDATE users SET bounces = $1 WHERE id = $2`,
-            [newBounces, user.id]
-          );
+          await db.query(`UPDATE users SET bounces = $1 WHERE id = $2`, [newBounces, user.id]);
 
           console.log(`📌 Updated bounce count for ${customerEmail} to ${newBounces}`);
 
@@ -183,15 +146,16 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         } else {
           console.warn(`⚠️ No user found for bounced email: ${customerEmail}`);
         }
-      } catch (dbErr) {
-        console.error('❌ Database error during bounce tracking:', dbErr.message);
+      } else {
+        console.warn(`⚠️ No customer email found in webhook event for ${event.type}`);
       }
-    } else {
-      console.warn(`⚠️ No customer email found in webhook event for ${event.type}`);
     }
-  }
 
-  res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+  } catch (err) {
+    console.error('❌ Webhook processing error:', err.message);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 module.exports = router;

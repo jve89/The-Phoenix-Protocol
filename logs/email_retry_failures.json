@@ -1,7 +1,0 @@
-[
-    {
-    "email": "johanvanerkel@gmail.com",
-    "subject": "Test Retry Email",
-    "html": "<p>This is a test retry email sent by the fallback queue.</p>"
-  }
-]

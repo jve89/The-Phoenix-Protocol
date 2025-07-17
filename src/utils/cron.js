@@ -10,6 +10,21 @@ const { loadTemplate } = require('./loadTemplate');
 const { logFailure } = require('./retry_email_queue');
 const { logEvent } = require('./db_logger');
 
+function buildAdminGuideEmailHtml(guide) {
+  let html = `<h1>Daily Guide Summary - ${guide.date}</h1>`;
+
+  for (const variant of ['male_moveon', 'male_reconnect', 'female_moveon', 'female_reconnect', 'neutral_moveon', 'neutral_reconnect']) {
+    const section = guide[variant];
+    if (section) {
+      html += `<h2>${section.title}</h2>`;
+      html += `<p>${section.content.replace(/\n/g, '<br>')}</p>`;
+      html += `<hr>`;
+    }
+  }
+
+  return html;
+}
+
 function startCron() {
   global.lastCronTimestamp = new Date().toISOString();
   console.log('[CRON] Subscription expiry, guide generation, and premium email schedule active.');
@@ -17,21 +32,32 @@ function startCron() {
 
   // 1️⃣ Generate & cache daily guides at 15:00 UTC
   cron.schedule('0 15 * * *', async () => {
-    const { sendDailyGuideBackup } = require('./backup');
     const time = new Date().toISOString();
     console.log(`[CRON] Generating and caching premium guides: ${time}`);
     await logEvent('cron', `🚀 Generating and caching premium guides at ${time}`);
 
     try {
       await generateAndCacheDailyGuides();
-
-      console.log('[CRON] ⏳ Waiting 15 minutes before sending backup...');
-      await new Promise(resolve => setTimeout(resolve, 900_000));  // 15 min in ms
-
-      await sendDailyGuideBackup(process.env.ADMIN_EMAIL);
-
       console.log('[CRON] Guide generation complete.');
       await logEvent('cron', '✅ Guide generation completed successfully.');
+
+      // Send full guide summary to admin 30 minutes later
+      const today = new Date().toISOString().split('T')[0];
+      const fullGuide = await loadGuideByDate(today);
+
+      if (fullGuide && process.env.ADMIN_EMAIL) {
+        setTimeout(async () => {
+          try {
+            const adminHtml = buildAdminGuideEmailHtml(fullGuide);
+            await sendEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
+            console.log('[CRON] Admin guide email sent successfully.');
+            await logEvent('cron', '✅ Admin guide email sent.');
+          } catch (err) {
+            console.error('[CRON] Admin guide email send failed:', err.message);
+            await logEvent('cron', `❌ Admin guide email send failed: ${err.message}`);
+          }
+        }, 30 * 60 * 1000); // 30 minutes delay
+      }
     } catch (err) {
       console.error('[CRON] Guide generation error:', err.message);
       await logEvent('cron', `❌ Guide generation error: ${err.message}`);
@@ -59,20 +85,9 @@ function startCron() {
       let todayGuide = await loadTodayGuide();
 
       if (!todayGuide) {
-        console.warn('[CRON] No cached guide found — attempting DB fallback...');
-        await logEvent('cron', '⚠️ No cached guide — attempting DB fallback.');
-
-        const today = new Date().toISOString().split('T')[0];
-        todayGuide = await loadGuideByDate(today);
-
-        if (todayGuide) {
-          console.log('[CRON] ✅ Loaded guide from DB fallback.');
-          await logEvent('cron', '✅ Guide loaded from DB fallback.');
-        } else {
-          console.error('[CRON] ❌ No guide available in file or DB');
-          await logEvent('cron', '❌ Guide missing in both file and DB.');
-          return;
-        }
+        console.error('[CRON] ❌ No guide available for today in DB');
+        await logEvent('cron', '❌ Guide missing in DB.');
+        return;
       }
 
       const template = loadTemplate('premium_guide_email.html');

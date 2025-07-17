@@ -1,28 +1,22 @@
-# Dockerfile
 FROM node:lts
 
-# Install PostgreSQL client
+# Install PostgreSQL client for CLI tools (optional)
 RUN apt-get update && \
     apt-get install -y postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Heroku CLI
-RUN curl https://cli-assets.heroku.com/install.sh | sh
-
 # Set working directory
-WORKDIR /workspace
+WORKDIR /app
 
-# Copy package files early for caching
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install npm dependencies
 RUN npm install
 
-# Copy the rest of the project
+# Copy all source files
 COPY . .
 
-# Expose the port your app runs on
+# Expose app port
 EXPOSE 3000
 
-# Default command
+# Start the server
 CMD ["node", "src/server.js"]

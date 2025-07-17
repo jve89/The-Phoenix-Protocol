@@ -3,7 +3,9 @@ const axios = require('axios');
 const path = require('path');
 const { format, subDays } = require('date-fns');
 const db = require('../db/db');
-const fallbackPrompts = require('../../content/fallback.json');
+
+// Cache loaded prompts keyed by variant
+const promptCache = {};
 
 // 🔧 Centralised log writer for dashboard
 async function logEvent(source, level, message) {
@@ -13,23 +15,24 @@ async function logEvent(source, level, message) {
   `, [source, level, message]);
 }
 
-// 📦 Save fallback usage
-async function logFallback(variant, title) {
-  await db.query(`
-    INSERT INTO fallback_logs (variant, fallback_title)
-    VALUES ($1, $2)
-  `, [variant, title]);
+// Helper to load and cache prompt files
+function getPromptList(variant) {
+  if (promptCache[variant]) return promptCache[variant];
+  try {
+    const promptList = require(path.join(__dirname, `../../content/prompts/${variant}.js`));
+    promptCache[variant] = promptList;
+    return promptList;
+  } catch {
+    return null;
+  }
 }
 
 // 🧠 Generate one tip
 const generateTip = async (gender, goalStage) => {
   const variant = `${gender}_${goalStage}`;
-  const promptFilePath = path.join(__dirname, `../../content/prompts/${variant}.js`);
+  const promptList = getPromptList(variant);
 
-  let promptList;
-  try {
-    promptList = require(promptFilePath);
-  } catch {
+  if (!promptList) {
     await logEvent('content', 'error', `Missing or invalid prompt file: ${variant}`);
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
@@ -68,9 +71,7 @@ const generateTip = async (gender, goalStage) => {
 
   } catch (err) {
     await logEvent('content', 'error', `Grok error for ${variant}: ${err.message}`);
-    const fallback = fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
-    await logFallback(variant, fallback.title || 'Untitled');
-    return fallback.content || 'Today, focus on yourself and take a deep breath.';
+    return `We're experiencing a temporary error generating your guide. Please try again later.`;
   }
 };
 

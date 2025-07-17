@@ -1,11 +1,10 @@
-// src/server.js
-
 const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
 const webhookRoutes = require('./routes/webhooks');
 const unsubscribeRoute = require('./routes/unsubscribe');
 const { startCron } = require('./utils/cron');
+const { connectAndInit } = require('./db/db');
 
 // ✅ Global error handlers for uncaught runtime crashes
 process.on('uncaughtException', err => {
@@ -15,8 +14,8 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('🔥 Unhandled Rejection:', reason);
 });
 
-// ✅ Load env vars
-dotenv.config({ path: './.env' });
+// ✅ Load env vars (default path is './.env')
+dotenv.config();
 
 // ✅ Log env var presence for Heroku debug
 console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY ? '✅ Present' : '❌ Missing');
@@ -29,14 +28,10 @@ if (!process.env.STRIPE_SECRET_KEY) console.error('Stripe key not loaded');
 const app = express();
 
 app.use('/', unsubscribeRoute);
-
-// ✅ Optional HTTPS redirect
-app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  next();
-});
+app.use('/webhook', webhookRoutes); // raw body parser inside webhookRoutes
+app.use(express.json());
+app.use(express.static('public'));
+app.use('/api', routes);
 
 const port = process.env.PORT || 3000;
 
@@ -49,18 +44,20 @@ if (process.env.NODE_ENV === 'production') {
     }).on('error', err => {
       console.error('[PING] Error during self-ping:', err.message);
     });
-  }, 1000 * 60 * 5); // Every 5 minutes
+  }, 1000 * 60 * 5);
 }
 
-// ✅ Stripe webhook BEFORE express.json() to preserve raw body
-app.use('/webhook', webhookRoutes);
+async function startServer() {
+  try {
+    await connectAndInit();
+    app.listen(port, () => {
+      console.log(`🚀 Server running on port ${port}`);
+      startCron();
+    });
+  } catch (err) {
+    console.error('❌ Failed to start server:', err);
+    process.exit(1);
+  }
+}
 
-// ✅ Normal JSON parsing and routes
-app.use(express.json());
-app.use(express.static('public'));
-app.use('/api', routes);
-
-app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
-  startCron();
-});
+startServer();

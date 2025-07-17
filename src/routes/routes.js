@@ -7,12 +7,63 @@ const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 const { retryAllPendingEmails } = require('../utils/retry_email_queue');
 const guideRoutes = require('./guides');
-
 const router = express.Router();
+
+const VALID_PLANS = ["30", "90", "365"];
 
 router.use(guideRoutes);
 
-// ✅ Manual retry route for email failures (debug only)
+// Simple in-memory rate limiter middleware for admin routes
+const rateLimitMap = new Map();
+function rateLimiter(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 minute window
+  const maxRequests = 20;
+
+  let requestLog = rateLimitMap.get(ip) || [];
+  // Remove outdated timestamps
+  requestLog = requestLog.filter(ts => now - ts < windowMs);
+  if (requestLog.length >= maxRequests) {
+    return res.status(429).send('Too many requests, slow down.');
+  }
+  requestLog.push(now);
+  rateLimitMap.set(ip, requestLog);
+  next();
+}
+
+// Helper to validate date format YYYY-MM-DD
+function isValidDateString(dateStr) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+}
+
+// Helper to sanitize and trim inputs (simple version)
+function sanitizeInput(value) {
+  if (typeof value !== 'string') return '';
+  return value.trim();
+}
+
+// Helper for admin HTML rendering (used by /admin/today and /admin/archive)
+function renderGuideHtml(guide, title) {
+  let html = `<h1>${title} — Guide for ${guide.date || ''}</h1><hr>`;
+  for (const [variant, data] of Object.entries(guide)) {
+    if (variant === 'date') continue;
+    const paragraphs = data.content
+      .split(/\n{2,}/)
+      .map(p => `<p>${p.trim()}</p>`)
+      .join('\n');
+    html += `
+      <h2>📘 ${variant}</h2>
+      <h3>${data.title}</h3>
+      ${paragraphs}
+      <hr>
+    `;
+  }
+  return html;
+}
+
+router.use(rateLimiter);
+
 router.get('/debug/retry-emails', async (req, res) => {
   try {
     await retryAllPendingEmails();
@@ -23,23 +74,17 @@ router.get('/debug/retry-emails', async (req, res) => {
   }
 });
 
-// ✅ Lightweight backend health check (for UptimeRobot)
 router.get('/ping', (req, res) => {
   const timestamp = new Date().toISOString();
   console.log(`[PING] /api/ping called at ${timestamp}`);
   res.status(200).json({ status: 'ok', timestamp });
 });
 
-// ✅ Cron healthcheck endpoint (shows last run time)
 router.get('/cron/status', (req, res) => {
   const lastRun = global.lastCronTimestamp || 'Unknown';
   res.status(200).json({ cronLastRun: lastRun });
 });
 
-/**
- * 🚩 TEMPORARY DEBUG ROUTE: List all users in JSON for inspection
- * REMOVE AFTER DEBUGGING
- */
 router.get('/debug/list-users', async (req, res) => {
   console.log('[DEBUG] List users route triggered');
   try {
@@ -52,30 +97,28 @@ router.get('/debug/list-users', async (req, res) => {
   }
 });
 
-// 🚀 Handle user signup
 router.post('/signup', async (req, res) => {
   console.log('Signup request received:', req.body);
-  const { email, name, gender, plan, goal_stage } = req.body;
+  const email = sanitizeInput(req.body.email);
+  const name = sanitizeInput(req.body.name);
+  const gender = sanitizeInput(req.body.gender);
+  const plan = sanitizeInput(req.body.plan);
+  const goal_stage = sanitizeInput(req.body.goal_stage);
 
-  const validPlans = ["30", "90", "365"];
-  if (
-    !email || !gender || !plan ||
-    typeof email !== 'string' || typeof gender !== 'string' || typeof plan !== 'string' ||
-    email.trim() === '' || gender.trim() === '' || plan.trim() === ''
-  ) {
+  if (!email || !gender || !plan) {
     console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan });
     return res.status(400).json({ error: 'Email, gender, and plan are required and cannot be empty.' });
   }
 
-  if (!validPlans.includes(plan.trim())) {
-    console.error('❌ Signup validation failed: Invalid plan provided:', plan.trim());
+  if (!VALID_PLANS.includes(plan)) {
+    console.error('❌ Signup validation failed: Invalid plan provided:', plan);
     return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365 days.' });
   }
 
   try {
     const { rows: existingUserRows } = await db.query(
       `SELECT plan, end_date FROM users WHERE email = $1`,
-      [email.trim()]
+      [email]
     );
 
     if (existingUserRows.length > 0) {
@@ -85,33 +128,22 @@ router.post('/signup', async (req, res) => {
       const isActive = endDate && endDate >= now;
 
       if (isActive) {
-        console.warn(`⚠️ Signup blocked — existing active user: ${email.trim()}`);
+        console.warn(`⚠️ Signup blocked — existing active user: ${email}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
       }
 
-      console.log(`🔄 Re-signing expired user: ${email.trim()}`);
+      console.log(`🔄 Re-signing expired user: ${email}`);
       await db.query(
         `UPDATE users SET plan = $1, end_date = NULL, goal_stage = $2 WHERE email = $3`,
-        [plan.trim(), goal_stage || null, email.trim()]
+        [plan, goal_stage || null, email]
       );
 
       const welcomeBackTemplate = loadTemplate('welcome_back.html');
-      await sendEmail(
-        email.trim(),
-        'Welcome Back to The Phoenix Protocol',
-        welcomeBackTemplate
-      );
+      await sendEmail(email, 'Welcome Back to The Phoenix Protocol', welcomeBackTemplate);
     } else {
       let endDate = null; // Will be set later by webhook
 
-      const insertValues = [
-        email.trim(),
-        name ? name.trim() : null,
-        gender.trim(),
-        plan.trim(),
-        endDate,
-        goal_stage || null
-      ];
+      const insertValues = [email, name || null, gender, plan, endDate, goal_stage || null];
       console.log('🧩 Insert values:', insertValues);
 
       await db.query(
@@ -120,57 +152,40 @@ router.post('/signup', async (req, res) => {
       );
 
       const welcomeTemplate = loadTemplate('welcome.html');
-      await sendEmail(
-        email.trim(),
-        'Welcome to The Phoenix Protocol',
-        welcomeTemplate
-      );
-      console.log('✅ Welcome email sent to', email.trim());
+      await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
+      console.log('✅ Welcome email sent to', email);
     }
 
-    const url = await createCheckoutSession(
-      email.trim(),
-      plan.trim(),
-      gender?.trim() || null,
-      goal_stage?.trim() || null
-    );
+    const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);
     console.log('✅ Stripe checkout session created, redirecting user.');
     res.status(200).json({ message: 'Sign-up successful', url });
-
   } catch (err) {
     console.error('❌ Database error during signup:', err);
     res.status(500).json({ error: 'Sign-up failed: Database issue' });
   }
 });
 
-// 🚀 Create Stripe checkout session
 router.post('/create-checkout-session', async (req, res) => {
-  const { email, plan, gender, goal_stage } = req.body;
+  const email = sanitizeInput(req.body.email);
+  const plan = sanitizeInput(req.body.plan);
+  const gender = sanitizeInput(req.body.gender);
+  const goal_stage = sanitizeInput(req.body.goal_stage);
+
   console.log('Creating checkout session:', { email, plan });
 
-  const validPlans = ["30", "90", "365"];
-  if (
-    !email || !plan ||
-    typeof email !== 'string' || typeof plan !== 'string' ||
-    email.trim() === '' || plan.trim() === ''
-  ) {
+  if (!email || !plan) {
     console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan });
     return res.status(400).json({ error: 'Email and plan are required and cannot be empty.' });
   }
 
-  if (!validPlans.includes(plan.trim())) {
-    console.error('❌ Validation failed for /create-checkout-session: Invalid plan provided.', plan.trim());
+  if (!VALID_PLANS.includes(plan)) {
+    console.error('❌ Validation failed for /create-checkout-session: Invalid plan provided.', plan);
     return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365 days.' });
   }
 
   try {
-    const url = await createCheckoutSession(
-      email.trim(), 
-      plan.trim(),
-      gender?.trim() || null,
-      goal_stage?.trim() || null,
-    );
-    console.log('✅ Stripe checkout session created for', email.trim());
+    const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);
+    console.log('✅ Stripe checkout session created for', email);
     res.json({ url });
   } catch (error) {
     console.error('❌ Checkout session creation error:', error.message);
@@ -178,7 +193,6 @@ router.post('/create-checkout-session', async (req, res) => {
   }
 });
 
-// ✅ GET /api/today — secured by x-admin-secret header
 router.get('/today', async (req, res) => {
   const clientSecret = req.headers['x-admin-secret'];
   const expectedSecret = process.env.ADMIN_SECRET;
@@ -201,9 +215,7 @@ router.get('/today', async (req, res) => {
   }
 });
 
-// ✅ Human-readable admin view of today's guide
-const { loadTodayGuide } = require('../utils/content');
-
+// Human-readable admin view of today's guide
 router.get('/admin/today', async (req, res) => {
   const clientSecret = req.query.secret;
   const expectedSecret = process.env.ADMIN_SECRET;
@@ -219,24 +231,7 @@ router.get('/admin/today', async (req, res) => {
       return res.status(404).send('<h2>⚠️ No guide available for today or yesterday.</h2>');
     }
 
-    let html = `<h1>The Phoenix Protocol — Guide for ${guide.date}</h1><hr>`;
-
-    for (const [variant, data] of Object.entries(guide)) {
-      if (variant === 'date') continue;
-
-      const paragraphs = data.content
-        .split(/\n{2,}/)
-        .map(p => `<p>${p.trim()}</p>`)
-        .join('\n');
-
-      html += `
-        <h2>📘 ${variant}</h2>
-        <h3>${data.title}</h3>
-        ${paragraphs}
-        <hr>
-      `;
-    }
-
+    const html = renderGuideHtml(guide, 'The Phoenix Protocol');
     res.send(`
       <html>
         <head>
@@ -258,14 +253,18 @@ router.get('/admin/today', async (req, res) => {
   }
 });
 
-// ✅ Load guide JSON for a specific date — secure API
+// Load guide JSON for a specific date — secure API
 router.get('/archive/:date', async (req, res) => {
   const clientSecret = req.headers['x-admin-secret'];
   const expectedSecret = process.env.ADMIN_SECRET;
-  const { date } = req.params;
+  const date = req.params.date;
 
   if (!expectedSecret || clientSecret !== expectedSecret) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (!isValidDateString(date)) {
+    return res.status(400).json({ error: 'Invalid date format, expected YYYY-MM-DD' });
   }
 
   try {
@@ -280,13 +279,18 @@ router.get('/archive/:date', async (req, res) => {
   }
 });
 
-// ✅ Human-readable view of past guide — browser friendly
+// Human-readable view of past guide — browser friendly
 router.get('/admin/archive', async (req, res) => {
-  const { date, secret } = req.query;
+  const date = req.query.date;
+  const secret = req.query.secret;
   const expectedSecret = process.env.ADMIN_SECRET;
 
   if (!expectedSecret || secret !== expectedSecret) {
     return res.status(401).send('<h2>❌ Unauthorized</h2>');
+  }
+
+  if (!isValidDateString(date)) {
+    return res.status(400).send('<h2>❌ Invalid date format, expected YYYY-MM-DD</h2>');
   }
 
   try {
@@ -295,24 +299,7 @@ router.get('/admin/archive', async (req, res) => {
       return res.status(404).send(`<h2>⚠️ No guide available for ${date}.</h2>`);
     }
 
-    let html = `<h1>The Phoenix Protocol — Guide for ${guide.date || date}</h1><hr>`;
-
-    for (const [variant, data] of Object.entries(guide)) {
-      if (variant === 'date') continue;
-
-      const paragraphs = data.content
-        .split(/\n{2,}/)
-        .map(p => `<p>${p.trim()}</p>`)
-        .join('\n');
-
-      html += `
-        <h2>📘 ${variant}</h2>
-        <h3>${data.title}</h3>
-        ${paragraphs}
-        <hr>
-      `;
-    }
-
+    const html = renderGuideHtml(guide, 'The Phoenix Protocol');
     res.send(`
       <html>
         <head>

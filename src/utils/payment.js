@@ -1,7 +1,7 @@
-require('dotenv').config({ path: './.env' });
-
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
+
+const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // amounts in cents
 
 const createCheckoutSession = async (email, plan, gender = null, goal_stage = null) => {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -9,14 +9,17 @@ const createCheckoutSession = async (email, plan, gender = null, goal_stage = nu
     throw new Error('Missing Stripe API key');
   }
 
-  console.log(`Creating checkout session for email: ${email}, plan: ${plan}, gender: ${gender}, goal_stage: ${goal_stage}`);
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    throw new Error('Invalid email');
+  }
 
-  const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // amounts in cents
-  const amount = pricingMap[plan];
-  if (!amount || isNaN(amount) || amount <= 0) {
-    console.error('Invalid plan amount:', plan);
+  if (!pricingMap[plan]) {
     throw new Error('Invalid plan');
   }
+
+  const amount = pricingMap[plan];
+
+  console.log(`Creating checkout session for email: ${email}, plan: ${plan}, gender: ${gender}, goal_stage: ${goal_stage}`);
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -53,7 +56,6 @@ const createCheckoutSession = async (email, plan, gender = null, goal_stage = nu
 
 const refundLatestChargeForEmail = async (email) => {
   try {
-    // Find the customer by email
     const customers = await stripe.customers.list({ email, limit: 1 });
     if (!customers.data.length) {
       console.warn(`⚠️ No customer found for ${email}, cannot refund.`);
@@ -61,18 +63,18 @@ const refundLatestChargeForEmail = async (email) => {
     }
     const customer = customers.data[0];
 
-    // Find the latest charge for the customer
-    const charges = await stripe.charges.list({
-      customer: customer.id,
-      limit: 1,
-    });
+    const charges = await stripe.charges.list({ customer: customer.id, limit: 1 });
     if (!charges.data.length) {
       console.warn(`⚠️ No charge found for ${email}, cannot refund.`);
       return;
     }
     const charge = charges.data[0];
 
-    // Issue the refund
+    if (charge.refunded) {
+      console.log(`⚠️ Charge ${charge.id} already refunded for ${email}`);
+      return;
+    }
+
     await stripe.refunds.create({ charge: charge.id });
     console.log(`✅ Issued refund for ${email}, charge ${charge.id}`);
 
