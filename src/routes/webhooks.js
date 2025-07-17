@@ -14,6 +14,15 @@ const { refundLatestChargeForEmail } = require('../utils/payment');
 const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 const { sendWelcomeBackEmail } = require('../utils/send_welcome_back');
 
+// Helper to safely run async function in setTimeout
+function safeAsyncTimeout(fn, delay) {
+  setTimeout(() => {
+    fn().catch(err => {
+      console.error('❌ Error in delayed async function:', err);
+    });
+  }, delay);
+}
+
 router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
   let event;
   const sig = req.headers['stripe-signature'];
@@ -101,15 +110,11 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           return res.status(200).json({ received: true });
         }
 
-        // Delay sending first guide by 5 minutes (300000 ms)
-        setTimeout(async () => {
-          try {
-            await sendFirstGuideImmediately(email, gender, goalStage);
-            console.log(`✅ First premium guide sent to ${email} after 5-minute delay`);
-            // No need to update first_guide_sent_at here — sendFirstGuideImmediately handles that.
-          } catch (err) {
-            console.error(`❌ Error sending first premium guide to ${email}:`, err);
-          }
+        // Delay sending first guide by 5 minutes (300000 ms), safely
+        safeAsyncTimeout(async () => {
+          await sendFirstGuideImmediately(email, gender, goalStage);
+          console.log(`✅ First premium guide sent to ${email} after 5-minute delay`);
+          // sendFirstGuideImmediately updates first_guide_sent_at internally
         }, 300000);
       } else {
         console.warn(`⚠️ No matching user found for ${email} on payment confirmation`);

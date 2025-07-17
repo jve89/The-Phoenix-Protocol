@@ -1,5 +1,3 @@
-// src/routes/routes.js
-
 const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
@@ -7,11 +5,14 @@ const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 const { retryAllPendingEmails } = require('../utils/retry_email_queue');
 const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
+const { loadTodayGuide, loadGuideByDate } = require('../utils/content'); // Make sure these are exported from utils/content.js
 const guideRoutes = require('./guides');
+
 const router = express.Router();
 
-const VALID_PLANS = ["30", "90", "365"];
+const VALID_PLANS = ['30', '90', '365'];
 
+// Use sub-routes for guide-related endpoints
 router.use(guideRoutes);
 
 // Simple in-memory rate limiter middleware for admin routes
@@ -23,7 +24,6 @@ function rateLimiter(req, res, next) {
   const maxRequests = 20;
 
   let requestLog = rateLimitMap.get(ip) || [];
-  // Remove outdated timestamps
   requestLog = requestLog.filter(ts => now - ts < windowMs);
   if (requestLog.length >= maxRequests) {
     return res.status(429).send('Too many requests, slow down.');
@@ -33,18 +33,18 @@ function rateLimiter(req, res, next) {
   next();
 }
 
-// Helper to validate date format YYYY-MM-DD
+// Date validation helper
 function isValidDateString(dateStr) {
   return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
 }
 
-// Helper to sanitize and trim inputs (simple version)
+// Basic input sanitizer
 function sanitizeInput(value) {
   if (typeof value !== 'string') return '';
   return value.trim();
 }
 
-// Helper for admin HTML rendering (used by /admin/today and /admin/archive)
+// Admin HTML renderer for guides
 function renderGuideHtml(guide, title) {
   let html = `<h1>${title} — Guide for ${guide.date || ''}</h1><hr>`;
   for (const [variant, data] of Object.entries(guide)) {
@@ -65,6 +65,7 @@ function renderGuideHtml(guide, title) {
 
 router.use(rateLimiter);
 
+// Retry failed emails endpoint (debug)
 router.get('/debug/retry-emails', async (req, res) => {
   try {
     await retryAllPendingEmails();
@@ -75,21 +76,24 @@ router.get('/debug/retry-emails', async (req, res) => {
   }
 });
 
+// Health check ping
 router.get('/ping', (req, res) => {
   const timestamp = new Date().toISOString();
   console.log(`[PING] /api/ping called at ${timestamp}`);
   res.status(200).json({ status: 'ok', timestamp });
 });
 
+// Cron last run status
 router.get('/cron/status', (req, res) => {
   const lastRun = global.lastCronTimestamp || 'Unknown';
   res.status(200).json({ cronLastRun: lastRun });
 });
 
+// Debug list users
 router.get('/debug/list-users', async (req, res) => {
   console.log('[DEBUG] List users route triggered');
   try {
-    const result = await db.query(`SELECT * FROM users ORDER BY id ASC`);
+    const result = await db.query('SELECT * FROM users ORDER BY id ASC');
     console.log(`[DEBUG] Retrieved ${result.rows.length} user(s) from Postgres`);
     res.status(200).json(result.rows);
   } catch (err) {
@@ -98,8 +102,10 @@ router.get('/debug/list-users', async (req, res) => {
   }
 });
 
+// Signup route
 router.post('/signup', async (req, res) => {
   console.log('Signup request received:', req.body);
+
   const email = sanitizeInput(req.body.email);
   const name = sanitizeInput(req.body.name);
   const gender = sanitizeInput(req.body.gender);
@@ -117,10 +123,7 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    const { rows: existingUserRows } = await db.query(
-      `SELECT plan, end_date FROM users WHERE email = $1`,
-      [email]
-    );
+    const { rows: existingUserRows } = await db.query('SELECT plan, end_date FROM users WHERE email = $1', [email]);
 
     if (existingUserRows.length > 0) {
       const user = existingUserRows[0];
@@ -135,24 +138,24 @@ router.post('/signup', async (req, res) => {
 
       console.log(`🔄 Re-signing expired user: ${email}`);
       await db.query(
-        `UPDATE users SET plan = $1, end_date = NULL, goal_stage = $2 WHERE email = $3`,
+        'UPDATE users SET plan = $1, end_date = NULL, goal_stage = $2 WHERE email = $3',
         [plan, goal_stage || null, email]
       );
 
-      const welcomeBackTemplate = loadTemplate('welcome_back.html');
+      const welcomeBackTemplate = await loadTemplate('welcome_back.html');
       await sendEmail(email, 'Welcome Back to The Phoenix Protocol', welcomeBackTemplate);
     } else {
-      let endDate = null; // Will be set later by webhook
+      const endDate = null; // To be set on webhook payment confirmation
 
       const insertValues = [email, name || null, gender, plan, endDate, goal_stage || null];
       console.log('🧩 Insert values:', insertValues);
 
       await db.query(
-        `INSERT INTO users (email, name, gender, plan, end_date, goal_stage) VALUES ($1, $2, $3, $4, $5, $6)`,
+        'INSERT INTO users (email, name, gender, plan, end_date, goal_stage) VALUES ($1, $2, $3, $4, $5, $6)',
         insertValues
       );
 
-      const welcomeTemplate = loadTemplate('welcome.html');
+      const welcomeTemplate = await loadTemplate('welcome.html');
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to', email);
 
@@ -169,6 +172,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// Create Stripe checkout session
 router.post('/create-checkout-session', async (req, res) => {
   const email = sanitizeInput(req.body.email);
   const plan = sanitizeInput(req.body.plan);
@@ -197,6 +201,7 @@ router.post('/create-checkout-session', async (req, res) => {
   }
 });
 
+// Get today's guide JSON (admin only)
 router.get('/today', async (req, res) => {
   const clientSecret = req.headers['x-admin-secret'];
   const expectedSecret = process.env.ADMIN_SECRET;
@@ -219,7 +224,7 @@ router.get('/today', async (req, res) => {
   }
 });
 
-// Human-readable admin view of today's guide
+// Admin human-readable view of today's guide
 router.get('/admin/today', async (req, res) => {
   const clientSecret = req.query.secret;
   const expectedSecret = process.env.ADMIN_SECRET;
@@ -257,7 +262,7 @@ router.get('/admin/today', async (req, res) => {
   }
 });
 
-// Load guide JSON for a specific date — secure API
+// Load guide JSON for a specific date (admin API)
 router.get('/archive/:date', async (req, res) => {
   const clientSecret = req.headers['x-admin-secret'];
   const expectedSecret = process.env.ADMIN_SECRET;
@@ -283,7 +288,7 @@ router.get('/archive/:date', async (req, res) => {
   }
 });
 
-// Human-readable view of past guide — browser friendly
+// Admin human-readable view of past guide
 router.get('/admin/archive', async (req, res) => {
   const date = req.query.date;
   const secret = req.query.secret;

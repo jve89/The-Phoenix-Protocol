@@ -1,19 +1,11 @@
-const fs = require('fs');
-const path = require('path');
 const db = require('../db/db');
 const { sendEmail } = require('./email');
 const { loadTodayGuide } = require('./content');
 const { marked } = require('marked');
 
-const logPath = path.join(__dirname, '../../logs/send_today_guide.log');
-
 function log(message) {
   const timestamp = new Date().toISOString();
-  const entry = `[${timestamp}] ${message}\n`;
-  fs.appendFile(logPath, entry, 'utf8', err => {
-    if (err) console.error('Log write error:', err);
-  });
-  console.log(message);
+  console.log(`[${timestamp}] ${message}`);
 }
 
 const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to say', goalStage = 'reconnect') => {

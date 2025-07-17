@@ -1,30 +1,23 @@
-const fs = require('fs');
-const path = require('path');
 const db = require('../db/db');
-const jwt = require('jsonwebtoken');
 const { sendEmail } = require('./email');
 const { loadTodayGuide } = require('./content');
 const { marked } = require('marked');
-
-const logPath = path.join(__dirname, '../../logs/send_today_guide.log');
+const jwt = require('jsonwebtoken');
 
 function log(message) {
   const timestamp = new Date().toISOString();
-  const entry = `[${timestamp}] ${message}\n`;
-  fs.appendFile(logPath, entry, 'utf8', err => {
-    if (err) console.error('Log write error:', err);
-  });
-  console.log(message);
+  console.log(`[${timestamp}] ${message}`);
 }
 
 (async () => {
   try {
     log('🚀 Starting premium guide send pipeline...');
 
+    // Select users with active paid plans
+    // Exclude users who have already received first guide today
     const { rows: users } = await db.query(`
       SELECT email, gender, goal_stage FROM users
       WHERE plan IN ('30', '90', '365')
-        AND (created_at IS NULL OR created_at::date != CURRENT_DATE)
         AND (first_guide_sent_at IS NULL OR first_guide_sent_at::date != CURRENT_DATE)
     `);
 
@@ -42,9 +35,13 @@ function log(message) {
 
     const { loadTemplate } = require('./loadTemplate');
     const template = loadTemplate('premium_guide_email.html');
+    if (!template) {
+      log('❌ Email template loading failed. Exiting.');
+      process.exit(1);
+    }
 
     if (!process.env.JWT_SECRET) {
-      log('❌ JWT_SECRET missing in environment');
+      log('❌ JWT_SECRET missing in environment. Exiting.');
       process.exit(1);
     }
 
