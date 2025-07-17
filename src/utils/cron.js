@@ -71,9 +71,12 @@ function startCron() {
     await logEvent('cron', `🚀 Sending premium guides at ${time}`);
 
     try {
+      // Updated SQL: exclude new subscribers (first_guide_sent_at IS NOT NULL)
       const { rows: users } = await db.query(`
         SELECT email, gender, goal_stage FROM users
-        WHERE plan IN ('30', '90', '365') AND (first_guide_sent_at IS NULL OR first_guide_sent_at::date != CURRENT_DATE)
+        WHERE plan IN ('30', '90', '365')
+          AND first_guide_sent_at IS NOT NULL
+          AND first_guide_sent_at::date != CURRENT_DATE
       `);
 
       if (!users.length) {
@@ -133,6 +136,7 @@ function startCron() {
       await logEvent('cron', `❌ User fetch/send error: ${err.message}`);
     }
   }, { timezone: 'Etc/UTC' });
+
 
   // 3️⃣ Downgrade expired subscriptions at 00:00 UTC
   cron.schedule('0 0 * * *', async () => {

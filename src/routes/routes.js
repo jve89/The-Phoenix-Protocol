@@ -6,6 +6,7 @@ const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 const { retryAllPendingEmails } = require('../utils/retry_email_queue');
+const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 const guideRoutes = require('./guides');
 const router = express.Router();
 
@@ -154,6 +155,9 @@ router.post('/signup', async (req, res) => {
       const welcomeTemplate = loadTemplate('welcome.html');
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to', email);
+
+      // Send first cached guide immediately after signup
+      await sendFirstGuideImmediately(email, gender, goal_stage);
     }
 
     const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);

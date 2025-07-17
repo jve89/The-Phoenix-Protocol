@@ -106,13 +106,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
           try {
             await sendFirstGuideImmediately(email, gender, goalStage);
             console.log(`✅ First premium guide sent to ${email} after 5-minute delay`);
-
-            try {
-              await db.query(`UPDATE users SET first_guide_sent_at = CURRENT_TIMESTAMP WHERE email = $1`, [email]);
-              console.log(`🕓 Saved first_guide_sent_at timestamp for ${email}`);
-            } catch (timestampErr) {
-              console.error(`❌ Failed to update first_guide_sent_at for ${email}:`, timestampErr.message);
-            }
+            // No need to update first_guide_sent_at here — sendFirstGuideImmediately handles that.
           } catch (err) {
             console.error(`❌ Error sending first premium guide to ${email}:`, err);
           }
