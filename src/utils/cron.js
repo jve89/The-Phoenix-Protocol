@@ -24,7 +24,12 @@ function startCron() {
 
     try {
       await generateAndCacheDailyGuides();
+
+      console.log('[CRON] ⏳ Waiting 15 minutes before sending backup...');
+      await new Promise(resolve => setTimeout(resolve, 900_000));  // 15 min in ms
+
       await sendDailyGuideBackup(process.env.ADMIN_EMAIL);
+
       console.log('[CRON] Guide generation complete.');
       await logEvent('cron', '✅ Guide generation completed successfully.');
     } catch (err) {

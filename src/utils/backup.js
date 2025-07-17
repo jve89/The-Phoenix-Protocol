@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { sendEmail } = require('./email');
+const { logFailure } = require('./retry_email_queue');
+const { logEvent } = require('./db_logger');
 
 async function sendDailyGuideBackup(adminEmail) {
   try {
@@ -8,6 +10,7 @@ async function sendDailyGuideBackup(adminEmail) {
 
     if (!fs.existsSync(cachePath)) {
       console.warn('[BACKUP] ❌ No daily_cache.json found.');
+      await logEvent('backup', '❌ No daily_cache.json found.');
       return;
     }
 
@@ -33,8 +36,11 @@ async function sendDailyGuideBackup(adminEmail) {
     );
 
     console.log(`[BACKUP] ✅ Sent daily backup to ${adminEmail}`);
+    await logEvent('backup', `✅ Sent daily guide backup to ${adminEmail}`);
   } catch (err) {
     console.error('[BACKUP] ❌ Failed to send backup:', err.message);
+    await logEvent('backup', `❌ Failed to send guide backup: ${err.message}`);
+    await logFailure(adminEmail, '📦 Daily Guide Backup Failed', err.message);
   }
 }
 
