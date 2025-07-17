@@ -142,8 +142,11 @@ router.post('/signup', async (req, res) => {
         [plan, goal_stage || null, email]
       );
 
-      const welcomeBackTemplate = await loadTemplate('welcome_back.html');
+      const welcomeBackTemplate = await loadTemplate('welcome_back.html');  // added await
       await sendEmail(email, 'Welcome Back to The Phoenix Protocol', welcomeBackTemplate);
+
+      // Do NOT send first guide here. Wait for payment webhook.
+
     } else {
       const endDate = null; // To be set on webhook payment confirmation
 
@@ -155,12 +158,11 @@ router.post('/signup', async (req, res) => {
         insertValues
       );
 
-      const welcomeTemplate = await loadTemplate('welcome.html');
+      const welcomeTemplate = await loadTemplate('welcome.html');  // added await
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to', email);
 
-      // Send first cached guide immediately after signup
-      await sendFirstGuideImmediately(email, gender, goal_stage);
+      // Removed sendFirstGuideImmediately here - webhook will send after payment
     }
 
     const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);
