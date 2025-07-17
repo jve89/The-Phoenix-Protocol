@@ -25,7 +25,11 @@ const sendFirstGuideImmediately = async (userEmail, userGender = 'prefer not to 
       return;
     }
 
-    const variant = `${userGender}_${goalStage}`;
+    // Normalize gender and goalStage to match guide keys
+    const normalizedGoalStage = goalStage.toLowerCase().replace(/_/g, '');
+    const normalizedGender = userGender.toLowerCase().replace(/\s+/g, '');
+    const variant = `${normalizedGender}_${normalizedGoalStage}`;
+
     const guide = todayGuide[variant];
     if (!guide) {
       log(`⚠️ Missing guide for ${variant}. Skipping ${userEmail}.`);
