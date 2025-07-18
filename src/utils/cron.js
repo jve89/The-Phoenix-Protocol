@@ -8,8 +8,7 @@ const path = require('path');
 const { sendEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
-const { logFailure } = require('./retry_email_queue');
-const { logEvent } = require('./db_logger');
+const { logEvent } = require('./db_logger'); // 🧼 Only this remains
 
 function buildAdminGuideEmailHtml(guide) {
   let html = `<h1>Daily Guide Summary - ${guide.date}</h1>`;
@@ -114,7 +113,6 @@ function startCron() {
             [newUsage, user.id]
           );
 
-          // Downgrade if this was the final email
           if (newUsage >= user.plan_limit) {
             await db.query(`UPDATE users SET plan = 'free' WHERE id = $1`, [user.id]);
 
@@ -128,7 +126,7 @@ function startCron() {
         } catch (err) {
           console.error(`[CRON] ❌ Send failed for ${user.email}:`, err.message);
           await logEvent('cron', 'error', `❌ Send fail: ${user.email} – ${err.message}`);
-          logFailure(user.email, guideContent.title, html);
+          // 🔥 REMOVED: logFailure() no longer exists
         }
       }
     } catch (err) {
