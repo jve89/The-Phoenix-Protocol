@@ -6,14 +6,10 @@ const { loadTemplate } = require('../utils/loadTemplate');
 const { retryAllPendingEmails } = require('../utils/retry_email_queue');
 const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 const { loadTodayGuide, loadGuideByDate } = require('../utils/content'); // Make sure these are exported from utils/content.js
-const guideRoutes = require('./guides');
 
 const router = express.Router();
 
 const VALID_PLANS = ['30', '90', '365'];
-
-// Use sub-routes for guide-related endpoints
-router.use(guideRoutes);
 
 // Simple in-memory rate limiter middleware for admin routes
 const rateLimitMap = new Map();
@@ -149,8 +145,8 @@ router.post('/signup', async (req, res) => {
       console.log('🧩 Insert values:', insertValues);
 
       await db.query(
-        'INSERT INTO users (email, name, gender, plan, end_date, goal_stage) VALUES ($1, $2, $3, $4, $5, $6)',
-        insertValues
+        'INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [email, name || null, gender, plan, parseInt(plan), 0, goal_stage || null]
       );
 
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
