@@ -3,20 +3,12 @@ const router = express.Router();
 const db = require('../db/db');
 const Stripe = require('stripe');
 const { refundLatestChargeForEmail } = require('../utils/payment');
-const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 if (!process.env.STRIPE_SECRET_KEY) console.error('❌ STRIPE_SECRET_KEY not set');
 if (!webhookSecret) console.error('❌ STRIPE_WEBHOOK_SECRET not set');
-
-// Async-safe delayed execution
-function safeAsyncTimeout(fn, delay) {
-  setTimeout(() => {
-    fn().catch(err => console.error('❌ Error in delayed async function:', err));
-  }, delay);
-}
 
 router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
   let event;
@@ -62,29 +54,11 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         [plan, limit, gender, goalStage, sessionId, email]
       );
 
-      if (rowCount > 0) {
-        const { rows: updated } = await db.query(
-          `SELECT first_guide_sent_at FROM users WHERE email = $1`,
-          [email]
-        );
-
-        const alreadySent = !!updated[0]?.first_guide_sent_at;
-
-        if (alreadySent) {
-          console.log(`🛑 ${email} already received guide. No resend.`);
-          return res.status(200).json({ received: true });
-        }
-
-        safeAsyncTimeout(async () => {
-          await sendFirstGuideImmediately(email, gender, goalStage);
-          console.log(`✅ Sent first guide to ${email}`);
-        }, 300000);
-      } else {
+      if (rowCount === 0) {
         console.warn(`⚠️ No user matched for ${email}`);
       }
     }
 
-    // Bounce/refund logic
     const isBounceEvent = [
       'invoice.payment_failed',
       'charge.failed',
