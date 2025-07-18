@@ -123,23 +123,21 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    const { rows: existingUserRows } = await db.query('SELECT plan, end_date FROM users WHERE email = $1', [email]);
+    const { rows: existingUserRows } = await db.query('SELECT plan, plan_limit, usage_count FROM users WHERE email = $1', [email]);
     const welcomeTemplate = await loadTemplate('welcome.html');
 
     if (existingUserRows.length > 0) {
       const user = existingUserRows[0];
-      const now = new Date();
-      const endDate = user.end_date ? new Date(user.end_date) : null;
-      const isActive = endDate && endDate >= now;
+      const isActive = user.usage_count < user.plan_limit;
 
       if (isActive) {
-        console.warn(`⚠️ Signup blocked — existing active user: ${email}`);
+        console.warn(`⚠️ Signup blocked — user has an active countdown plan: ${email}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
       }
 
       console.log(`🔄 Re-signing expired user: ${email}`);
       await db.query(
-        'UPDATE users SET plan = $1, end_date = NULL, goal_stage = $2 WHERE email = $3',
+        'UPDATE users SET plan = $1, goal_stage = $2 WHERE email = $3',
         [plan, goal_stage || null, email]
       );
 
