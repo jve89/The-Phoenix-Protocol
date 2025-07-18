@@ -1,6 +1,6 @@
 FROM node:lts
 
-# Install PostgreSQL client for CLI tools (optional)
+# Install PostgreSQL client (optional but useful for Heroku CLI or pg:psql)
 RUN apt-get update && \
     apt-get install -y postgresql-client && \
     rm -rf /var/lib/apt/lists/*
@@ -8,15 +8,15 @@ RUN apt-get update && \
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Optimized layer caching: install deps first
 COPY package*.json ./
-RUN npm install
+RUN npm ci --omit=dev
 
-# Copy all source files
+# Copy source files
 COPY . .
 
 # Expose app port
 EXPOSE 3000
 
-# Start the server
+# Default command
 CMD ["node", "src/server.js"]

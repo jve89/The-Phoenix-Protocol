@@ -1,61 +1,70 @@
-./.env
-./Dockerfile
-./LICENSE
-./Procfile
-./README.md
-./config/config.js
-./content/prompts/female_moveon.js
-./content/prompts/female_reconnect.js
-./content/prompts/male_moveon.js
-./content/prompts/male_reconnect.js
-./content/prompts/neutral_moveon.js
-./content/prompts/neutral_reconnect.js
-./filetree.txt
-./package-lock.json
-./package.json
-./public/checkout.html
-./public/favicon.ico
-./public/founder.jpg
-./public/founder.png
-./public/hero.jpg
-./public/hero_female.jpg
-./public/index.html
-./public/logo-purple.jpg
-./public/logo-purple.png
-./public/logo-purple.svg
-./public/logo.jpg
-./public/logo.png
-./public/logo.svg
-./public/og-banner.png
-./public/privacy.html
-./public/robots.txt
-./public/sample-guide.html
-./public/script.js
-./public/sitemap.xml
-./public/style.css
-./public/success.html
-./public/terms.html
-./setup.md
-./src/db/db.js
-./src/routes/guides.js
-./src/routes/logs.js
-./src/routes/routes.js
-./src/routes/unsubscribe.js
-./src/routes/webhooks.js
-./src/server.js
-./src/utils/content.js
-./src/utils/cron.js
-./src/utils/db_logger.js
-./src/utils/email.js
-./src/utils/generate_today_guide.js
-./src/utils/loadTemplate.js
-./src/utils/payment.js
-./src/utils/retry_email_queue.js
-./src/utils/send_first_guide_immediately.js
-./src/utils/send_today_guide.js
-./src/utils/send_welcome_back.js
-./templates/email.html
-./templates/farewell_email.html
-./templates/premium_guide_email.html
-./templates/welcome.html
-./templates/welcome_back.html
+
+/workspace/The-Phoenix-Protocol
+├── Dockerfile
+├── LICENSE
+├── Procfile
+├── README.md
+├── config
+|  └── config.js
+├── content
+|  └── prompts
+|     ├── female_moveon.js
+|     ├── female_reconnect.js
+|     ├── male_moveon.js
+|     ├── male_reconnect.js
+|     ├── neutral_moveon.js
+|     └── neutral_reconnect.js
+├── filetree.txt
+├── package-lock.json
+├── package.json
+├── public
+|  ├── checkout.html
+|  ├── favicon.ico
+|  ├── founder.jpg
+|  ├── founder.png
+|  ├── hero.jpg
+|  ├── hero_female.jpg
+|  ├── index.html
+|  ├── logo-purple.jpg
+|  ├── logo-purple.png
+|  ├── logo-purple.svg
+|  ├── logo.jpg
+|  ├── logo.png
+|  ├── logo.svg
+|  ├── og-banner.png
+|  ├── privacy.html
+|  ├── robots.txt
+|  ├── sample-guide.html
+|  ├── script.js
+|  ├── sitemap.xml
+|  ├── style.css
+|  ├── success.html
+|  └── terms.html
+├── setup.md
+├── src
+|  ├── db
+|  |  └── db.js
+|  ├── routes
+|  |  ├── routes.js
+|  |  ├── unsubscribe.js
+|  |  └── webhooks.js
+|  ├── server.js
+|  └── utils
+|     ├── content.js
+|     ├── cron.js
+|     ├── db_logger.js
+|     ├── email.js
+|     ├── loadTemplate.js
+|     └── payment.js
+└── templates
+   ├── email.html
+   ├── farewell_email.html
+   ├── premium_guide_email.html
+   └── welcome.html
+
+directory: 280 file: 2005
+
+ignored: directory (7)
+
+
+[2K[1G

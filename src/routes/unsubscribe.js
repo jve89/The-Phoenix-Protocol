@@ -8,12 +8,11 @@ if (!JWT_SECRET) {
   console.error('❌ JWT_SECRET not set!');
 }
 
-// Step 1: Show unsubscribe confirmation page
+// Step 1: Show confirmation page
 router.get('/unsubscribe', (req, res) => {
   const { token } = req.query;
   if (!token) {
-    res.status(400).type('text/html').send('<h2>Missing token</h2>');
-    return;
+    return res.status(400).type('text/html').send('<h2>Missing token</h2>');
   }
 
   try {
@@ -62,8 +61,7 @@ router.get('/unsubscribe', (req, res) => {
 router.post('/unsubscribe', async (req, res) => {
   const { token } = req.query;
   if (!token) {
-    res.status(400).type('text/html').send('<h2>Missing token</h2>');
-    return;
+    return res.status(400).type('text/html').send('<h2>Missing token</h2>');
   }
 
   try {
@@ -71,13 +69,12 @@ router.post('/unsubscribe', async (req, res) => {
     const email = decoded.email;
 
     const result = await db.query(
-      `UPDATE users SET plan = 'free' WHERE email = $1 RETURNING email`,
+      `UPDATE users SET plan = 'free', usage_count = plan_limit WHERE email = $1 RETURNING email`,
       [email]
     );
 
     if (result.rowCount === 0) {
-      res.status(404).type('text/html').send('<h2>Email not found.</h2>');
-      return;
+      return res.status(404).type('text/html').send('<h2>Email not found.</h2>');
     }
 
     const html = `

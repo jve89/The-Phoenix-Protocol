@@ -3,7 +3,9 @@ image:
 
 tasks:
   - name: Start Phoenix Protocol SaaS
-    command: node src/server.js
+    command: |
+      npm install
+      node src/server.js
 
 ports:
   - port: 3000

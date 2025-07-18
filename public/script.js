@@ -8,52 +8,51 @@ form.addEventListener('submit', async (e) => {
   const data = {
     email: formData.get('email')?.trim(),
     name: formData.get('name')?.trim(),
-    gender: formData.get('gender'),
-    plan: formData.get('plan'),
-    goal_stage: formData.get('goal_stage'),
+    gender: formData.get('gender')?.trim(),
+    plan: formData.get('plan')?.trim(),
+    goal_stage: formData.get('goal_stage')?.trim(),
   };
 
-  // Basic validation
+  // ✅ Basic client-side validation
   if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
     alert('Please enter a valid email address.');
     return;
   }
   if (!data.gender || !data.plan) {
-    alert('Please select gender and plan.');
+    alert('Please select both gender and plan.');
     return;
   }
 
   submitBtn.disabled = true;
+  submitBtn.innerText = 'Processing...';
 
   try {
-    const signupResponse = await fetch('/api/signup', {
+    // 1️⃣ Signup
+    const signupRes = await fetch('/api/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
 
-    const responseData = await signupResponse.json();
+    const signupJson = await signupRes.json();
+    if (!signupRes.ok) throw new Error(signupJson.error || 'Signup failed');
 
-    if (!signupResponse.ok) throw new Error(responseData.error || 'Signup failed');
-
-    const checkoutResponse = await fetch('/api/create-checkout-session', {
+    // 2️⃣ Stripe Checkout
+    const checkoutRes = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: data.email,
-        plan: data.plan,
-        gender: data.gender,
-        goal_stage: data.goal_stage,
-      }),
+      body: JSON.stringify(data),
     });
 
-    const { url } = await checkoutResponse.json();
+    const { url } = await checkoutRes.json();
+    if (!url) throw new Error('Checkout URL not returned');
     window.location.href = url;
 
-  } catch (error) {
-    console.error('Error:', error.message);
-    alert(error.message || 'Sign-up failed');
+  } catch (err) {
+    console.error('[Signup Error]', err.message);
+    alert(err.message || 'Something went wrong. Please try again.');
   } finally {
     submitBtn.disabled = false;
+    submitBtn.innerText = 'Continue';
   }
 });

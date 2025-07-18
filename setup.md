@@ -1,127 +1,153 @@
-The Phoenix Protocol – Long-Term SaaS Maintenance Guide
-This document ensures your SaaS can run 10+ years without intervention while remaining stable, compliant, and maintainable.
+**The Phoenix Protocol – Long-Term SaaS Maintenance Guide**
+*Run for 10+ years with no human intervention.*
 
-🚀 1️⃣ Project Purpose
-Name: The Phoenix Protocol
+---
 
-Mission: Automated daily breakup recovery guidance via Stripe, SendGrid, Postgres.
+### 🚀 1️⃣ Purpose & Philosophy
 
-Goal: Low-touch SaaS requiring near-zero human support, with auto-refunds on undeliverable emails.
+**Name:** The Phoenix Protocol
+**Mission:** Deliver automated, daily heartbreak recovery guides via email.
+**SaaS Goal:**
 
-🔧 2️⃣ Core Technologies
-Backend: Node.js + Express
+* Zero human support
+* Fully automated billing, refunds, and content delivery
+* Built to quietly run in the background
 
-Database: PostgreSQL (Heroku Postgres)
+---
 
-Email: SendGrid
+### 🔧 2️⃣ Core Tech Stack
 
-Payments: Stripe (webhooks for auto-refunds on 5x bounces)
+| Layer        | Tool / Platform     |
+| ------------ | ------------------- |
+| Backend      | Node.js + Express   |
+| Database     | PostgreSQL (Heroku) |
+| Payments     | Stripe              |
+| Email        | SendGrid            |
+| Cron / Tasks | node-cron           |
+| AI Tips      | Grok (optional)     |
+| Frontend     | HTML + TailwindCSS  |
+| Hosting      | Heroku              |
 
-Frontend: HTML, TailwindCSS
+---
 
-Hosting: Heroku
+### 🔑 3️⃣ Environment Variables
 
-🔑 3️⃣ Environment Variables
-Ensure these are always correctly set in Heroku Config Vars:
+Ensure **all** are set in Heroku → **Settings → Config Vars**:
 
+```
 DATABASE_URL
-
-SENDGRID_API_KEY
-
-STRIPE_SECRET_KEY
-
-STRIPE_PUBLIC_KEY
-
-STRIPE_WEBHOOK_SECRET
-
-GROK_API_KEY (optional, for Grok tips)
-
 PORT
+SENDGRID_API_KEY
+STRIPE_SECRET_KEY
+STRIPE_PUBLIC_KEY
+STRIPE_WEBHOOK_SECRET
+GROK_API_KEY      # (Optional – only needed for AI tips)
+```
 
-Check .env locally if testing.
+**Local Testing:** Use `.env` file. Check for `.env.example` as future reference.
 
-📦 4️⃣ Directory Structure Reference
-public/
-  index.html
-  checkout.html
-  success.html
-  ...
-src/
+---
+
+### 📦 4️⃣ Folder Structure Reference
+
+```
+/public
+  index.html, checkout.html, success.html, ...
+/src
   server.js
-  routes/
-    routes.js
-    webhooks.js
-  utils/
-    payment.js
-    email.js
-    ...
-logs/
-config/
-templates/
+  /routes
+    routes.js, webhooks.js, unsubscribe.js
+  /utils
+    content.js, payment.js, email.js, cron.js, ...
+/config
+  config.js
+/templates
+  welcome.html, premium_guide_email.html, ...
+/content/prompts
+  male_moveon.js, female_reconnect.js, ...
+```
 
-💸 5️⃣ Stripe Bounce Refund Logic
-We track bounces in users table.
+---
 
-After 5 bounces, an automatic refund is triggered using:
+### 💸 5️⃣ Auto-Refund Logic (SendGrid Bounces)
 
-refundLatestChargeForEmail in src/utils/payment.js
+* Each user has a `bounces` counter in the `users` table
+* When it reaches **5**, the latest charge is refunded
+* Implemented in:
 
-Webhook handling in src/routes/webhooks.js
+  * `src/routes/webhooks.js` (SendGrid events)
+  * `refundLatestChargeForEmail()` in `src/utils/payment.js`
 
-🛠️ 6️⃣ Regular Maintenance Checklist
-✅ Monthly:
+---
 
-Check Heroku logs: heroku logs --tail --app the-phoenix-protocol
+### 🛠️ 6️⃣ Regular Maintenance
 
-Review Stripe payments dashboard for disputes or failures.
+#### ✅ Monthly
 
-Confirm SendGrid reputation and bounce rates.
+* `heroku logs --tail --app the-phoenix-protocol`
+* Stripe Dashboard → check payments, chargebacks
+* SendGrid Dashboard → check bounce/spam rates
 
-✅ Quarterly:
+#### ✅ Quarterly
 
-Verify payment flows with a Stripe test purchase.
+* Make a test Stripe purchase
+* Backup database
+* Trigger a test bounce to confirm refund flow works
 
-Backup Postgres database.
+#### ✅ Annually
 
-Test webhook refund automation.
+* Renew domain & SSL (Heroku ACM handles SSL by default)
+* Run `npm outdated` + `npm update`
+* Test signup-to-checkout flow end-to-end
 
-✅ Annually:
+---
 
-Review and renew domain and SSL (Heroku ACM handles SSL).
+### 🔄 7️⃣ Refund Logic – Manual Test
 
-Check for Node dependency updates (npm outdated, npm update).
+1. Sign up with a test email
+2. Simulate 5 SendGrid bounces (or fake via DB increment)
+3. Confirm:
 
-🔄 7️⃣ Testing Refund Automation
-To test:
+   * `users.bounces` hits 5
+   * Refund is auto-triggered
+   * Webhook log confirms refund via Stripe
 
-Use a Stripe test card that forces failure.
+---
 
-Check webhook triggers bounce increment.
+### 🛡️ 8️⃣ Disaster Recovery – What to Do If It Breaks
 
-Confirm refund is processed automatically on 5th bounce.
+1. Run:
 
-🛡️ 8️⃣ Recovery Strategy
-If broken:
+   ```bash
+   heroku restart --app the-phoenix-protocol
+   ```
 
-Check Heroku config vars (DATABASE_URL, STRIPE_SECRET_KEY etc.).
+2. Check Config Vars in Heroku
 
-Run heroku restart --app the-phoenix-protocol.
+3. Look at logs:
 
-Review logs for ❌ errors.
+   ```bash
+   heroku logs --tail --app the-phoenix-protocol
+   ```
 
-Check src/routes/webhooks.js and src/utils/payment.js for last updates.
+4. Investigate files:
 
-✍️ 9️⃣ Notes for Future You
-This SaaS is designed to run quietly in the background.
+   * `src/routes/webhooks.js`
+   * `src/utils/payment.js`
+   * `src/utils/email.js`
 
-Aim for no direct support; automated refunds reduce complaints.
+---
 
-Any major refactors should maintain:
+### 🧠 9️⃣ Final Notes for Future You
 
-Determinism
+* Built to require **no support team**
+* Stripe refunds on bounces = fewer angry users
+* Do not overcomplicate
+* Prioritise:
 
-Low complexity
+  * ✅ Deterministic logic
+  * ✅ Clear folder structure
+  * ✅ Isolated responsibilities
+  * ✅ Flat dependencies, no framework lock-in
 
-Clean modular structure
-
-
+---

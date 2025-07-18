@@ -1,5 +1,6 @@
-require('dotenv').config();
+// src/utils/cron.js
 
+require('dotenv').config();
 const cron = require('node-cron');
 const db = require('../db/db');
 const fs = require('fs').promises;
@@ -12,182 +13,129 @@ const { logEvent } = require('./db_logger');
 
 function buildAdminGuideEmailHtml(guide) {
   let html = `<h1>Daily Guide Summary - ${guide.date}</h1>`;
-
   for (const variant of ['male_moveon', 'male_reconnect', 'female_moveon', 'female_reconnect', 'neutral_moveon', 'neutral_reconnect']) {
     const section = guide[variant];
     if (section) {
-      html += `<h2>${section.title}</h2>`;
-      html += `<p>${section.content.replace(/\n/g, '<br>')}</p>`;
-      html += `<hr>`;
+      html += `<h2>${section.title}</h2><p>${section.content.replace(/\n/g, '<br>')}</p><hr>`;
     }
   }
-
   return html;
 }
 
 function startCron() {
   global.lastCronTimestamp = new Date().toISOString();
-  console.log('[CRON] Subscription expiry, guide generation, and premium email schedule active.');
-  logEvent('cron', 'info', '✅ Cron system started and monitoring triggers.');
+  console.log('[CRON] Guide generation and delivery system running.');
+  logEvent('cron', 'info', '✅ Cron system booted and active.');
 
-  // 1️⃣ Generate & cache daily guides at 15:00 UTC
+  // 1️⃣ Guide generation at 15:00 UTC
   cron.schedule('0 15 * * *', async () => {
     const time = new Date().toISOString();
-    console.log(`[CRON] Generating and caching premium guides: ${time}`);
-    await logEvent('cron', 'info', `🚀 Generating and caching premium guides at ${time}`);
+    console.log(`[CRON] Generating today's guide: ${time}`);
+    await logEvent('cron', 'info', `🚀 Guide generation started at ${time}`);
 
     try {
       await generateAndCacheDailyGuides();
-      console.log('[CRON] Guide generation complete.');
-      await logEvent('cron', 'info', '✅ Guide generation completed successfully.');
+      console.log('[CRON] ✅ Guide cache complete.');
+      await logEvent('cron', 'info', '✅ Guide generation complete.');
 
-      // Send full guide summary to admin 30 minutes later
       const today = new Date().toISOString().split('T')[0];
-      const fullGuide = await loadGuideByDate(today);
+      const guide = await loadGuideByDate(today);
 
-      if (fullGuide && process.env.ADMIN_EMAIL) {
+      if (guide && process.env.ADMIN_EMAIL) {
         setTimeout(async () => {
           try {
-            const adminHtml = buildAdminGuideEmailHtml(fullGuide);
+            const adminHtml = buildAdminGuideEmailHtml(guide);
             await sendEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
-            console.log('[CRON] Admin guide email sent successfully.');
-            await logEvent('cron', 'info', '✅ Admin guide email sent.');
+            console.log('[CRON] Admin guide email sent.');
+            await logEvent('cron', 'info', '✅ Admin summary email sent.');
           } catch (err) {
-            console.error('[CRON] Admin guide email send failed:', err.message);
-            await logEvent('cron', 'error', `❌ Admin guide email send failed: ${err.message}`);
+            console.error('[CRON] Admin email failed:', err.message);
+            await logEvent('cron', 'error', `❌ Admin email failed: ${err.message}`);
           }
-        }, 30 * 60 * 1000); // 30 minutes delay
+        }, 30 * 60 * 1000); // 15:30 UTC
       }
     } catch (err) {
       console.error('[CRON] Guide generation error:', err.message);
-      await logEvent('cron', 'error', `❌ Guide generation error: ${err.message}`);
+      await logEvent('cron', 'error', `❌ Guide gen error: ${err.message}`);
     }
   }, { timezone: 'Etc/UTC' });
 
-  // 2️⃣ Send premium guides at 16:00 UTC
+  // 2️⃣ Guide delivery at 16:00 UTC
   cron.schedule('0 16 * * *', async () => {
-    const time = new Date().toISOString();
-    console.log(`[CRON] Sending premium guides: ${time}`);
-    await logEvent('cron', 'info', `🚀 Sending premium guides at ${time}`);
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+
+    console.log(`[CRON] Sending daily guides: ${now.toISOString()}`);
+    await logEvent('cron', 'info', `📬 Starting guide send: ${now.toISOString()}`);
 
     try {
-      // Exclude new subscribers (first_guide_sent_at IS NOT NULL)
       const { rows: users } = await db.query(`
-        SELECT email, gender, goal_stage FROM users
-        WHERE plan IN ('30', '90', '365')
-          AND first_guide_sent_at IS NOT NULL
-          AND first_guide_sent_at::date != CURRENT_DATE
+        SELECT id, email, gender, goal_stage, plan, plan_limit, usage_count
+        FROM users
+        WHERE plan IS NOT NULL AND usage_count < plan_limit
       `);
 
       if (!users.length) {
-        console.log('[CRON] No active users to send guides to.');
-        await logEvent('cron', 'warn', '⚠️ No active users found, skipping send.');
+        console.log('[CRON] No active subscribers with remaining uses.');
+        await logEvent('cron', 'warn', '⚠️ No eligible users to send.');
         return;
       }
 
       const template = await loadTemplate('premium_guide_email.html');
-      if (!template) {
-        console.error('[CRON] ❌ Email template missing, aborting sends.');
-        await logEvent('cron', 'error', '❌ Email template missing for premium guides.');
-        return;
-      }
-
-      let todayGuide = await loadTodayGuide();
-      if (!todayGuide) {
-        console.error('[CRON] ❌ No guide available for today in DB');
-        await logEvent('cron', 'error', '❌ Guide missing in DB.');
+      const guide = await loadTodayGuide();
+      if (!template || !guide) {
+        console.error('[CRON] ❌ Missing template or guide.');
+        await logEvent('cron', 'error', '❌ Missing content.');
         return;
       }
 
       for (const user of users) {
+        const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
+        const guideContent = guide[variant];
+
+        if (!guideContent) {
+          console.warn(`[CRON] No guide for ${variant}, skipping ${user.email}`);
+          await logEvent('cron', 'warn', `⚠️ No guide for ${variant} (${user.email})`);
+          continue;
+        }
+
+        const html = template
+          .replace('{{title}}', guideContent.title)
+          .replace('{{content}}', guideContent.content.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>'));
+
         try {
-          const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
-          const guide = todayGuide[variant];
+          await sendEmail(user.email, guideContent.title, html);
+          console.log(`[CRON] ✅ Sent to ${user.email}`);
+          await logEvent('cron', 'info', `✅ Guide sent: ${user.email}`);
 
-          if (!guide) {
-            console.warn(`[CRON] Missing guide for variant: ${variant}. Skipping ${user.email}`);
-            await logEvent('cron', 'warn', `⚠️ Missing guide for ${variant}, skipping ${user.email}`);
-            continue;
+          const newUsage = user.usage_count + 1;
+          await db.query(
+            `UPDATE users SET usage_count = $1, first_guide_sent_at = NOW() WHERE id = $2`,
+            [newUsage, user.id]
+          );
+
+          // Downgrade if this was the final email
+          if (newUsage >= user.plan_limit) {
+            await db.query(`UPDATE users SET plan = 'free' WHERE id = $1`, [user.id]);
+
+            const farewellHtml = await fs.readFile(path.join(__dirname, '../../templates/farewell_email.html'), 'utf-8');
+            await sendEmail(user.email, 'Thank You for Using The Phoenix Protocol', farewellHtml);
+
+            console.log(`[CRON] 🔚 Final guide sent. Downgraded ${user.email}`);
+            await logEvent('cron', 'info', `🔚 Final guide sent & unsubscribed: ${user.email}`);
           }
 
-          const formattedContent = guide.content
-            .split(/\n{2,}/)
-            .map(paragraph => `<p>${paragraph.trim()}</p>`)
-            .join('\n');
-
-          const htmlContent = template
-            .replace('{{title}}', guide.title)
-            .replace('{{content}}', formattedContent);
-
-          const subject = guide.title || 'Your Daily Phoenix Protocol Guide';
-
-          try {
-            await sendEmail(user.email, subject, htmlContent);
-            console.log(`[CRON] Guide sent to ${user.email}`);
-            await logEvent('cron', 'info', `✅ Guide sent to ${user.email}`);
-          } catch (err) {
-            console.error(`[CRON] Send error for ${user.email}: ${err.message}`);
-            await logEvent('cron', 'error', `❌ Send error for ${user.email}: ${err.message}`);
-            logFailure(user.email, subject, htmlContent);
-          }
         } catch (err) {
-          console.error(`[CRON] Processing error for ${user.email}: ${err.message}`);
-          await logEvent('cron', 'error', `❌ Processing error for ${user.email}: ${err.message}`);
+          console.error(`[CRON] ❌ Send failed for ${user.email}:`, err.message);
+          await logEvent('cron', 'error', `❌ Send fail: ${user.email} – ${err.message}`);
+          logFailure(user.email, guideContent.title, html);
         }
       }
     } catch (err) {
-      console.error('[CRON] User fetch/send error:', err.message);
-      await logEvent('cron', 'error', `❌ User fetch/send error: ${err.message}`);
+      console.error('[CRON] Send error:', err.message);
+      await logEvent('cron', 'error', `❌ Send error: ${err.message}`);
     }
   }, { timezone: 'Etc/UTC' });
-
-  // 3️⃣ Downgrade expired subscriptions at 00:00 UTC
-  cron.schedule('0 0 * * *', async () => {
-    const time = new Date().toISOString();
-    console.log(`[CRON] Checking for expired subscriptions: ${time}`);
-    await logEvent('cron', 'info', `🚀 Checking for expired subscriptions at ${time}`);
-
-    try {
-      const { rows: expiredUsers } = await db.query(
-        `SELECT id, email FROM users WHERE end_date IS NOT NULL AND end_date <= CURRENT_DATE`
-      );
-
-      if (!expiredUsers.length) {
-        console.log('[CRON] No users to downgrade today.');
-        await logEvent('cron', 'warn', '⚠️ No users to downgrade today.');
-        return;
-      }
-
-      for (const user of expiredUsers) {
-        try {
-          await db.query(
-            `UPDATE users SET plan = 'free', end_date = NULL WHERE id = $1`,
-            [user.id]
-          );
-          console.log(`[CRON] Downgraded ${user.email} to free plan.`);
-          await logEvent('cron', 'info', `✅ Downgraded ${user.email} to free plan.`);
-
-          const farewellPath = path.join(__dirname, '../../templates/farewell_email.html');
-          const farewellHtml = await fs.readFile(farewellPath, 'utf-8');
-
-          await sendEmail(
-            user.email,
-            'Thank You for Using The Phoenix Protocol',
-            farewellHtml
-          );
-
-          console.log(`[CRON] Expiry notice sent to ${user.email}`);
-          await logEvent('cron', 'info', `📧 Expiry notice sent to ${user.email}`);
-        } catch (err) {
-          console.error(`[CRON] Downgrade error for ${user.email}:`, err.message);
-          await logEvent('cron', 'error', `❌ Downgrade error for ${user.email}: ${err.message}`);
-        }
-      }
-    } catch (err) {
-      console.error('[CRON] Expiry check error:', err.message);
-      await logEvent('cron', 'error', `❌ Expiry check error: ${err.message}`);
-    }
-  });
 }
 
 module.exports = { startCron };

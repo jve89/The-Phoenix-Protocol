@@ -1,25 +1,24 @@
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 
-const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // amounts in cents
+const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // cents
 
-const createCheckoutSession = async (email, plan, gender = null, goal_stage = null) => {
+const createCheckoutSession = async (email, plan, gender = '', goal_stage = '') => {
   if (!process.env.STRIPE_SECRET_KEY) {
-    console.error('Stripe secret key not found in environment');
-    throw new Error('Missing Stripe API key');
+    console.error('[Stripe] Missing STRIPE_SECRET_KEY');
+    throw new Error('Stripe API key is missing');
   }
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     throw new Error('Invalid email');
   }
 
-  if (!pricingMap[plan]) {
-    throw new Error('Invalid plan');
+  const amount = pricingMap?.[String(plan)];
+  if (!amount) {
+    throw new Error(`Invalid plan: ${plan}`);
   }
 
-  const amount = pricingMap[plan];
-
-  console.log(`Creating checkout session for email: ${email}, plan: ${plan}, gender: ${gender}, goal_stage: ${goal_stage}`);
+  console.log(`[Stripe] Creating session for ${email} - Plan: ${plan}, Gender: ${gender}, Goal: ${goal_stage}`);
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -33,23 +32,23 @@ const createCheckoutSession = async (email, plan, gender = null, goal_stage = nu
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://www.thephoenixprotocol.app/checkout.html`,
+      success_url: 'https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://www.thephoenixprotocol.app/checkout.html',
       customer_email: email,
       customer_creation: 'always',
       metadata: {
         email,
-        plan,
-        gender: gender || '',
-        goal_stage: goal_stage || ''
+        plan: String(plan),
+        gender,
+        goal_stage
       }
     });
 
-    console.log('Stripe checkout session created:', session.id);
+    console.log('[Stripe] Session created:', session.id);
     return session.url;
 
   } catch (error) {
-    console.error('Stripe error:', error.message, error);
+    console.error('[Stripe] Checkout creation error:', error.message);
     throw new Error('Payment setup failed');
   }
 };
@@ -58,28 +57,29 @@ const refundLatestChargeForEmail = async (email) => {
   try {
     const customers = await stripe.customers.list({ email, limit: 1 });
     if (!customers.data.length) {
-      console.warn(`⚠️ No customer found for ${email}, cannot refund.`);
+      console.warn(`[Stripe] No customer found for ${email}`);
       return;
     }
+
     const customer = customers.data[0];
-
     const charges = await stripe.charges.list({ customer: customer.id, limit: 1 });
+
     if (!charges.data.length) {
-      console.warn(`⚠️ No charge found for ${email}, cannot refund.`);
+      console.warn(`[Stripe] No charges found for ${email}`);
       return;
     }
-    const charge = charges.data[0];
 
+    const charge = charges.data[0];
     if (charge.refunded) {
-      console.log(`⚠️ Charge ${charge.id} already refunded for ${email}`);
+      console.log(`[Stripe] Charge ${charge.id} already refunded for ${email}`);
       return;
     }
 
     await stripe.refunds.create({ charge: charge.id });
-    console.log(`✅ Issued refund for ${email}, charge ${charge.id}`);
+    console.log(`[Stripe] Refunded charge ${charge.id} for ${email}`);
 
   } catch (error) {
-    console.error(`❌ Error issuing refund for ${email}:`, error);
+    console.error(`[Stripe] Refund error for ${email}:`, error.message);
   }
 };
 

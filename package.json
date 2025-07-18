@@ -1,20 +1,24 @@
 {
   "name": "the-phoenix-protocol",
   "version": "1.0.0",
-  "description": "Daily motivational email service for heartbroken people",
+  "description": "Daily AI-powered motivational email service for heartbreak recovery",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jve89/The-Phoenix-Protocol.git"
+    "url": "https://github.com/jve89/The-Phoenix-Protocol.git"
   },
   "keywords": [
     "saas",
+    "breakup",
+    "ai",
+    "email",
     "motivation",
-    "heartbreak"
+    "self-improvement"
   ],
   "author": "jve89",
   "license": "MIT",
@@ -33,5 +37,9 @@
     "node-cron": "^4.2.0",
     "pg": "^8.16.3",
     "stripe": "^11.1.0"
+  },
+  "devDependencies": {
+    "tree-cli": "^0.6.7",
+    "nodemon": "^3.1.0"
   }
 }

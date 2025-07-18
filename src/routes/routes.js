@@ -124,6 +124,7 @@ router.post('/signup', async (req, res) => {
 
   try {
     const { rows: existingUserRows } = await db.query('SELECT plan, end_date FROM users WHERE email = $1', [email]);
+    const welcomeTemplate = await loadTemplate('welcome.html');
 
     if (existingUserRows.length > 0) {
       const user = existingUserRows[0];
@@ -142,15 +143,11 @@ router.post('/signup', async (req, res) => {
         [plan, goal_stage || null, email]
       );
 
-      const welcomeBackTemplate = await loadTemplate('welcome_back.html');  // added await
-      await sendEmail(email, 'Welcome Back to The Phoenix Protocol', welcomeBackTemplate);
-
-      // Do NOT send first guide here. Wait for payment webhook.
+      await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
+      console.log('✅ Welcome email sent to returning user:', email);
 
     } else {
-      const endDate = null; // To be set on webhook payment confirmation
-
-      const insertValues = [email, name || null, gender, plan, endDate, goal_stage || null];
+      const insertValues = [email, name || null, gender, plan, null, goal_stage || null];
       console.log('🧩 Insert values:', insertValues);
 
       await db.query(
@@ -158,16 +155,14 @@ router.post('/signup', async (req, res) => {
         insertValues
       );
 
-      const welcomeTemplate = await loadTemplate('welcome.html');  // added await
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
-      console.log('✅ Welcome email sent to', email);
-
-      // Removed sendFirstGuideImmediately here - webhook will send after payment
+      console.log('✅ Welcome email sent to new user:', email);
     }
 
     const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);
     console.log('✅ Stripe checkout session created, redirecting user.');
     res.status(200).json({ message: 'Sign-up successful', url });
+
   } catch (err) {
     console.error('❌ Database error during signup:', err);
     res.status(500).json({ error: 'Sign-up failed: Database issue' });

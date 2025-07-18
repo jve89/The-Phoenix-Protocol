@@ -6,29 +6,23 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// SQL for users table with all expected columns & proper types
+// SQL table schema for users
 const usersTableSQL = `
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   name TEXT,
   gender TEXT,
-  plan TEXT,
-  end_date TIMESTAMP, -- proper date type
-  session_id TEXT,
   goal_stage TEXT,
+  plan TEXT,
+  end_date TIMESTAMP,
   first_guide_sent_at TIMESTAMP,
-  bounces INTEGER DEFAULT 0,
-  payment_status TEXT,
-  stripe_customer_id TEXT,
-  stripe_payment_intent TEXT,
-  stripe_checkout_session_id TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
 `;
 
-// Initialize DB (call on app startup)
+// Init DB and table
 async function connectAndInit() {
   try {
     await pool.query(usersTableSQL);
@@ -42,7 +36,7 @@ async function connectAndInit() {
   }
 }
 
-// Wrapper to execute queries with error handling
+// Safe query wrapper
 async function query(text, params) {
   try {
     return await pool.query(text, params);
@@ -52,7 +46,7 @@ async function query(text, params) {
   }
 }
 
-// Fetch user by session_id
+// Utility: fetch user by session ID
 async function getUserBySessionId(sessionId) {
   const result = await query('SELECT * FROM users WHERE session_id = $1', [sessionId]);
   return result.rows[0];

@@ -1,113 +1,200 @@
-# The Phoenix Protocol
+# **The Phoenix Protocol**
 
-**The Phoenix Protocol** is a premium heartbreak recovery service that delivers daily, psychologically grounded guides to paying subscribers. Each guide is tailored to the user's gender and emotional goal (reconnect or move on). The app uses AI-generated content, email automation, and Stripe integration to operate autonomously.
-
----
-
-## 📦 Features
-
-- 🔥 6 personalised story variants:
-  - `male_reconnect`, `male_moveon`
-  - `female_reconnect`, `female_moveon`
-  - `neutral_reconnect`, `neutral_moveon`
-- ✅ Stripe checkout with webhook-based payment confirmation
-- 📧 Premium email delivery system (daily + immediate first guide)
-- 🔁 Retry queue for failed emails
-- 🧠 AI prompt system for generating new content
-- 🧾 Unsubscribe mechanism with JWT tokens
-- 🛠️ CLI utilities for testing and debugging
+**The Phoenix Protocol** is a fully automated heartbreak recovery SaaS. It delivers daily AI-generated guides tailored to gender and emotional goals (reconnect or move on), sent via email to paying subscribers. Built for quiet, long-term operation with minimal human maintenance.
 
 ---
 
-## 🧩 Architecture Overview
+## 🔥 Key Features
 
-├── content/ # AI prompts and generated daily content
-│ ├── prompts/ # 6 variant prompt files (male/female/neutral × reconnect/move_on)
-│ ├── daily_cache/ # JSON output from daily AI guide generation
-│ └── fallback.json # Default fallback guide
+* ✅ **6 Personalised Variants**:
+  `male_reconnect`, `male_moveon`
+  `female_reconnect`, `female_moveon`
+  `neutral_reconnect`, `neutral_moveon`
+
+* 💳 Stripe checkout + webhook-based activation
+
+* 📧 Daily email delivery + instant first guide
+
+* 🔁 Retry queue for failed email attempts
+
+* 🧠 GPT prompt system for content generation
+
+* 🔓 JWT-powered unsubscribe system
+
+* 🛠️ Test + debug CLI scripts included
+
+* 🪫 Auto-refund after 5 bounces (SendGrid + Stripe)
+
+---
+
+## 🧱 Architecture Overview
+
+```
+.
+├── content/
+│   ├── prompts/               # Prompt files per variant (6 total)
+│   ├── daily_cache/           # JSON guide output (auto-generated daily)
+│   └── fallback.json          # Emergency fallback if guide fails
 │
-├── logs/ # Log files for debugging and audit
+├── logs/                      # Log files (guide generation, retries, etc.)
 │
-├── public/ # Static frontend assets (HTML, images, scripts)
+├── public/                    # Frontend: index.html, checkout.html, etc.
 │
 ├── src/
-│ ├── db/ # Postgres connection
-│ ├── routes/ # Express API routes
-│ └── utils/ # Core pipeline logic (email, cron, Stripe, guide generation)
+│   ├── db/                    # Postgres connection + setup
+│   ├── routes/                # Express routes (signup, webhook, unsubscribe)
+│   └── utils/                 # Core logic (email, cron, payment, logging)
 │
-├── templates/ # HTML email templates
-├── test/ # Manual test scripts for QA
-└── users.db # SQLite for development fallback (use Postgres in production)
+├── templates/                 # Email HTML templates
+├── test/                      # Manual test scripts
+├── filetree.txt               # Reference structure (internal)
+├── Dockerfile                 # Heroku-compatible container
+└── Procfile                   # Heroku process declaration
+```
 
 ---
 
-## 🛠️ Environment Variables
+## ⚙️ Environment Variables
 
-The following variables must be set in `.env` (or on Heroku):
+Must be set in `.env` or via Heroku Config Vars:
 
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-JWT_SECRET=your_jwt_secret
+```
+DATABASE_URL
+PORT
+STRIPE_SECRET_KEY
+STRIPE_PUBLIC_KEY
+STRIPE_WEBHOOK_SECRET
+SENDGRID_API_KEY
+GROK_API_KEY       # Optional (used for AI tip variant)
+JWT_SECRET
+```
 
 ---
 
-## ⚙️ Core Scripts
+## 🧩 Core Commands
 
-### ✅ Generate new content
-✅ Send daily premium guides
-node src/utils/send_today_guide.js
+### 🔁 Retry Queue
 
-✅ Send immediate guide to new user
-node src/utils/send_first_guide_immediately.js user@example.com female reconnect
+Manages failed email sends:
 
-🔁 Retry Email Failures
+```bash
 node src/utils/retry_email_queue.js
+```
 
-📩 Stripe Webhook
-POST /api/webhooks
-It updates the user’s payment status and triggers refunds for repeated email bounces.
+### 📤 Daily Premium Guide Sender
 
-🔓 Unsubscribe
-Each email contains a secure unsubscribe token using JWT.
-Landing page: /unsubscribe?token=...
-Route: /api/unsubscribe handles secure opt-out.
+Sends one email per user based on variant:
 
-🧪 Test Scripts
-test/test_send_premium.js
-test/test_farewell.js
-test/test_welcome_back.js
+```bash
+node src/utils/send_today_guide.js
+```
 
-🧠 Prompt Generation Logic
-All 6 variant prompts are located in:
-content/prompts/
-Each file exports multiple prompt templates used during AI generation.
-To update prompts, simply edit the JS files and regenerate guides.
+### 🚀 Cron (15:00 UTC)
 
-🧼 Logging
-Log files are saved to:
-logs/send_today_guide.log
-logs/generate_today_guide_debug.log
-logs/email_retry_failures.json
+Automatically runs the above daily. Triggered via:
 
-Use logs to debug sending issues, failed variants, or retry failures.
+```js
+startCron(); // Inside server.js
+```
 
-🚀 Deployment
-Heroku-compatible. Make sure the following files are present:
+### 🆕 Immediate Guide for New Signups
 
-Procfile
+Automatically sent via backend, or test manually:
 
-.env (via Heroku Config Vars)
+```bash
+node src/utils/send_first_guide_immediately.js user@example.com female reconnect
+```
 
-package.json with proper start script
+---
 
-📣 Status Monitoring
-/api/ping – UptimeRobot-compatible health check
-/api/cron/status – Last cron run timestamp
-/api/debug/list-users – Debug-only user listing
-/api/debug/retry-emails – Force retry for failed emails (manual)
+## 🧪 Manual Testing
 
-👨‍💻 Author
-Built by Johan (@vanerkel)
-Clean structure, long-term maintainability, and automation-first design.
+Scripts under `/test`:
+
+```bash
+node test/test_send_premium.js       # Force-send a guide to a user
+node test/test_farewell.js           # Sends exit email
+node test/test_welcome_back.js       # Sends "welcome back" email
+```
+
+---
+
+## 📩 Stripe Webhook (Refund Logic)
+
+Route: `POST /api/webhooks`
+
+* Updates user payment status
+* Triggers auto-refund after 5 bounces
+* Refund logic in:
+
+  * `src/utils/payment.js`
+  * `src/routes/webhooks.js`
+
+---
+
+## 🧠 AI Prompt Architecture
+
+Prompt variants live in:
+
+```
+/content/prompts/
+  ├── male_moveon.js
+  ├── female_reconnect.js
+  └── ...etc
+```
+
+Each exports template strings that fuel daily guide generation.
+To update: edit prompt file → rerun guide generator.
+
+---
+
+## 🔐 Unsubscribe Logic
+
+* Each email contains a signed JWT unsubscribe token
+* Route: `GET /unsubscribe?token=...`
+* Backend: `src/routes/unsubscribe.js` handles validation and DB update
+
+---
+
+## 📈 Monitoring
+
+* `GET /api/ping` – UptimeRobot-compatible
+* `GET /api/cron/status` – Timestamp of last cron run
+* `GET /api/debug/list-users` – Debug only
+* `GET /api/debug/retry-emails` – Force all retries (manual override)
+
+---
+
+## 🧼 Logs & Debugging
+
+Check logs under `/logs/`:
+
+* `send_today_guide.log` – Email sends
+* `generate_today_guide_debug.log` – Content generation
+* `email_retry_failures.json` – Email retry queue
+
+---
+
+## 🚀 Deployment
+
+Fully Heroku-ready.
+Ensure the following are present:
+
+```
+/Procfile
+/Dockerfile
+/.env (or Heroku Config Vars)
+package.json  → with "start": "node src/server.js"
+```
+
+---
+
+## 👨‍💻 Author
+
+Made by **Johan (@vanerkel)**
+Cleanly architected for long-term operation with minimal oversight.
+No fluff. Just recovery — delivered.
+
+---
 
 
