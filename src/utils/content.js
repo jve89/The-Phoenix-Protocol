@@ -1,13 +1,12 @@
 require('dotenv').config();
 const axios = require('axios');
 const path = require('path');
-const { format, subDays } = require('date-fns');
 const db = require('../db/db');
 
 // Cache loaded prompts keyed by variant
 const promptCache = {};
 
-// 🔧 Centralised log writer for dashboard
+// 🔧 Centralised log writer for monitoring
 async function logEvent(source, level, message) {
   await db.query(`
     INSERT INTO guide_generation_logs (source, level, message)
@@ -15,7 +14,7 @@ async function logEvent(source, level, message) {
   `, [source, level, message]);
 }
 
-// Helper to load and cache prompt files
+// 🔁 Load and cache prompt lists from content/prompts
 function getPromptList(variant) {
   if (promptCache[variant]) return promptCache[variant];
   try {
@@ -27,7 +26,7 @@ function getPromptList(variant) {
   }
 }
 
-// 🧠 Generate one tip
+// 🧠 Generate one AI-generated guide
 const generateTip = async (gender, goalStage) => {
   const variant = `${gender}_${goalStage}`;
   const promptList = getPromptList(variant);
@@ -75,61 +74,6 @@ const generateTip = async (gender, goalStage) => {
   }
 };
 
-// 📅 Generate and cache all 6 variants
-const generateAndCacheDailyGuides = async () => {
-  const today = format(new Date(), 'yyyy-MM-dd');
-  await logEvent('content', 'info', `🚀 Starting guide generation for ${today}`);
-
-  const combos = [
-    ['male', 'moveon'], ['male', 'reconnect'],
-    ['female', 'moveon'], ['female', 'reconnect'],
-    ['neutral', 'moveon'], ['neutral', 'reconnect']
-  ];
-
-  const guideObject = { date: today };
-
-  for (const [gender, goalStage] of combos) {
-    const variant = `${gender}_${goalStage}`;
-    await logEvent('content', 'info', `🧠 Generating ${variant}`);
-    const content = await generateTip(gender, goalStage);
-    const title = content.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide';
-    guideObject[variant] = { title, content };
-  }
-
-  await db.query(`
-    INSERT INTO daily_guides (date, guide)
-    VALUES ($1, $2)
-    ON CONFLICT (date) DO UPDATE SET guide = EXCLUDED.guide
-  `, [today, JSON.stringify(guideObject)]);
-
-  await logEvent('content', 'info', `✅ Daily guide stored for ${today}`);
-};
-
-// 📖 Load from DB by date
-const loadGuideByDate = async (dateStr) => {
-  try {
-    const { rows } = await db.query(
-      `SELECT guide FROM daily_guides WHERE date = $1`,
-      [dateStr]
-    );
-    return rows.length ? rows[0].guide : null;
-  } catch (err) {
-    await logEvent('content', 'error', `loadGuideByDate(${dateStr}): ${err.message}`);
-    return null;
-  }
-};
-
-// 📖 Load today's guide (fallback to yesterday)
-const loadTodayGuide = async () => {
-  const today = format(new Date(), 'yyyy-MM-dd');
-  const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
-
-  return await loadGuideByDate(today) || await loadGuideByDate(yesterday);
-};
-
 module.exports = {
-  generateTip,
-  generateAndCacheDailyGuides,
-  loadTodayGuide,
-  loadGuideByDate
+  generateTip
 };
