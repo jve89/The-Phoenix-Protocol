@@ -4,7 +4,6 @@ const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 const { retryAllPendingEmails } = require('../utils/retry_email_queue');
-const { sendFirstGuideImmediately } = require('../utils/send_first_guide_immediately');
 const { loadTodayGuide, loadGuideByDate } = require('../utils/content'); // Make sure these are exported from utils/content.js
 
 const router = express.Router();
