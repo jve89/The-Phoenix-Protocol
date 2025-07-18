@@ -3,7 +3,6 @@ const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
 const { sendEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
-const { retryAllPendingEmails } = require('../utils/retry_email_queue');
 
 const router = express.Router();
 
@@ -34,17 +33,6 @@ function sanitizeInput(value) {
 }
 
 router.use(rateLimiter);
-
-// Retry failed emails endpoint (debug)
-router.get('/debug/retry-emails', async (req, res) => {
-  try {
-    await retryAllPendingEmails();
-    res.status(200).json({ status: 'Retry attempt complete' });
-  } catch (err) {
-    console.error('[DEBUG] Email retry route error:', err.message);
-    res.status(500).json({ error: 'Retry failed', details: err.message });
-  }
-});
 
 // Health check ping
 router.get('/ping', (req, res) => {

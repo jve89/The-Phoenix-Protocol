@@ -62,9 +62,9 @@
    ├── premium_guide_email.html
    └── welcome.html
 
-directory: 280 file: 2005
+directory: 320 file: 2112
 
-ignored: directory (7)
+ignored: directory (8)
 
 
 [2K[1G
