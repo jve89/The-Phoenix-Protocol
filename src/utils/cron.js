@@ -29,6 +29,7 @@ function startCron() {
   // 1️⃣ Guide generation at 15:00 UTC
   cron.schedule('0 15 * * *', async () => {
     const time = new Date().toISOString();
+    global.lastCronTimestamp = time; // ← 🛠️ Add this line
     console.log(`[CRON] Generating today's guide: ${time}`);
     await logEvent('cron', 'info', `🚀 Guide generation started at ${time}`);
 
@@ -41,17 +42,15 @@ function startCron() {
       const guide = await loadGuideByDate(today);
 
       if (guide && process.env.ADMIN_EMAIL) {
-        setTimeout(async () => {
-          try {
-            const adminHtml = buildAdminGuideEmailHtml(guide);
-            await sendEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
-            console.log('[CRON] Admin guide email sent.');
-            await logEvent('cron', 'info', '✅ Admin summary email sent.');
-          } catch (err) {
-            console.error('[CRON] Admin email failed:', err.message);
-            await logEvent('cron', 'error', `❌ Admin email failed: ${err.message}`);
-          }
-        }, 30 * 60 * 1000); // 15:30 UTC
+        try {
+          const adminHtml = buildAdminGuideEmailHtml(guide);
+          await sendEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
+          console.log('[CRON] Admin guide email sent.');
+          await logEvent('cron', 'info', '✅ Admin summary email sent.');
+        } catch (err) {
+          console.error('[CRON] Admin email failed:', err.message);
+          await logEvent('cron', 'error', `❌ Admin email failed: ${err.message}`);
+        }
       }
     } catch (err) {
       console.error('[CRON] Guide generation error:', err.message);
@@ -63,6 +62,8 @@ function startCron() {
   cron.schedule('0 16 * * *', async () => {
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
+    global.lastCronTimestamp = now.toISOString(); // 🛠️ Add this
+    console.log(`[CRON] Sending daily guides: ${now.toISOString()}`);
 
     console.log(`[CRON] Sending daily guides: ${now.toISOString()}`);
     await logEvent('cron', 'info', `📬 Starting guide send: ${now.toISOString()}`);

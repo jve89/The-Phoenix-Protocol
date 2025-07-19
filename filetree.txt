@@ -37,7 +37,6 @@
 |  ├── sample-guide.html
 |  ├── script.js
 |  ├── sitemap.xml
-|  ├── style.css
 |  ├── success.html
 |  └── terms.html
 ├── setup.md
@@ -62,9 +61,9 @@
    ├── premium_guide_email.html
    └── welcome.html
 
-directory: 320 file: 2112
+directory: 464 file: 2382
 
-ignored: directory (8)
+ignored: directory (12)
 
 
 [2K[1G
