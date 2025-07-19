@@ -5,10 +5,10 @@ const cron = require('node-cron');
 const db = require('../db/db');
 const fs = require('fs').promises;
 const path = require('path');
-const { sendEmail } = require('./email');
+const { sendRawEmail } = require('./email'); // 🟣 Updated
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
-const { logEvent } = require('./db_logger'); // 🧼 Only this remains
+const { logEvent } = require('./db_logger');
 
 function buildAdminGuideEmailHtml(guide) {
   let html = `<h1>Daily Guide Summary - ${guide.date}</h1>`;
@@ -29,7 +29,7 @@ function startCron() {
   // 1️⃣ Guide generation at 15:00 UTC
   cron.schedule('0 15 * * *', async () => {
     const time = new Date().toISOString();
-    global.lastCronTimestamp = time; // ← 🛠️ Add this line
+    global.lastCronTimestamp = time;
     console.log(`[CRON] Generating today's guide: ${time}`);
     await logEvent('cron', 'info', `🚀 Guide generation started at ${time}`);
 
@@ -44,7 +44,7 @@ function startCron() {
       if (guide && process.env.ADMIN_EMAIL) {
         try {
           const adminHtml = buildAdminGuideEmailHtml(guide);
-          await sendEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
+          await sendRawEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
           console.log('[CRON] Admin guide email sent.');
           await logEvent('cron', 'info', '✅ Admin summary email sent.');
         } catch (err) {
@@ -62,9 +62,7 @@ function startCron() {
   cron.schedule('0 16 * * *', async () => {
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
-    global.lastCronTimestamp = now.toISOString(); // 🛠️ Add this
-    console.log(`[CRON] Sending daily guides: ${now.toISOString()}`);
-
+    global.lastCronTimestamp = now.toISOString();
     console.log(`[CRON] Sending daily guides: ${now.toISOString()}`);
     await logEvent('cron', 'info', `📬 Starting guide send: ${now.toISOString()}`);
 
@@ -104,7 +102,7 @@ function startCron() {
           .replace('{{content}}', guideContent.content.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>'));
 
         try {
-          await sendEmail(user.email, guideContent.title, html);
+          await sendRawEmail(user.email, guideContent.title, html);
           console.log(`[CRON] ✅ Sent to ${user.email}`);
           await logEvent('cron', 'info', `✅ Guide sent: ${user.email}`);
 
@@ -118,7 +116,7 @@ function startCron() {
             await db.query(`UPDATE users SET plan = 'free' WHERE id = $1`, [user.id]);
 
             const farewellHtml = await fs.readFile(path.join(__dirname, '../../templates/farewell_email.html'), 'utf-8');
-            await sendEmail(user.email, 'Thank You for Using The Phoenix Protocol', farewellHtml);
+            await sendRawEmail(user.email, 'Thank You for Using The Phoenix Protocol', farewellHtml);
 
             console.log(`[CRON] 🔚 Final guide sent. Downgraded ${user.email}`);
             await logEvent('cron', 'info', `🔚 Final guide sent & unsubscribed: ${user.email}`);
@@ -127,7 +125,6 @@ function startCron() {
         } catch (err) {
           console.error(`[CRON] ❌ Send failed for ${user.email}:`, err.message);
           await logEvent('cron', 'error', `❌ Send fail: ${user.email} – ${err.message}`);
-          // 🔥 REMOVED: logFailure() no longer exists
         }
       }
     } catch (err) {
