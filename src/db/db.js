@@ -42,13 +42,25 @@ CREATE TABLE IF NOT EXISTS guide_generation_logs (
 `;
 
 /**
- * Connect to the database and initialize tables
+ * Connect to the database and initialize tables + columns
  */
 async function connectAndInit() {
   try {
+    // 1️⃣ Ensure base tables exist
     await pool.query(initSQL);
     console.log('✅ Database schema is ready');
 
+    // 2️⃣ Add any missing user‑columns (safe even if already present)
+    await pool.query(`
+      ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS plan_limit INTEGER DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS usage_count INTEGER DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS bounces INTEGER DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS session_id TEXT;
+    `);
+    console.log('✅ Users table columns updated (plan_limit, usage_count, bounces, session_id)');
+
+    // 3️⃣ Verify connection
     const result = await pool.query(
       'SELECT inet_server_addr() AS host, current_database() AS db'
     );
