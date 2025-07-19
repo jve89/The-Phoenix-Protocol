@@ -71,11 +71,13 @@ router.post('/signup', async (req, res) => {
   const name = sanitizeInput(req.body.name);
   const gender = sanitizeInput(req.body.gender);
   const plan = sanitizeInput(req.body.plan);
-  const goal_stage = sanitizeInput(req.body.goal_stage);
+  // normalize goal_stage: anything not 'reconnect' becomes 'moveon'
+  const rawGoal = sanitizeInput(req.body.goal_stage);
+  const goal_stage = rawGoal === 'reconnect' ? 'reconnect' : 'moveon';
 
   // Validate required fields
-  if (!email || !gender || !plan || !goal_stage) {
-    console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan, goal_stage });
+  if (!email || !gender || !plan || !rawGoal) {
+    console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan, rawGoal });
     return res.status(400).json({ error: 'Email, gender, plan, and goal_stage are required.' });
   }
 
@@ -150,12 +152,13 @@ router.post('/create-checkout-session', async (req, res) => {
   const email = sanitizeInput(req.body.email);
   const plan = sanitizeInput(req.body.plan);
   const gender = sanitizeInput(req.body.gender);
-  const goal_stage = sanitizeInput(req.body.goal_stage);
+  const rawGoal = sanitizeInput(req.body.goal_stage);
+  const goal_stage = rawGoal === 'reconnect' ? 'reconnect' : 'moveon';
 
   console.log('Creating checkout session:', { email, plan, goal_stage });
 
-  if (!email || !plan || !goal_stage) {
-    console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan, goal_stage });
+  if (!email || !plan || !rawGoal) {
+    console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan, rawGoal });
     return res.status(400).json({ error: 'Email, plan, and goal_stage are required.' });
   }
 
@@ -179,3 +182,4 @@ router.post('/create-checkout-session', async (req, res) => {
 });
 
 module.exports = router;
+
