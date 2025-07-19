@@ -1,3 +1,5 @@
+// src/server.js
+
 const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes/routes');
@@ -13,7 +15,7 @@ dotenv.config();
 process.on('uncaughtException', err => {
   console.error('🔥 Uncaught Exception:', err);
 });
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   console.error('🔥 Unhandled Rejection:', reason);
 });
 
@@ -22,6 +24,18 @@ const requiredEnv = ['STRIPE_SECRET_KEY', 'SENDGRID_API_KEY', 'DATABASE_URL'];
 for (const key of requiredEnv) {
   if (!process.env[key]) console.error(`❌ Missing env var: ${key}`);
   else console.log(`${key}: ✅ Present`);
+}
+
+// ⚠️ Consistency checks for other critical envs
+if (!process.env.JWT_SECRET) {
+  console.error('❌ Missing env var: JWT_SECRET');
+} else {
+  console.log('JWT_SECRET: ✅ Present');
+}
+if (!process.env.ADMIN_EMAIL) {
+  console.warn('⚠️ ADMIN_EMAIL not set — admin preview emails disabled');
+} else {
+  console.log('ADMIN_EMAIL: ✅ Present');
 }
 
 // ✅ App setup

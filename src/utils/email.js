@@ -1,3 +1,5 @@
+// src/utils/email.js
+
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config(); // rely on global config
 

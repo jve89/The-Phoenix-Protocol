@@ -1,3 +1,5 @@
+// public/script.js
+
 const form = document.getElementById('signup-form');
 const submitBtn = form.querySelector('button[type="submit"]');
 
@@ -18,12 +20,13 @@ form.addEventListener('submit', async (e) => {
     alert('Please enter a valid email address.');
     return;
   }
-  if (!data.gender || !data.plan) {
-    alert('Please select both gender and plan.');
+  if (!data.gender || !data.plan || !data.goal_stage) {
+    alert('Please select gender, plan, and goal stage.');
     return;
   }
 
   submitBtn.disabled = true;
+  const originalText = submitBtn.innerText;
   submitBtn.innerText = 'Processing...';
 
   try {
@@ -46,13 +49,13 @@ form.addEventListener('submit', async (e) => {
 
     const { url } = await checkoutRes.json();
     if (!url) throw new Error('Checkout URL not returned');
-    window.location.href = url;
 
+    window.location.href = url;
   } catch (err) {
     console.error('[Signup Error]', err.message);
     alert(err.message || 'Something went wrong. Please try again.');
   } finally {
     submitBtn.disabled = false;
-    submitBtn.innerText = 'Continue';
+    submitBtn.innerText = originalText;
   }
 });

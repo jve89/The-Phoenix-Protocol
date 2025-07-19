@@ -1,3 +1,5 @@
+// src/routes/routes.js
+
 const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
@@ -7,6 +9,7 @@ const { loadTemplate } = require('../utils/loadTemplate');
 const router = express.Router();
 
 const VALID_PLANS = ['30', '90', '365'];
+const VALID_GOAL_STAGES = ['moveon', 'reconnect'];
 
 // Simple in-memory rate limiter middleware for admin routes
 const rateLimitMap = new Map();
@@ -70,18 +73,26 @@ router.post('/signup', async (req, res) => {
   const plan = sanitizeInput(req.body.plan);
   const goal_stage = sanitizeInput(req.body.goal_stage);
 
-  if (!email || !gender || !plan) {
-    console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan });
-    return res.status(400).json({ error: 'Email, gender, and plan are required and cannot be empty.' });
+  // Validate required fields
+  if (!email || !gender || !plan || !goal_stage) {
+    console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan, goal_stage });
+    return res.status(400).json({ error: 'Email, gender, plan, and goal_stage are required.' });
   }
 
   if (!VALID_PLANS.includes(plan)) {
     console.error('❌ Signup validation failed: Invalid plan provided:', plan);
-    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365 days.' });
+    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365.' });
+  }
+  if (!VALID_GOAL_STAGES.includes(goal_stage)) {
+    console.error('❌ Signup validation failed: Invalid goal_stage provided:', goal_stage);
+    return res.status(400).json({ error: 'Invalid goal_stage. Allowed: moveon, reconnect.' });
   }
 
   try {
-    const { rows: existingUserRows } = await db.query('SELECT plan, plan_limit, usage_count FROM users WHERE email = $1', [email]);
+    const { rows: existingUserRows } = await db.query(
+      'SELECT plan, plan_limit, usage_count FROM users WHERE email = $1',
+      [email]
+    );
     const welcomeTemplate = await loadTemplate('welcome.html');
 
     if (existingUserRows.length > 0) {
@@ -96,26 +107,35 @@ router.post('/signup', async (req, res) => {
       console.log(`🔄 Re-signing expired user: ${email}`);
       await db.query(
         'UPDATE users SET plan = $1, goal_stage = $2 WHERE email = $3',
-        [plan, goal_stage || null, email]
+        [plan, goal_stage, email]
       );
 
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to returning user:', email);
 
     } else {
-      const insertValues = [email, name || null, gender, plan, null, goal_stage || null];
+      const insertValues = [
+        email,
+        name || null,
+        gender,
+        plan,
+        parseInt(plan, 10),
+        0,
+        goal_stage
+      ];
       console.log('🧩 Insert values:', insertValues);
 
       await db.query(
         'INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [email, name || null, gender, plan, parseInt(plan), 0, goal_stage || null]
+        insertValues
       );
 
       await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to new user:', email);
     }
 
-    const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);
+    // Create Stripe checkout session
+    const url = await createCheckoutSession(email, plan, gender, goal_stage);
     console.log('✅ Stripe checkout session created, redirecting user.');
     res.status(200).json({ message: 'Sign-up successful', url });
 
@@ -132,20 +152,24 @@ router.post('/create-checkout-session', async (req, res) => {
   const gender = sanitizeInput(req.body.gender);
   const goal_stage = sanitizeInput(req.body.goal_stage);
 
-  console.log('Creating checkout session:', { email, plan });
+  console.log('Creating checkout session:', { email, plan, goal_stage });
 
-  if (!email || !plan) {
-    console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan });
-    return res.status(400).json({ error: 'Email and plan are required and cannot be empty.' });
+  if (!email || !plan || !goal_stage) {
+    console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan, goal_stage });
+    return res.status(400).json({ error: 'Email, plan, and goal_stage are required.' });
   }
 
   if (!VALID_PLANS.includes(plan)) {
     console.error('❌ Validation failed for /create-checkout-session: Invalid plan provided.', plan);
-    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365 days.' });
+    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365.' });
+  }
+  if (!VALID_GOAL_STAGES.includes(goal_stage)) {
+    console.error('❌ Validation failed for /create-checkout-session: Invalid goal_stage provided.', goal_stage);
+    return res.status(400).json({ error: 'Invalid goal_stage. Allowed: moveon, reconnect.' });
   }
 
   try {
-    const url = await createCheckoutSession(email, plan, gender || null, goal_stage || null);
+    const url = await createCheckoutSession(email, plan, gender, goal_stage);
     console.log('✅ Stripe checkout session created for', email);
     res.json({ url });
   } catch (error) {

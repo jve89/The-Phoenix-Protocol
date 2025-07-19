@@ -1,24 +1,29 @@
+// src/utils/content.js
+
 require('dotenv').config();
 const axios = require('axios');
 const path = require('path');
 const { format, subDays } = require('date-fns');
 const db = require('../db/db');
 
+// Cache loaded prompts keyed by variant
 const promptCache = {};
 
-// 🔧 Log to DB
+// 🔧 Centralized log writer for monitoring
 async function logEvent(source, level, message) {
-  await db.query(`
-    INSERT INTO guide_generation_logs (source, level, message)
-    VALUES ($1, $2, $3)
-  `, [source, level, message]);
+  await db.query(
+    `INSERT INTO guide_generation_logs (source, level, message)
+     VALUES ($1, $2, $3)`
+  , [source, level, message]);
 }
 
-// 📦 Prompt loader
+// 🔁 Load and cache prompt lists from content/prompts
 function getPromptList(variant) {
   if (promptCache[variant]) return promptCache[variant];
   try {
-    const promptList = require(path.join(__dirname, `../../content/prompts/${variant}.js`));
+    const promptList = require(
+      path.join(__dirname, `../../content/prompts/${variant}.js`)
+    );
     promptCache[variant] = promptList;
     return promptList;
   } catch {
@@ -26,7 +31,7 @@ function getPromptList(variant) {
   }
 }
 
-// 🧠 Generate one guide
+// 🧠 Generate one AI-generated guide
 const generateTip = async (gender, goalStage) => {
   const variant = `${gender}_${goalStage}`;
   const promptList = getPromptList(variant);
@@ -36,7 +41,9 @@ const generateTip = async (gender, goalStage) => {
     return `Your guide is temporarily unavailable — please check back tomorrow.`;
   }
 
-  const promptObj = promptList[Math.floor(Math.random() * promptList.length)];
+  const promptObj = promptList[
+    Math.floor(Math.random() * promptList.length)
+  ];
   let prompt;
 
   if (typeof promptObj?.prompt === 'function') {
@@ -52,18 +59,22 @@ const generateTip = async (gender, goalStage) => {
 
   try {
     console.log(`[generateTip] ${variant} → Prompt:`, String(prompt).slice(0, 100), '...');
-    const res = await axios.post('https://api.x.ai/v1/chat/completions', {
-      messages: [{ role: 'user', content: prompt }],
-      model: process.env.GROK_MODEL || 'grok-3-latest',
-      stream: false,
-      temperature: 0.7,
-      max_tokens: 1000
-    }, {
-      headers: {
-        'Authorization': `Bearer ${process.env.GROK_API_KEY}`,
-        'Content-Type': 'application/json'
+    const res = await axios.post(
+      'https://api.x.ai/v1/chat/completions',
+      {
+        messages: [{ role: 'user', content: prompt }],
+        model: process.env.GROK_MODEL || 'grok-3-latest',
+        stream: false,
+        temperature: 0.7,
+        max_tokens: 1000
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.GROK_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
       }
-    });
+    );
 
     return res.data.choices[0].message.content.trim();
   } catch (err) {
@@ -72,7 +83,37 @@ const generateTip = async (gender, goalStage) => {
   }
 };
 
-// 📖 Load guide by date
+// 📅 Generate and cache all 6 variants
+const generateAndCacheDailyGuides = async () => {
+  const today = format(new Date(), 'yyyy-MM-dd');
+  await logEvent('content', 'info', `🚀 Starting guide generation for ${today}`);
+
+  const combos = [
+    ['male', 'moveon'], ['male', 'reconnect'],
+    ['female', 'moveon'], ['female', 'reconnect'],
+    ['neutral', 'moveon'], ['neutral', 'reconnect']
+  ];
+  const guideObject = { date: today };
+
+  for (const [gender, goalStage] of combos) {
+    const variant = `${gender}_${goalStage}`;
+    await logEvent('content', 'info', `🧠 Generating ${variant}`);
+    const content = await generateTip(gender, goalStage);
+    const title = content.split('\n')[0].replace(/#/g, '').trim() || 'Your Premium Guide';
+    guideObject[variant] = { title, content };
+  }
+
+  await db.query(
+    `INSERT INTO daily_guides (date, guide)
+     VALUES ($1, $2)
+     ON CONFLICT (date) DO UPDATE SET guide = EXCLUDED.guide`,
+    [today, JSON.stringify(guideObject)]
+  );
+
+  await logEvent('content', 'info', `✅ Daily guide stored for ${today}`);
+};
+
+// 📖 Load from DB by date
 const loadGuideByDate = async (dateStr) => {
   try {
     const { rows } = await db.query(
@@ -86,15 +127,16 @@ const loadGuideByDate = async (dateStr) => {
   }
 };
 
-// 📖 Load today or fallback to yesterday
+// 📖 Load today's guide (fallback to yesterday)
 const loadTodayGuide = async () => {
   const today = format(new Date(), 'yyyy-MM-dd');
   const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
-  return await loadGuideByDate(today) || await loadGuideByDate(yesterday);
+  return (await loadGuideByDate(today)) || (await loadGuideByDate(yesterday));
 };
 
 module.exports = {
   generateTip,
+  generateAndCacheDailyGuides,
   loadTodayGuide,
   loadGuideByDate
 };

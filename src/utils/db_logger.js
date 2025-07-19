@@ -1,3 +1,5 @@
+// src/utils/db_logger.js
+
 const db = require('../db/db');
 
 /**
@@ -17,23 +19,6 @@ async function logEvent(source, level = 'info', message) {
   }
 }
 
-/**
- * Insert a fallback usage log into fallback_logs table.
- * @param {string} variant - The variant key related to the fallback.
- * @param {string|null} fallbackTitle - Title or identifier of the fallback content used.
- */
-async function logFallback(variant, fallbackTitle = null) {
-  try {
-    await db.query(
-      `INSERT INTO fallback_logs (variant, fallback_title) VALUES ($1, $2)`,
-      [variant, fallbackTitle]
-    );
-  } catch (err) {
-    console.error('[db_logger] Failed to insert fallback log:', err.message);
-  }
-}
-
 module.exports = {
-  logEvent,
-  logFallback,
+  logEvent
 };
