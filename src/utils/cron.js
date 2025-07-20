@@ -1,3 +1,5 @@
+// src/utils/cron.js
+
 require('dotenv').config();
 const cron = require('node-cron');
 const db = require('../db/db');
@@ -7,6 +9,9 @@ const { sendRawEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent } = require('./db_logger');
+const { sendDailyGuideBackup } = require('./backup'); // ✅ Added
+
+const RETRY_LIMIT = 3;
 
 function buildAdminGuideEmailHtml(guide) {
   let html = `<h1>Daily Guide Summary - ${guide.date}</h1>`;
@@ -42,12 +47,12 @@ function startCron() {
       if (guide && process.env.ADMIN_EMAIL) {
         try {
           const adminHtml = buildAdminGuideEmailHtml(guide);
-          await sendRawEmail(process.env.ADMIN_EMAIL, `Daily Guide Summary for ${today}`, adminHtml);
-          console.log('[CRON] Admin guide email sent.');
-          await logEvent('cron', 'info', '✅ Admin summary email sent.');
+          await sendDailyGuideBackup(guide, adminHtml); // ← pass HTML body too
+          console.log('[CRON] Admin guide + backup sent.');
+          await logEvent('cron', 'info', '✅ Guide + backup email sent to admin.');
         } catch (err) {
-          console.error('[CRON] Admin email failed:', err.message);
-          await logEvent('cron', 'error', `❌ Admin email failed: ${err.message}`);
+          console.error('[CRON] Backup email failed:', err.message);
+          await logEvent('cron', 'error', `❌ Backup email failed: ${err.message}`);
         }
       }
     } catch (err) {
@@ -104,6 +109,11 @@ function startCron() {
           console.log(`[CRON] ✅ Sent to ${user.email}`);
           await logEvent('cron', 'info', `✅ Guide sent: ${user.email}`);
 
+          await db.query(`
+            INSERT INTO delivery_log (user_id, email, variant, status, error_message)
+            VALUES ($1, $2, $3, $4, $5)
+          `, [user.id, user.email, variant, 'success', null]);
+
           const newUsage = user.usage_count + 1;
           await db.query(
             `UPDATE users SET usage_count = $1, first_guide_sent_at = NOW() WHERE id = $2`,
@@ -123,11 +133,77 @@ function startCron() {
         } catch (err) {
           console.error(`[CRON] ❌ Send failed for ${user.email}:`, err.message);
           await logEvent('cron', 'error', `❌ Send fail: ${user.email} – ${err.message}`);
+
+          await db.query(`
+            INSERT INTO delivery_log (user_id, email, variant, status, error_message)
+            VALUES ($1, $2, $3, $4, $5)
+          `, [user.id, user.email, variant, 'failed', err.message]);
         }
       }
     } catch (err) {
       console.error('[CRON] Send error:', err.message);
       await logEvent('cron', 'error', `❌ Send error: ${err.message}`);
+    }
+  }, { timezone: 'Etc/UTC' });
+
+  // 3️⃣ Retry failed deliveries at 17:00 UTC
+  cron.schedule('0 17 * * *', async () => {
+    console.log('[CRON] 🔁 Retry pass for failed emails...');
+    await logEvent('cron', 'info', '🔁 Retry task started.');
+
+    try {
+      const { rows: failures } = await db.query(`
+        SELECT user_id, email, variant, COUNT(*) AS attempts
+        FROM delivery_log
+        WHERE status = 'failed'
+          AND sent_at > NOW() - INTERVAL '24 hours'
+        GROUP BY user_id, email, variant
+        HAVING COUNT(*) < $1
+        LIMIT 50
+      `, [RETRY_LIMIT]);
+
+      if (!failures.length) {
+        console.log('[CRON] ✅ No eligible failures to retry.');
+        return;
+      }
+
+      const template = await loadTemplate('premium_guide_email.html');
+      const today = new Date().toISOString().split('T')[0];
+      const guide = await loadGuideByDate(today);
+
+      for (const fail of failures) {
+        const { user_id, email, variant } = fail;
+        const guideContent = guide?.[variant];
+        if (!guideContent || !template) {
+          console.warn(`[CRON] ⚠️ Missing guide/template for retry: ${variant}`);
+          continue;
+        }
+
+        const html = template
+          .replace('{{title}}', guideContent.title)
+          .replace('{{content}}', guideContent.content.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>'));
+
+        try {
+          await sendRawEmail(email, guideContent.title, html);
+          console.log(`[CRON] ✅ Retry success: ${email}`);
+          await logEvent('cron', 'info', `✅ Retry sent: ${email}`);
+
+          await db.query(`
+            INSERT INTO delivery_log (user_id, email, variant, status)
+            VALUES ($1, $2, $3, 'success')
+          `, [user_id, email, variant]);
+        } catch (err) {
+          console.error(`[CRON] ❌ Retry failed for ${email}:`, err.message);
+          await db.query(`
+            INSERT INTO delivery_log (user_id, email, variant, status, error_message)
+            VALUES ($1, $2, $3, 'failed', $4)
+          `, [user_id, email, variant, err.message]);
+        }
+      }
+
+    } catch (err) {
+      console.error('[CRON] Retry task error:', err.message);
+      await logEvent('cron', 'error', `❌ Retry cron error: ${err.message}`);
     }
   }, { timezone: 'Etc/UTC' });
 }

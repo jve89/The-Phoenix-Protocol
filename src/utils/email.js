@@ -4,6 +4,8 @@ const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 const { marked } = require('marked');
 const jwt = require('jsonwebtoken');
+const fs = require('fs').promises;
+const path = require('path');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -13,9 +15,9 @@ const fromEmail = {
 };
 
 /**
- * Sends a fully rendered HTML email (with optional unsubscribe token replacement)
+ * Sends a fully rendered HTML email (with optional unsubscribe token replacement + file attachment)
  */
-const sendRawEmail = async (to, subject, html) => {
+const sendRawEmail = async (to, subject, html, attachmentPath = null) => {
   if (!to || !subject || !html) {
     console.error('[sendRawEmail] Invalid params:', { to, subject });
     throw new Error('Invalid raw email parameters');
@@ -38,6 +40,21 @@ const sendRawEmail = async (to, subject, html) => {
     subject,
     html: finalHtml,
   };
+
+  // 📎 Attach file if present
+  if (attachmentPath) {
+    try {
+      const fileContent = await fs.readFile(attachmentPath, { encoding: 'base64' });
+      msg.attachments = [{
+        content: fileContent,
+        filename: path.basename(attachmentPath),
+        type: 'application/json',
+        disposition: 'attachment',
+      }];
+    } catch (err) {
+      console.error('[sendRawEmail] Failed to attach file:', err.message);
+    }
+  }
 
   try {
     await sgMail.send(msg);
