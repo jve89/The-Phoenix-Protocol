@@ -3,6 +3,7 @@
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 const { marked } = require('marked');
+const jwt = require('jsonwebtoken');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -12,7 +13,7 @@ const fromEmail = {
 };
 
 /**
- * Sends a fully rendered HTML email (no Markdown conversion)
+ * Sends a fully rendered HTML email (with optional unsubscribe token replacement)
  */
 const sendRawEmail = async (to, subject, html) => {
   if (!to || !subject || !html) {
@@ -20,11 +21,22 @@ const sendRawEmail = async (to, subject, html) => {
     throw new Error('Invalid raw email parameters');
   }
 
+  // 🔐 Replace {{unsubscribe_token}} if present
+  let finalHtml = html;
+  if (html.includes('{{unsubscribe_token}}')) {
+    try {
+      const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '90d' });
+      finalHtml = html.replace('{{unsubscribe_token}}', token);
+    } catch (err) {
+      console.error('[sendRawEmail] Failed to generate unsubscribe token:', err.message);
+    }
+  }
+
   const msg = {
     to,
     from: fromEmail,
     subject,
-    html,
+    html: finalHtml,
   };
 
   try {
@@ -67,5 +79,5 @@ const sendMarkdownEmail = async (to, subject, markdownBody) => {
 module.exports = {
   sendRawEmail,
   sendMarkdownEmail,
-  fromEmail
+  fromEmail,
 };
