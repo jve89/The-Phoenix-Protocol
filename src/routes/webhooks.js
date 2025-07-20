@@ -116,4 +116,51 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
   }
 });
 
+// ✅ SendGrid Event Webhook
+router.post('/sendgrid', express.json(), async (req, res) => {
+  try {
+    const events = req.body;
+    if (!Array.isArray(events)) {
+      console.warn('⚠️ Invalid SendGrid webhook payload');
+      return res.status(400).json({ error: 'Invalid payload' });
+    }
+
+    for (const event of events) {
+      const type = event.event;
+      const email = (event.email || '').trim().toLowerCase();
+
+      if (!email || !['bounce', 'dropped'].includes(type)) continue;
+
+      const { rows } = await db.query(
+        `SELECT id, bounces FROM users WHERE email = $1`,
+        [email]
+      );
+
+      if (rows.length === 0) {
+        console.warn(`⚠️ No user found for SendGrid bounce: ${email}`);
+        continue;
+      }
+
+      const user = rows[0];
+      const newBounces = user.bounces + 1;
+      await db.query(`UPDATE users SET bounces = $1 WHERE id = $2`, [
+        newBounces,
+        user.id,
+      ]);
+
+      console.log(`📌 SendGrid bounce: ${email}, total: ${newBounces}`);
+
+      if (newBounces >= 5) {
+        console.log(`⚠️ ${email} reached bounce limit. Refunding.`);
+        await refundLatestChargeForEmail(email);
+      }
+    }
+
+    res.status(200).json({ received: true });
+  } catch (err) {
+    console.error('❌ SendGrid webhook error:', err.message);
+    res.status(500).json({ error: 'Webhook handler failed' });
+  }
+});
+
 module.exports = router;
