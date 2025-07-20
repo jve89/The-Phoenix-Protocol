@@ -206,6 +206,36 @@ function startCron() {
       await logEvent('cron', 'error', `❌ Retry cron error: ${err.message}`);
     }
   }, { timezone: 'Etc/UTC' });
+
+  // 4️⃣ Prune old logs daily at 03:00 UTC
+  cron.schedule('0 3 * * *', async () => {
+    console.log('[CRON] 🧹 Pruning logs older than 90 days...');
+    await logEvent('cron', 'info', '🧹 Log pruning started');
+
+    try {
+      const tables = [
+        'guide_generation_logs',
+        'delivery_log',
+        'daily_guides',
+        'email_retry_queue',
+        'fallback_logs'
+      ];
+
+      for (const table of tables) {
+        const col = table === 'fallback_logs' ? 'timestamp' : 'created_at';
+        const res = await db.query(`
+          DELETE FROM ${table}
+          WHERE ${col} < NOW() - INTERVAL '90 days'
+        `);
+        console.log(`[CRON] 🧹 ${table}: ${res.rowCount} deleted`);
+        await logEvent('cron', 'info', `🧹 ${table}: ${res.rowCount} pruned`);
+      }
+
+    } catch (err) {
+      console.error('[CRON] ❌ Prune error:', err.message);
+      await logEvent('cron', 'error', `❌ Log prune error: ${err.message}`);
+    }
+  }, { timezone: 'Etc/UTC' });
 }
 
 module.exports = { startCron };

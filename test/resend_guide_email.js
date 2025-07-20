@@ -1,5 +1,7 @@
 // test/resend_guide_email.js
 
+// test/resend_guide_email.js
+
 require('dotenv').config();
 const db = require('../src/db/db');
 const { sendRawEmail } = require('../src/utils/email');
@@ -52,10 +54,11 @@ const { marked } = require('marked');
 
       const htmlBody = marked.parse(guideContent.content);
       const finalHtml = template
-        .replace('{{title}}', guideContent.title)
+        .replace('{{title}}', guideContent.title || 'Daily Guidance')
         .replace('{{content}}', htmlBody);
 
-      await sendRawEmail(user.email, guideContent.title, finalHtml);
+      const subject = (guideContent.title || 'Your Daily Guide').trim().slice(0, 80);
+      await sendRawEmail(user.email, subject, finalHtml);
       console.log(`📤 Re-sent to ${user.email}`);
     }
 

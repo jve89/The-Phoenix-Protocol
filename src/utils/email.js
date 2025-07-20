@@ -8,11 +8,37 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
 const path = require('path');
 
+// 🔐 Ensure API key is present
+if (!process.env.SENDGRID_API_KEY) {
+  console.error('❌ SENDGRID_API_KEY is missing');
+  process.exit(1);
+}
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const fromEmail = {
   name: 'The Phoenix Protocol',
   email: 'no-reply@thephoenixprotocol.app',
+};
+
+/**
+ * Retry wrapper for transient SendGrid failures
+ */
+const sendWithRetry = async (msg, retries = 2) => {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      await sgMail.send(msg);
+      return;
+    } catch (error) {
+      const status = error.response?.statusCode;
+      const isTransient = [429, 500, 502, 503, 504].includes(status);
+      if (!isTransient || attempt === retries) {
+        console.error('❌ Raw email error:', error.response ? error.response.body : error.message);
+        throw error;
+      }
+      console.warn(`⏳ SendGrid retry ${attempt + 1}/${retries} for`, msg.to);
+      await new Promise(res => setTimeout(res, 1000 * (attempt + 1)));
+    }
+  }
 };
 
 /**
@@ -24,9 +50,20 @@ const sendRawEmail = async (to, subject, html, attachmentPath = null) => {
     throw new Error('Invalid raw email parameters');
   }
 
+  // ✂️ Enforce max subject length
+  if (subject.length > 140) {
+    console.warn(`✂️ Subject truncated for ${to}`);
+    subject = subject.slice(0, 137) + '...';
+  }
+
   // 🔐 Replace {{unsubscribe_token}} if present
   let finalHtml = html;
   if (html.includes('{{unsubscribe_token}}')) {
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET missing for unsubscribe token generation');
+      process.exit(1);
+    }
+
     try {
       const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '90d' });
       finalHtml = html.replace('{{unsubscribe_token}}', token);
@@ -35,17 +72,17 @@ const sendRawEmail = async (to, subject, html, attachmentPath = null) => {
     }
   }
 
+  const plainText = convert(finalHtml, {
+    wordwrap: 130,
+    selectors: [{ selector: 'a', options: { hideLinkHrefIfSameAsText: true } }],
+  });
+
   const msg = {
     to,
     from: fromEmail,
     subject,
     html: finalHtml,
-    text: convert(finalHtml, {
-      wordwrap: 130,
-      selectors: [
-        { selector: 'a', options: { hideLinkHrefIfSameAsText: true } },
-      ],
-    }),
+    text: plainText,
   };
 
   // 📎 Attach file if present
@@ -63,13 +100,8 @@ const sendRawEmail = async (to, subject, html, attachmentPath = null) => {
     }
   }
 
-  try {
-    await sgMail.send(msg);
-    console.log('📤 Raw email sent to', to);
-  } catch (error) {
-    console.error('❌ Raw email error:', error.response ? error.response.body : error.message);
-    throw error;
-  }
+  await sendWithRetry(msg);
+  console.log('📤 Raw email sent to', to);
 };
 
 /**
