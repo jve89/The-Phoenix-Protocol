@@ -30,19 +30,6 @@
       line-height: 1.6;
       margin: 16px 0;
     }
-    .button {
-      display: inline-block;
-      background-color: #7c3aed;
-      color: #ffffff;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-weight: 600;
-      margin-top: 20px;
-    }
-    .button:hover {
-      background-color: #6d28d9;
-    }
     .footer {
       font-size: 12px;
       color: #999;
@@ -61,12 +48,29 @@
     <h1>Thank You for Using The Phoenix Protocol</h1>
     <p>Your time with our premium program has ended, but your personal healing journey continues — and we’re still here when you're ready.</p>
     <p>If you would like to continue receiving your daily premium guides, you can easily renew your plan with just one click below:</p>
-    <a href="https://www.thephoenixprotocol.app/#pricing" class="button">Renew Your Plan</a>
+
+    <!-- ✅ Inline-styled, target-blank button -->
+    <a href="https://www.thephoenixprotocol.app/#pricing" target="_blank"
+       style="display: inline-block; background-color: #7c3aed; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; margin-top: 20px;">
+       Renew Your Plan
+    </a>
 
     <div class="footer">
       This message confirms your premium plan has ended.<br>
       You can renew anytime, or reach out to <a href="mailto:support@thephoenixprotocol.app">support@thephoenixprotocol.app</a> if you need help.
     </div>
+  </div>
+
+  <!-- ✅ Plain-text fallback for text-based clients -->
+  <div style="display:none; white-space:pre-wrap; font-family:monospace;">
+    Thank you for using The Phoenix Protocol.
+
+    Your premium plan has ended, but your healing journey continues.
+
+    To renew your plan, visit:
+    https://www.thephoenixprotocol.app/#pricing
+
+    Need help? Contact: support@thephoenixprotocol.app
   </div>
 </body>
 </html>

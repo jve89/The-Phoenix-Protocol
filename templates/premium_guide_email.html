@@ -27,7 +27,7 @@
       margin-bottom: 12px;
       line-height: 1.3;
     }
-        h4, h5, h6 {
+    h4, h5, h6 {
       color: #7c3aed;
       font-weight: 600;
       margin-top: 20px;
@@ -115,12 +115,25 @@
     <div class="logo">
       <img src="https://www.thephoenixprotocol.app/logo-purple.png" alt="The Phoenix Protocol" style="max-width: 180px; height: auto;">
     </div>
+
+    <!-- Injected HTML content from backend -->
     {{content}}
+
     <div class="footer">
       You are receiving this email because you signed up for The Phoenix Protocol.<br>
       If you no longer wish to receive these emails, you can
-      <a href="https://www.thephoenixprotocol.app/unsubscribe?token={{unsubscribe_token}}" style="color: #999; font-size: 12px;">unsubscribe here</a>.
+      <a href="https://www.thephoenixprotocol.app/unsubscribe?token={{unsubscribe_token}}" 
+         target="_blank"
+         style="color: #999; font-size: 12px;">unsubscribe here</a>.
     </div>
+  </div>
+
+  <!-- ✅ Plain-text fallback for text-based clients -->
+  <div style="display:none; white-space:pre-wrap; font-family:monospace;">
+    You're receiving this email from The Phoenix Protocol.
+
+    To unsubscribe, visit:
+    https://www.thephoenixprotocol.app/unsubscribe?token={{unsubscribe_token}}
   </div>
 </body>
 </html>
