@@ -1,19 +1,33 @@
-// test_resend.js
-
 require('dotenv').config();
 const db = require('./src/db/db');
 const { sendRawEmail } = require('./src/utils/email');
 const { loadTemplate } = require('./src/utils/loadTemplate');
-const { loadTodayGuide } = require('./src/utils/content');
+const { loadGuideByDate, loadTodayGuide } = require('./src/utils/content');
 const { marked } = require('marked');
 
 (async () => {
   try {
     const template = await loadTemplate('premium_guide_email.html');
-    const guide = await loadTodayGuide();
+    let guide = await loadTodayGuide();
+
+    // 🛟 Fallback to latest guide in DB if today's is missing
+    if (!guide) {
+      console.warn('⚠️ Today\'s guide not found. Falling back to latest available...');
+      const { rows } = await db.query(`
+        SELECT date FROM daily_guides
+        ORDER BY date DESC
+        LIMIT 1
+      `);
+
+      if (rows.length > 0) {
+        const fallbackDate = rows[0].date.toISOString().split('T')[0];
+        guide = await loadGuideByDate(fallbackDate);
+        console.log(`📦 Loaded fallback guide from ${fallbackDate}`);
+      }
+    }
 
     if (!template || !guide) {
-      console.error('❌ Missing template or guide.');
+      console.error('❌ Missing template or guide, even after fallback.');
       process.exit(1);
     }
 
@@ -35,7 +49,6 @@ const { marked } = require('marked');
       }
 
       const htmlBody = marked.parse(guideContent.content);
-
       const finalHtml = template
         .replace('{{title}}', guideContent.title)
         .replace('{{content}}', htmlBody);
