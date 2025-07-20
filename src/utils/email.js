@@ -3,6 +3,7 @@
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 const { marked } = require('marked');
+const { convert } = require('html-to-text');
 const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
 const path = require('path');
@@ -39,6 +40,12 @@ const sendRawEmail = async (to, subject, html, attachmentPath = null) => {
     from: fromEmail,
     subject,
     html: finalHtml,
+    text: convert(finalHtml, {
+      wordwrap: 130,
+      selectors: [
+        { selector: 'a', options: { hideLinkHrefIfSameAsText: true } },
+      ],
+    }),
   };
 
   // 📎 Attach file if present

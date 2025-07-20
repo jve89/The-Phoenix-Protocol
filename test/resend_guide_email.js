@@ -1,8 +1,10 @@
+// test/resend_guide_email.js
+
 require('dotenv').config();
-const db = require('./src/db/db');
-const { sendRawEmail } = require('./src/utils/email');
-const { loadTemplate } = require('./src/utils/loadTemplate');
-const { loadGuideByDate, loadTodayGuide } = require('./src/utils/content');
+const db = require('../src/db/db');
+const { sendRawEmail } = require('../src/utils/email');
+const { loadTemplate } = require('../src/utils/loadTemplate');
+const { loadGuideByDate, loadTodayGuide } = require('../src/utils/content');
 const { marked } = require('marked');
 
 (async () => {
