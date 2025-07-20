@@ -1,9 +1,9 @@
-// src/utils/trigger_guide_cron.js
+// test/trigger_guide_cron.js
 
 require('dotenv').config();
-const { generateAndCacheDailyGuides, loadGuideByDate } = require('./content');
-const { sendEmail } = require('./email');
-const { logEvent } = require('./db_logger');
+const { generateAndCacheDailyGuides, loadGuideByDate } = require('../src/utils/content');
+const { sendEmail } = require('../src/utils/email');
+const { logEvent } = require('../src/utils/db_logger');
 const path = require('path');
 const fs = require('fs').promises;
 

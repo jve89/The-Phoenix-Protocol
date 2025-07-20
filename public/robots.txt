@@ -1,4 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /api/
+Disallow: /templates/
+Disallow: /sample-guide.html
+Allow: /
 
 Sitemap: https://www.thephoenixprotocol.app/sitemap.xml

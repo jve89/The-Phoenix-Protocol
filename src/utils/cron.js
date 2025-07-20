@@ -1,11 +1,9 @@
-// src/utils/cron.js
-
 require('dotenv').config();
 const cron = require('node-cron');
 const db = require('../db/db');
 const fs = require('fs').promises;
 const path = require('path');
-const { sendRawEmail } = require('./email'); // 🟣 Updated
+const { sendRawEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent } = require('./db_logger');
@@ -70,7 +68,7 @@ function startCron() {
       const { rows: users } = await db.query(`
         SELECT id, email, gender, goal_stage, plan, plan_limit, usage_count
         FROM users
-        WHERE plan IS NOT NULL AND usage_count < plan_limit
+        WHERE plan IS NOT NULL AND plan > 0 AND usage_count < plan_limit
       `);
 
       if (!users.length) {
@@ -113,7 +111,7 @@ function startCron() {
           );
 
           if (newUsage >= user.plan_limit) {
-            await db.query(`UPDATE users SET plan = 'free' WHERE id = $1`, [user.id]);
+            await db.query(`UPDATE users SET plan = 0 WHERE id = $1`, [user.id]);
 
             const farewellHtml = await fs.readFile(path.join(__dirname, '../../templates/farewell_email.html'), 'utf-8');
             await sendRawEmail(user.email, 'Thank You for Using The Phoenix Protocol', farewellHtml);

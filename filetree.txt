@@ -55,13 +55,17 @@
 |     ├── email.js
 |     ├── loadTemplate.js
 |     └── payment.js
-└── templates
-   ├── email.html
-   ├── farewell_email.html
-   ├── premium_guide_email.html
-   └── welcome.html
+├── templates
+|  ├── email.html
+|  ├── farewell_email.html
+|  ├── premium_guide_email.html
+|  └── welcome.html
+└── test
+   ├── resend_guide_email.js
+   ├── trigger_guide_cron.js
+   └── welcome_email_test.js
 
-directory: 464 file: 2382
+directory: 469 file: 2388
 
 ignored: directory (12)
 

@@ -1,9 +1,11 @@
-// src/routes/unsubscribe.js
-
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const db = require('../db/db');
 const router = express.Router();
+
+const path = require('path');
+const fs = require('fs').promises;
+const { sendRawEmail } = require('../utils/email');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
@@ -71,13 +73,16 @@ router.post('/unsubscribe', async (req, res) => {
     const email = decoded.email;
 
     const result = await db.query(
-      `UPDATE users SET plan = 'free', usage_count = plan_limit WHERE email = $1 RETURNING email`,
+      `UPDATE users SET plan = 0, usage_count = plan_limit WHERE email = $1 RETURNING email`,
       [email]
     );
 
     if (result.rowCount === 0) {
       return res.status(404).type('text/html').send('<h2>Email not found.</h2>');
     }
+
+    const farewellHtml = await fs.readFile(path.join(__dirname, '../../templates/farewell_email.html'), 'utf-8');
+    await sendRawEmail(email, 'Thank You for Using The Phoenix Protocol', farewellHtml);
 
     const html = `
       <html>

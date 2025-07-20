@@ -1,4 +1,4 @@
-// test_welcome_email.js
+// test/welcome_email_test.js
 
 require('dotenv').config();
 const fs = require('fs');
@@ -7,7 +7,7 @@ const { sendRawEmail } = require('./src/utils/email');
 
 (async () => {
   try {
-    const html = fs.readFileSync(path.join(__dirname, 'templates/welcome.html'), 'utf-8');
+    const html = fs.readFileSync(path.join(__dirname, '../templates/welcome.html'), 'utf-8');
     await sendRawEmail('johanvanerkel@gmail.com', 'Welcome to The Phoenix Protocol', html);
     console.log('✅ Welcome email sent.');
     process.exit(0);
