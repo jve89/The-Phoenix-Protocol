@@ -1,7 +1,5 @@
 // test/resend_guide_email.js
 
-// test/resend_guide_email.js
-
 require('dotenv').config();
 const db = require('../src/db/db');
 const { sendRawEmail } = require('../src/utils/email');

@@ -47,6 +47,9 @@ router.get('/unsubscribe', (req, res) => {
           </style>
         </head>
         <body>
+        <div style="margin-bottom: 40px;">
+          <img src="https://www.thephoenixprotocol.app/logo-purple.png" alt="The Phoenix Protocol" width="120" />
+        </div>
           <h1>Are you sure?</h1>
           <p>This will cancel your premium content and cannot be undone.</p>
           <form method="POST" action="/unsubscribe?token=${encodeURIComponent(token)}">
@@ -100,6 +103,9 @@ router.post('/unsubscribe', async (req, res) => {
           </style>
         </head>
         <body>
+        <div style="margin-bottom: 40px;">
+          <img src="https://www.thephoenixprotocol.app/logo-purple.png" alt="The Phoenix Protocol" width="120" />
+        </div>
           <h1>You've been unsubscribed</h1>
           <p>You will no longer receive premium emails.</p>
         </body>
