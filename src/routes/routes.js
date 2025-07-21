@@ -3,7 +3,7 @@
 const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
-const { sendEmail } = require('../utils/email');
+const { sendRawEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
 
 const router = express.Router();
@@ -112,7 +112,7 @@ router.post('/signup', async (req, res) => {
         [plan, goal_stage, email]
       );
 
-      await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
+      await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to returning user:', email);
 
     } else {
@@ -132,7 +132,7 @@ router.post('/signup', async (req, res) => {
         insertValues
       );
 
-      await sendEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
+      await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
       console.log('✅ Welcome email sent to new user:', email);
     }
 
