@@ -108,8 +108,14 @@ router.post('/signup', async (req, res) => {
 
       console.log(`🔄 Re-signing expired user: ${email}`);
       await db.query(
-        'UPDATE users SET plan = $1, goal_stage = $2 WHERE email = $3',
-        [plan, goal_stage, email]
+        `UPDATE users
+        SET plan = $1,
+            goal_stage = $2,
+            plan_limit = $3,
+            usage_count = 0,
+            first_guide_sent_at = NULL
+        WHERE email = $4`,
+        [plan, goal_stage, parseInt(plan, 10), email]
       );
 
       await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
