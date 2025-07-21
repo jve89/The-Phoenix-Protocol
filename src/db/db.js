@@ -101,8 +101,14 @@ async function closePool() {
   }
 }
 
+// Expose a raw connection for transactions
+function connect() {
+  return pool.connect();
+}
+
 module.exports = {
   connectAndInit,
   query,
-  closePool
+  closePool,
+  connect
 };

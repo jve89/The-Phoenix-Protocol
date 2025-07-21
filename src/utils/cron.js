@@ -7,29 +7,23 @@ const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent } = require('./db_logger');
 const { sendDailyGuideBackup } = require('./backup');
+const { marked } = require('marked'); // Markdown to HTML converter
 
-// Alias structured logger using db_logger
+// Structured logger
 const logger = {
-  info:  (msg) => logEvent('cron', 'info', msg),
-  warn:  (msg) => logEvent('cron', 'warn', msg),
-  error: (msg) => logEvent('cron', 'error', msg),
+  info:  msg => logEvent('cron', 'info', msg),
+  warn:  msg => logEvent('cron', 'warn', msg),
+  error: msg => logEvent('cron', 'error', msg)
 };
 
 // Prevent overlapping runs
-const jobRunning = {
-  generate: false,
-  deliver:  false,
-  retry:    false,
-  prune:    false
-};
+const jobRunning = { generate: false, deliver: false, retry: false, prune: false };
 
-// Helper: YYYY-MM-DD in UTC
-function todayUtc() {
-  return new Date().toISOString().slice(0, 10);
-}
+// Helper: get YYYY-MM-DD in UTC
+const todayUtc = () => new Date().toISOString().slice(0, 10);
 
-// Validate required environment variables
-function validateEnv() {
+// Validate critical envs
+const validateEnv = () => {
   const required = ['SENDGRID_API_KEY', 'DATABASE_URL'];
   for (const key of required) {
     if (!process.env[key]) {
@@ -38,61 +32,66 @@ function validateEnv() {
     }
   }
   return true;
-}
+};
 
-// Job 1: Generate & cache daily guides, then send admin backup
+// Job 1: Generate & cache, then send admin backup
 async function runGenerateDailyGuides() {
+  console.log('[CRON] 🚀 Starting daily guide generation');
   logger.info('🚀 Starting daily guide generation');
   try {
     await generateAndCacheDailyGuides();
+    console.log('[CRON] ✅ Guide generation complete');
     logger.info('✅ Guide generation complete');
   } catch (err) {
+    console.error('[CRON] Guide generation failed:', err.message);
     logger.error(`Guide generation failed: ${err.message}`);
     return;
   }
 
+  // Build and send admin backup
   const date = todayUtc();
-  try {
-    const guide = await loadGuideByDate(date);
-    if (guide && process.env.ADMIN_EMAIL) {
-      const adminHtml = (() => {
-        let html = `<h1>Daily Guide Summary - ${date}</h1>`;
-        for (const variant of ['male_moveon','male_reconnect','female_moveon','female_reconnect','neutral_moveon','neutral_reconnect']) {
-          const section = guide[variant];
-          if (section) {
-            html += `<h2>${section.title}</h2><p>${section.content.replace(/\n/g,'<br>')}</p><hr>`;
-          }
-        }
-        return html;
-      })();
-
-      try {
+  if (process.env.ADMIN_EMAIL) {
+    try {
+      const guide = await loadGuideByDate(date);
+      if (guide) {
+        let adminHtml = `<h1>Daily Guide Summary - ${date}</h1>`;
+        Object.entries(guide)
+          .filter(([key]) => key !== 'date')
+          .forEach(([variant, section]) => {
+            if (section?.content) {
+              adminHtml += `<h2>${section.title}</h2>` + marked.parse(section.content) + '<hr/>';
+            }
+          });
         await sendDailyGuideBackup(guide, adminHtml);
+        console.log('[CRON] ✅ Admin guide + backup sent');
         logger.info('✅ Admin guide + backup sent');
-      } catch (err) {
-        logger.error(`Backup email failed: ${err.message}`);
       }
+    } catch (err) {
+      console.error('[CRON] Backup email failed:', err.message);
+      logger.error(`Backup email failed: ${err.message}`);
     }
-  } catch (err) {
-    logger.error(`Loading guide or sending backup failed: ${err.message}`);
   }
 }
 
-// Job 2: Deliver daily guides to users
+// Job 2: Deliver to users, rendering markdown
 async function runDeliverDailyGuides() {
+  console.log('[CRON] 📬 Starting guide delivery');
   logger.info('📬 Starting guide delivery');
-  let users;
+
+  let users = [];
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, gender, goal_stage, plan, plan_limit, usage_count
+      `SELECT id, email, gender, goal_stage, plan_limit, usage_count
        FROM users
        WHERE plan IS NOT NULL AND plan > 0 AND usage_count < plan_limit`
     ));
   } catch (err) {
+    console.error('[CRON] User query failed:', err.message);
     logger.error(`User query failed: ${err.message}`);
     return;
   }
   if (!users.length) {
+    console.log('[CRON] No eligible subscribers to send');
     logger.warn('No eligible subscribers to send');
     return;
   }
@@ -102,67 +101,44 @@ async function runDeliverDailyGuides() {
     loadTodayGuide()
   ]);
   if (!template || !guide) {
+    console.error('[CRON] Missing template or guide');
     logger.error('Missing template or guide');
     return;
   }
 
   for (const user of users) {
     const variant = `${user.gender||'neutral'}_${user.goal_stage||'reconnect'}`;
-    const guideContent = guide[variant];
-    if (!guideContent) {
-      logger.warn(`No guide for ${variant}, skipping ${user.email}`);
+    const section = guide[variant];
+    if (!section?.content) {
+      console.warn(`[CRON] No content for ${variant}, skipping ${user.email}`);
+      logger.warn(`No content for ${variant}: ${user.email}`);
       continue;
     }
 
+    const contentHtml = marked.parse(section.content);
     const html = template
-      .replace('{{title}}', guideContent.title)
-      .replace('{{content}}', guideContent.content.replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>'));
+      .replace('{{title}}', section.title)
+      .replace('{{content}}', contentHtml);
 
     try {
-      await sendRawEmail(user.email, guideContent.title, html);
-      logger.info(`✅ Sent to ${user.email}`);
+      await sendRawEmail(user.email, section.title, html);
+      console.log(`[CRON] ✅ Sent to ${user.email}`);
+      logger.info(`✅ Guide sent: ${user.email}`);
 
-      // Log & update within a transaction
-      const client = await db.connect();
-      try {
-        await client.query('BEGIN');
-        await client.query(
-          `INSERT INTO delivery_log (user_id, email, variant, status, error_message)
-           VALUES ($1,$2,$3,'success',NULL)` ,
-          [user.id, user.email, variant]
-        );
-        const newUsage = user.usage_count + 1;
-        await client.query(
-          `UPDATE users SET usage_count=$1, first_guide_sent_at=NOW() WHERE id=$2`,
-          [newUsage, user.id]
-        );
-
-        if (newUsage >= user.plan_limit) {
-          await client.query(`UPDATE users SET plan=0 WHERE id=$1`, [user.id]);
-          const farewellHtml = await fs.readFile(
-            path.join(__dirname, '../../templates/farewell_email.html'), 'utf-8'
-          );
-          await sendRawEmail(user.email, 'Thank You for Using The Phoenix Protocol', farewellHtml);
-          logger.info(`🔚 Final guide sent & unsubscribed: ${user.email}`);
-          await client.query(
-            `INSERT INTO delivery_log (user_id,email,variant,status,error_message)
-             VALUES ($1,$2,$3,'info','final')`,
-            [user.id, user.email, variant]
-          );
-        }
-        await client.query('COMMIT');
-      } catch (err) {
-        await client.query('ROLLBACK');
-        logger.error(`DB transaction failed for ${user.email}: ${err.message}`);
-      } finally {
-        client.release();
-      }
-
-    } catch (err) {
-      logger.error(`❌ Send failed for ${user.email}: ${err.message}`);
+      // Log and update usage
       await db.query(
-        `INSERT INTO delivery_log (user_id, email, variant, status, error_message)
-         VALUES ($1,$2,$3,'failed',$4)` ,
+        `INSERT INTO delivery_log (user_id,email,variant,status) VALUES ($1,$2,$3,'success')`,
+        [user.id, user.email, variant]
+      );
+      await db.query(
+        `UPDATE users SET usage_count = usage_count + 1, first_guide_sent_at = COALESCE(first_guide_sent_at, NOW()) WHERE id = $1`,
+        [user.id]
+      );
+    } catch (err) {
+      console.error(`[CRON] ❌ Send failed for ${user.email}:`, err.message);
+      logger.error(`Send failed for ${user.email}: ${err.message}`);
+      await db.query(
+        `INSERT INTO delivery_log (user_id,email,variant,status,error_message) VALUES ($1,$2,$3,'failed',$4)`,
         [user.id, user.email, variant, err.message]
       );
     }
@@ -171,23 +147,26 @@ async function runDeliverDailyGuides() {
 
 // Job 3: Retry failed deliveries
 async function runRetryFailedDeliveries() {
+  console.log('[CRON] 🔁 Starting retry of failed emails');
   logger.info('🔁 Starting retry of failed emails');
-  let failures;
+
+  let failures = [];
   try {
     ({ rows: failures } = await db.query(
       `SELECT user_id, email, variant, COUNT(*) AS attempts
        FROM delivery_log
        WHERE status='failed' AND sent_at > NOW() - INTERVAL '24 hours'
        GROUP BY user_id,email,variant
-       HAVING COUNT(*) < $1
-       LIMIT 50`,
-      [3]
+       HAVING COUNT(*) < 3
+       LIMIT 50`
     ));
   } catch (err) {
+    console.error('[CRON] Retry query failed:', err.message);
     logger.error(`Retry query failed: ${err.message}`);
     return;
   }
   if (!failures.length) {
+    console.log('[CRON] No failures to retry');
     logger.info('No failures to retry');
     return;
   }
@@ -198,28 +177,31 @@ async function runRetryFailedDeliveries() {
   ]);
 
   for (const { user_id, email, variant } of failures) {
-    const guideContent = guide?.[variant];
-    if (!guideContent || !template) {
+    const section = guide?.[variant];
+    if (!section?.content || !template) {
+      console.warn(`[CRON] Missing guide or template for retry: ${variant}`);
       logger.warn(`Missing guide or template for retry: ${variant}`);
       continue;
     }
+
+    const contentHtml = marked.parse(section.content);
     const html = template
-      .replace('{{title}}', guideContent.title)
-      .replace('{{content}}', guideContent.content.replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>'));
+      .replace('{{title}}', section.title)
+      .replace('{{content}}', contentHtml);
 
     try {
-      await sendRawEmail(email, guideContent.title, html);
+      await sendRawEmail(email, section.title, html);
+      console.log(`[CRON] ✅ Retry sent: ${email}`);
       logger.info(`✅ Retry sent: ${email}`);
       await db.query(
-        `INSERT INTO delivery_log (user_id,email,variant,status)
-         VALUES ($1,$2,$3,'success')`,
+        `INSERT INTO delivery_log (user_id,email,variant,status) VALUES ($1,$2,$3,'success')`,
         [user_id, email, variant]
       );
     } catch (err) {
+      console.error(`[CRON] ❌ Retry failed for ${email}:`, err.message);
       logger.error(`Retry failed for ${email}: ${err.message}`);
       await db.query(
-        `INSERT INTO delivery_log (user_id,email,variant,status,error_message)
-         VALUES ($1,$2,$3,'failed',$4)` ,
+        `INSERT INTO delivery_log (user_id,email,variant,status,error_message) VALUES ($1,$2,$3,'failed',$4)`,
         [user_id, email, variant, err.message]
       );
     }
@@ -228,67 +210,54 @@ async function runRetryFailedDeliveries() {
 
 // Job 4: Prune logs older than 90 days
 async function runPruneOldLogs() {
+  console.log('[CRON] 🧹 Starting log pruning');
   logger.info('🧹 Starting log pruning');
-  const tables = [
-    'guide_generation_logs',
-    'delivery_log',
-    'daily_guides',
-    'email_retry_queue',
-    'fallback_logs'
-  ];
+
+  const tables = ['guide_generation_logs','delivery_log','daily_guides','email_retry_queue','fallback_logs'];
   for (const table of tables) {
     const col = table === 'fallback_logs' ? 'timestamp' : 'created_at';
     try {
-      const res = await db.query(
-        `DELETE FROM ${table} WHERE ${col} < NOW() - INTERVAL '90 days'`
-      );
-      logger.info(`Pruned ${res.rowCount} rows from ${table}`);
+      const res = await db.query(`DELETE FROM ${table} WHERE ${col} < NOW() - INTERVAL '90 days'`);
+      console.log(`[CRON] 🧹 Pruned ${res.rowCount} from ${table}`);
+      logger.info(`Pruned ${res.rowCount} from ${table}`);
     } catch (err) {
+      console.error(`[CRON] ❌ Prune failed for ${table}:`, err.message);
       logger.error(`Prune failed for ${table}: ${err.message}`);
     }
   }
 }
 
+// Schedule tasks
 function startCron() {
   if (!validateEnv()) return;
 
-  // Schedule jobs with overlap protection
   cron.schedule('0 15 * * *', async () => {
-    if (jobRunning.generate) {
-      logger.warn('Generate job already running, skipping');
-      return;
+    if (!jobRunning.generate) {
+      jobRunning.generate = true;
+      try { await runGenerateDailyGuides(); } finally { jobRunning.generate = false; }
     }
-    jobRunning.generate = true;
-    try { await runGenerateDailyGuides(); } finally { jobRunning.generate = false; }
   }, { timezone: 'Etc/UTC' });
 
   cron.schedule('0 16 * * *', async () => {
-    if (jobRunning.deliver) {
-      logger.warn('Deliver job already running, skipping');
-      return;
+    if (!jobRunning.deliver) {
+      jobRunning.deliver = true;
+      try { await runDeliverDailyGuides(); } finally { jobRunning.deliver = false; }
     }
-    jobRunning.deliver = true;
-    try { await runDeliverDailyGuides(); } finally { jobRunning.deliver = false; }
   }, { timezone: 'Etc/UTC' });
 
   cron.schedule('0 17 * * *', async () => {
-    if (jobRunning.retry) {
-      logger.warn('Retry job already running, skipping');
-      return;
+    if (!jobRunning.retry) {
+      jobRunning.retry = true;
+      try { await runRetryFailedDeliveries(); } finally { jobRunning.retry = false; }
     }
-    jobRunning.retry = true;
-    try { await runRetryFailedDeliveries(); } finally { jobRunning.retry = false; }
   }, { timezone: 'Etc/UTC' });
 
   cron.schedule('0 3 * * *', async () => {
-    if (jobRunning.prune) {
-      logger.warn('Prune job already running, skipping');
-      return;
+    if (!jobRunning.prune) {
+      jobRunning.prune = true;
+      try { await runPruneOldLogs(); } finally { jobRunning.prune = false; }
     }
-    jobRunning.prune = true;
-    try { await runPruneOldLogs(); } finally { jobRunning.prune = false; }
   }, { timezone: 'Etc/UTC' });
 }
 
-// Export scheduler
 module.exports = { startCron };

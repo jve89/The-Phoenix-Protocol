@@ -22,7 +22,7 @@ const { marked } = require('marked');
       `);
 
       if (rows.length > 0) {
-        const fallbackDate = rows[0].date.toISOString().split('T')[0];
+        const fallbackDate = rows[0].date;
         guide = await loadGuideByDate(fallbackDate);
         console.log(`📦 Loaded fallback guide from ${fallbackDate}`);
       }
