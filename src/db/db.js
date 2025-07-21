@@ -1,23 +1,20 @@
 const { Pool } = require('pg');
-const { logEvent } = require('../utils/db_logger');
 
 // Validate critical ENV var
 if (!process.env.DATABASE_URL) {
-  logEvent('db', 'error', 'Missing DATABASE_URL');
+  console.error('❌ Missing DATABASE_URL');
   throw new Error('Missing DATABASE_URL');
 }
 
 // Initialize Postgres pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Use SSL in production if required by host
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 // Handle unexpected errors on idle clients
 pool.on('error', (err) => {
-  logEvent('db', 'error', `Unexpected idle client error: ${err.message}`);
-  // Depending on your strategy, you might exit process here
+  console.error(`Unexpected idle client error: ${err.message}`);
 });
 
 // DDL for initial schema (idempotent)
@@ -57,11 +54,11 @@ async function connectAndInit() {
   try {
     for (const sql of initSQL) {
       await pool.query(sql);
-      logEvent('db', 'info', 'Executed init SQL');
+      console.log('✅ Executed init SQL');
     }
-    logEvent('db', 'info', 'Database schema is ready');
+    console.log('✅ Database schema is ready');
   } catch (err) {
-    logEvent('db', 'error', `Schema initialization failed: ${err.message}`);
+    console.error(`Schema initialization failed: ${err.message}`);
     throw err;
   }
 }
@@ -82,11 +79,11 @@ async function query(text, params) {
       if (attempt < MAX_RETRIES && transientCodes.includes(err.code)) {
         attempt++;
         const delayMs = 100 * Math.pow(2, attempt);
-        logEvent('db', 'warn', `Query transient error (${err.code}), retry ${attempt} in ${delayMs}ms`);
+        console.warn(`Query transient error (${err.code}), retry ${attempt} in ${delayMs}ms`);
         await new Promise(res => setTimeout(res, delayMs));
         continue;
       }
-      logEvent('db', 'error', `Query failed: ${err.message} | SQL: ${text}`);
+      console.error(`Query failed: ${err.message} | SQL: ${text}`);
       throw err;
     }
   }
@@ -98,9 +95,9 @@ async function query(text, params) {
 async function closePool() {
   try {
     await pool.end();
-    logEvent('db', 'info', 'DB pool closed');
+    console.log('✅ DB pool closed');
   } catch (err) {
-    logEvent('db', 'warn', `Error closing DB pool: ${err.message}`);
+    console.warn(`Error closing DB pool: ${err.message}`);
   }
 }
 

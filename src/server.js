@@ -1,13 +1,11 @@
+// Load environment variables first
+require('dotenv').config();
 const express = require('express');
-const dotenv = require('dotenv');
 const routes = require('./routes/routes');
 const webhookRoutes = require('./routes/webhooks');
 const unsubscribeRoute = require('./routes/unsubscribe');
 const { startCron } = require('./utils/cron');
 const { connectAndInit } = require('./db/db');
-
-// Load environment variables
-dotenv.config();
 
 // Crash safety: handle uncaught exceptions and rejections
 process.on('uncaughtException', err => {
