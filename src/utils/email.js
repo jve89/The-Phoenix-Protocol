@@ -1,139 +1,134 @@
-// src/utils/email.js
-
 const sgMail = require('@sendgrid/mail');
-require('dotenv').config();
 const { marked } = require('marked');
 const { convert } = require('html-to-text');
 const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
 const path = require('path');
+const { logEvent } = require('./db_logger');
 
-// 🔐 Ensure API key is present
-if (!process.env.SENDGRID_API_KEY) {
-  console.error('❌ SENDGRID_API_KEY is missing');
-  process.exit(1);
+// Structured logger for email utilities
+const logger = {
+  info:  msg => logEvent('email', 'info', msg),
+  warn:  msg => logEvent('email', 'warn', msg),
+  error: msg => logEvent('email', 'error', msg)
+};
+
+// Validate required env or throw
+function validateEnv() {
+  if (!process.env.SENDGRID_API_KEY) {
+    throw new Error('Missing SENDGRID_API_KEY');
+  }
+  if (!process.env.JWT_SECRET) {
+    throw new Error('Missing JWT_SECRET for unsubscribe tokens');
+  }
 }
+validateEnv();
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const fromEmail = {
   name: 'The Phoenix Protocol',
-  email: 'no-reply@thephoenixprotocol.app',
+  email: 'no-reply@thephoenixprotocol.app'
 };
 
 /**
- * Retry wrapper for transient SendGrid failures
+ * Retry wrapper for transient SendGrid failures with exponential backoff
  */
-const sendWithRetry = async (msg, retries = 2) => {
+async function sendWithRetry(msg, retries = 2) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       await sgMail.send(msg);
+      logger.info(`SendGrid send success to ${msg.to}`);
       return;
     } catch (error) {
       const status = error.response?.statusCode;
-      const isTransient = [429, 500, 502, 503, 504].includes(status);
-      if (!isTransient || attempt === retries) {
-        console.error('❌ Raw email error:', error.response ? error.response.body : error.message);
+      const transient = [429, 500, 502, 503, 504].includes(status);
+      const msgTo = Array.isArray(msg.to) ? msg.to.join(',') : msg.to;
+
+      if (!transient || attempt === retries) {
+        logger.error(`SendGrid permanent error for ${msgTo}: ${error.message}`);
         throw error;
       }
-      console.warn(`⏳ SendGrid retry ${attempt + 1}/${retries} for`, msg.to);
-      await new Promise(res => setTimeout(res, 1000 * (attempt + 1)));
+      const delayMs = 1000 * Math.pow(2, attempt);
+      logger.warn(`Transient error (${status}) for ${msgTo}, retrying in ${delayMs}ms (${attempt+1}/${retries})`);
+      await new Promise(res => setTimeout(res, delayMs));
     }
   }
-};
+}
 
 /**
- * Sends a fully rendered HTML email (with optional unsubscribe token replacement + file attachment)
+ * Sends a fully rendered HTML email with optional attachment
  */
-const sendRawEmail = async (to, subject, html, attachmentPath = null) => {
+async function sendRawEmail(to, subject, html, attachmentPath = null) {
   if (!to || !subject || !html) {
-    console.error('[sendRawEmail] Invalid params:', { to, subject });
+    logger.error('Invalid parameters for sendRawEmail', { to, subject });
     throw new Error('Invalid raw email parameters');
   }
 
-  // ✂️ Enforce max subject length
-  if (subject.length > 140) {
-    console.warn(`✂️ Subject truncated for ${to}`);
-    subject = subject.slice(0, 137) + '...';
+  // Truncate long subjects
+  let finalSubject = subject;
+  if (finalSubject.length > 140) {
+    logger.warn(`Subject too long for ${to}, truncating`);
+    finalSubject = finalSubject.slice(0, 137) + '...';
   }
 
-  // 🔐 Replace {{unsubscribe_token}} if present
+  // Replace unsubscribe token
   let finalHtml = html;
   if (html.includes('{{unsubscribe_token}}')) {
-    if (!process.env.JWT_SECRET) {
-      console.error('❌ JWT_SECRET missing for unsubscribe token generation');
-      process.exit(1);
-    }
-
     try {
       const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '90d' });
-      finalHtml = html.replace('{{unsubscribe_token}}', token);
+      finalHtml = html.replace(/{{unsubscribe_token}}/g, token);
     } catch (err) {
-      console.error('[sendRawEmail] Failed to generate unsubscribe token:', err.message);
+      logger.error(`Failed to generate unsubscribe token for ${to}: ${err.message}`);
     }
   }
 
-  const plainText = convert(finalHtml, {
+  const text = convert(finalHtml, {
     wordwrap: 130,
-    selectors: [{ selector: 'a', options: { hideLinkHrefIfSameAsText: true } }],
+    selectors: [{ selector: 'a', options: { hideLinkHrefIfSameAsText: true } }]
   });
 
-  const msg = {
-    to,
-    from: fromEmail,
-    subject,
-    html: finalHtml,
-    text: plainText,
-  };
+  const msg = { to, from: fromEmail, subject: finalSubject, html: finalHtml, text };
 
-  // 📎 Attach file if present
+  // Attach file if provided
   if (attachmentPath) {
     try {
-      const fileContent = await fs.readFile(attachmentPath, { encoding: 'base64' });
+      const content = await fs.readFile(attachmentPath, { encoding: 'base64' });
       msg.attachments = [{
-        content: fileContent,
+        content,
         filename: path.basename(attachmentPath),
-        type: 'application/json',
-        disposition: 'attachment',
+        disposition: 'attachment'
       }];
     } catch (err) {
-      console.error('[sendRawEmail] Failed to attach file:', err.message);
+      logger.warn(`Attachment failed for ${to}: ${err.message}`);
     }
   }
 
   await sendWithRetry(msg);
-  console.log('📤 Raw email sent to', to);
-};
+}
 
 /**
- * Converts Markdown to styled HTML and sends email
+ * Converts Markdown to HTML template and sends via sendRawEmail
  */
-const sendMarkdownEmail = async (to, subject, markdownBody) => {
-  if (!to || !subject || !markdownBody) {
-    console.error('[sendMarkdownEmail] Invalid params:', { to, subject });
+async function sendMarkdownEmail(to, subject, markdown) {
+  if (!to || !subject || !markdown) {
+    logger.error('Invalid parameters for sendMarkdownEmail', { to, subject });
     throw new Error('Invalid markdown email parameters');
   }
 
-  const html = `
-    <html>
-      <head>
-        <style>
-          body { font-family: sans-serif; color: #111; line-height: 1.6; padding: 1rem; }
-          h1, h2, h3 { color: #5f259f; }
-          strong { font-weight: bold; }
-          em { font-style: italic; }
-        </style>
-      </head>
-      <body>
-        ${marked.parse(markdownBody)}
-      </body>
-    </html>
-  `;
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; color: #111; line-height: 1.6; padding: 1rem; }
+  h1, h2, h3 { color: #5f259f; }
+</style>
+</head>
+<body>\${marked.parse(markdown)}</body>
+</html>`;
 
-  return sendRawEmail(to, subject, html);
-};
+  await sendRawEmail(to, subject, html);
+}
 
-module.exports = {
-  sendRawEmail,
-  sendMarkdownEmail,
-  fromEmail,
-};
+module.exports = { sendRawEmail, sendMarkdownEmail, fromEmail };

@@ -1,26 +1,44 @@
-// src/utils/payment.js
-
 const Stripe = require('stripe');
+const { logEvent } = require('./db_logger');
+
+// Validate Stripe key at load time
+if (!process.env.STRIPE_SECRET_KEY) {
+  logEvent('payment', 'error', 'Missing STRIPE_SECRET_KEY');
+  throw new Error('Stripe API key not configured');
+}
+
+// Initialize Stripe client
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 
-const pricingMap = { "30": 1900, "90": 4900, "365": 9900 }; // cents
+// Pricing map in cents
+const pricingMap = { '30': 1900, '90': 4900, '365': 9900 };
 
-const createCheckoutSession = async (email, plan, gender = '', goal_stage = '') => {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error('[Stripe] Missing STRIPE_SECRET_KEY');
-    throw new Error('Stripe API key is missing');
+// Default URLs from env (fallback to constants)
+const SUCCESS_URL = process.env.SUCCESS_URL || 'https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}';
+const CANCEL_URL  = process.env.CANCEL_URL  || 'https://www.thephoenixprotocol.app/checkout.html';
+
+/**
+ * Create a Stripe Checkout session for a subscription plan.
+ * @param {string} email - Customer email address.
+ * @param {number|string} plan - Subscription duration in days (30, 90, 365).
+ * @param {string} gender - Optional customer gender metadata.
+ * @param {string} goalStage - Optional customer goal stage metadata.
+ * @returns {Promise<string>} - URL to redirect customer for checkout.
+ */
+async function createCheckoutSession(email, plan, gender = '', goalStage = '') {
+  // Parameter validation
+  if (typeof email !== 'string' || !email.includes('@')) {
+    logEvent('payment', 'warn', `Invalid email passed to createCheckoutSession: ${email}`);
+    throw new Error('Invalid email address');
   }
-
-  if (!email || typeof email !== 'string' || !email.includes('@')) {
-    throw new Error('Invalid email');
-  }
-
-  const amount = pricingMap?.[String(plan)];
+  const planKey = String(plan);
+  const amount = pricingMap[planKey];
   if (!amount) {
+    logEvent('payment', 'warn', `Invalid plan passed: ${planKey}`);
     throw new Error(`Invalid plan: ${plan}`);
   }
 
-  console.log(`[Stripe] Creating session for ${email} - Plan: ${plan}, Gender: ${gender}, Goal: ${goal_stage}`);
+  logEvent('payment', 'info', `Creating Stripe session for ${email}, plan ${planKey}`);
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -34,55 +52,55 @@ const createCheckoutSession = async (email, plan, gender = '', goal_stage = '') 
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: 'https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: 'https://www.thephoenixprotocol.app/checkout.html',
+      success_url: SUCCESS_URL,
+      cancel_url: CANCEL_URL,
       customer_email: email,
-      customer_creation: 'always',
-      metadata: {
-        email,
-        plan: String(plan),
-        gender,
-        goal_stage
-      }
+      metadata: { email, plan: planKey, gender, goalStage }
     });
 
-    console.log('[Stripe] Session created:', session.id);
+    logEvent('payment', 'info', `Stripe session created: ${session.id}`);
     return session.url;
-
-  } catch (error) {
-    console.error('[Stripe] Checkout creation error:', error.message);
+  } catch (err) {
+    logEvent('payment', 'error', `Stripe checkout creation failed for ${email}: ${err.message}`);
     throw new Error('Payment setup failed');
   }
-};
+}
 
-const refundLatestChargeForEmail = async (email) => {
+/**
+ * Refund the most recent charge for a given email address.
+ * @param {string} email - Customer email.
+ */
+async function refundLatestChargeForEmail(email) {
+  if (typeof email !== 'string' || !email.includes('@')) {
+    logEvent('payment', 'warn', `Invalid email for refund: ${email}`);
+    return;
+  }
+  logEvent('payment', 'info', `Initiating refund lookup for ${email}`);
+
   try {
-    const customers = await stripe.customers.list({ email, limit: 1 });
-    if (!customers.data.length) {
-      console.warn(`[Stripe] No customer found for ${email}`);
+    const { data: customers } = await stripe.customers.list({ email, limit: 1 });
+    if (!customers.length) {
+      logEvent('payment', 'warn', `No customer found for ${email}`);
       return;
     }
+    const customer = customers[0];
 
-    const customer = customers.data[0];
-    const charges = await stripe.charges.list({ customer: customer.id, limit: 1 });
-
-    if (!charges.data.length) {
-      console.warn(`[Stripe] No charges found for ${email}`);
+    const { data: charges } = await stripe.charges.list({ customer: customer.id, limit: 1 });
+    if (!charges.length) {
+      logEvent('payment', 'warn', `No charges found for ${email}`);
       return;
     }
-
-    const charge = charges.data[0];
+    const charge = charges[0];
     if (charge.refunded) {
-      console.log(`[Stripe] Charge ${charge.id} already refunded for ${email}`);
+      logEvent('payment', 'info', `Charge ${charge.id} already refunded for ${email}`);
       return;
     }
 
     await stripe.refunds.create({ charge: charge.id });
-    console.log(`[Stripe] Refunded charge ${charge.id} for ${email}`);
-
-  } catch (error) {
-    console.error(`[Stripe] Refund error for ${email}:`, error.message);
+    logEvent('payment', 'info', `Refund successful for charge ${charge.id} and email ${email}`);
+  } catch (err) {
+    logEvent('payment', 'error', `Refund error for ${email}: ${err.message}`);
   }
-};
+}
 
 module.exports = { createCheckoutSession, refundLatestChargeForEmail };

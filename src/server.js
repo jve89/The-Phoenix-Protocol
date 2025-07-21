@@ -1,77 +1,120 @@
-// src/server.js
-
 const express = require('express');
 const dotenv = require('dotenv');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const routes = require('./routes/routes');
 const webhookRoutes = require('./routes/webhooks');
 const unsubscribeRoute = require('./routes/unsubscribe');
 const { startCron } = require('./utils/cron');
-const { connectAndInit } = require('./db/db');
+const db = require('./db/db'); // assume db exposes close or uses pool
 
-// ✅ Load environment variables
+// Load environment variables
 dotenv.config();
 
-// ✅ Crash safety: Handle uncaught exceptions and rejections
+// Structured logger (using console for now)
+const logger = {
+  info:  msg => console.log(msg),
+  warn:  msg => console.warn(msg),
+  error: msg => console.error(msg)
+};
+
+// Crash safety: log and exit on uncaught errors
 process.on('uncaughtException', err => {
-  console.error('🔥 Uncaught Exception:', err);
+  logger.error(`🔥 Uncaught Exception: ${err.stack || err}`);
+  process.exit(1);
 });
 process.on('unhandledRejection', reason => {
-  console.error('🔥 Unhandled Rejection:', reason);
+  logger.error(`🔥 Unhandled Rejection: ${reason.stack || reason}`);
+  process.exit(1);
 });
 
-// ✅ Validate critical ENV vars
-const requiredEnv = ['STRIPE_SECRET_KEY', 'SENDGRID_API_KEY', 'DATABASE_URL'];
-for (const key of requiredEnv) {
-  if (!process.env[key]) console.error(`❌ Missing env var: ${key}`);
-  else console.log(`${key}: ✅ Present`);
+// Validate critical environment variables or exit
+function validateEnvOrExit(keys) {
+  let ok = true;
+  for (const key of keys) {
+    if (!process.env[key]) {
+      logger.error(`❌ Missing ENV ${key}`);
+      ok = false;
+    } else {
+      logger.info(`${key}: ✅ Present`);
+    }
+  }
+  if (!ok) process.exit(1);
 }
-
-// ⚠️ Consistency checks for other critical envs
-if (!process.env.JWT_SECRET) {
-  console.error('❌ Missing env var: JWT_SECRET');
-} else {
-  console.log('JWT_SECRET: ✅ Present');
-}
+validateEnvOrExit([
+  'STRIPE_SECRET_KEY',
+  'SENDGRID_API_KEY',
+  'DATABASE_URL',
+  'JWT_SECRET'
+]);
 if (!process.env.ADMIN_EMAIL) {
-  console.warn('⚠️ ADMIN_EMAIL not set — admin preview emails disabled');
+  logger.warn('⚠️ ADMIN_EMAIL not set — admin preview emails disabled');
 } else {
-  console.log('ADMIN_EMAIL: ✅ Present');
+  logger.info('ADMIN_EMAIL: ✅ Present');
 }
 
-// ✅ App setup
+// Create Express app
 const app = express();
-app.use('/', unsubscribeRoute);
-app.use('/webhook', webhookRoutes); // must be before body parser
-app.use(express.json());
-app.use(express.static('public'));
-app.use('/api', routes);
+app.set('trust proxy', 1);
+app.use(helmet());
 
-const port = process.env.PORT || 3000;
+// Health endpoint for uptime monitoring
+app.get('/health', (req, res) => res.sendStatus(200));
 
-// ✅ Prevent Heroku sleep (production only)
+// Prevent Heroku dyno sleep (production only)
 if (process.env.NODE_ENV === 'production') {
   const url = process.env.SELF_PING_URL || 'https://www.thephoenixprotocol.app/';
   setInterval(() => {
     require('https').get(url, res => {
-      console.log(`[PING] ${url} - ${res.statusCode}`);
+      logger.info(`[PING] ${url} - ${res.statusCode}`);
     }).on('error', err => {
-      console.error('[PING] Error:', err.message);
+      logger.error(`[PING] Error: ${err.message}`);
     });
   }, 5 * 60 * 1000);
 }
 
-// ✅ Connect to DB and start server + cron
+// Rate limiter for API routes
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  handler: (req, res) => res.status(429).json({ error: 'Too many requests, please try again later.' })
+});
+
+// Routes setup
+app.use('/', unsubscribeRoute);
+app.use('/webhook', express.raw({ type: '*/*' }), webhookRoutes);
+app.use(express.json());
+app.use(express.static('public'));
+app.use('/api', apiLimiter, routes);
+
+// Start server and cron after DB init
+const port = process.env.PORT || 3000;
+let server;
 async function startServer() {
   try {
-    await connectAndInit();
-    app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
+    await db.connectAndInit();
+    server = app.listen(port, () => {
+      logger.info(`🚀 Server running on port ${port}`);
       startCron();
     });
   } catch (err) {
-    console.error('❌ Startup failed:', err);
+    logger.error(`❌ Startup failed: ${err.stack || err}`);
     process.exit(1);
   }
 }
-
 startServer();
+
+// Graceful shutdown on SIGINT/SIGTERM
+async function shutdown() {
+  logger.info('⚙️ Shutting down...');
+  try {
+    if (server) server.close();
+    if (db && typeof db.close === 'function') await db.close();
+  } catch (err) {
+    logger.error(`Error during shutdown: ${err.stack || err}`);
+  } finally {
+    process.exit(0);
+  }
+}
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);

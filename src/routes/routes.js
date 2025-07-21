@@ -1,191 +1,170 @@
-// src/routes/routes.js
-
 const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
 const { sendRawEmail } = require('../utils/email');
 const { loadTemplate } = require('../utils/loadTemplate');
+const { logEvent } = require('../utils/db_logger');
 
 const router = express.Router();
 
-const VALID_PLANS = ['30', '90', '365'];
-const VALID_GOAL_STAGES = ['moveon', 'reconnect'];
+// Structured logger for routes
+const logger = {
+  info:  msg => logEvent('routes', 'info', msg),
+  warn:  msg => logEvent('routes', 'warn', msg),
+  error: msg => logEvent('routes', 'error', msg)
+};
 
-// Simple in-memory rate limiter middleware for admin routes
+// Rate limiter config
 const rateLimitMap = new Map();
-function rateLimiter(req, res, next) {
-  const ip = req.ip || req.connection.remoteAddress;
-  const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minute window
-  const maxRequests = 20;
+const WINDOW_MS = 60 * 1000;  // 1 minute
+const MAX_REQUESTS = 20;
 
-  let requestLog = rateLimitMap.get(ip) || [];
-  requestLog = requestLog.filter(ts => now - ts < windowMs);
-  if (requestLog.length >= maxRequests) {
+function rateLimiter(req, res, next) {
+  const ip = req.ip;
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) || [];
+  const recent = timestamps.filter(ts => now - ts < WINDOW_MS);
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
+
+  if (recent.length > MAX_REQUESTS) {
+    logger.warn(`Rate limit exceeded for ${ip}`);
     return res.status(429).send('Too many requests, slow down.');
   }
-  requestLog.push(now);
-  rateLimitMap.set(ip, requestLog);
+
+  // Periodic cleanup to prevent memory leak
+  if (rateLimitMap.size > 5000) {
+    for (const [key, ts] of rateLimitMap) {
+      if (ts[ts.length - 1] < now - WINDOW_MS) {
+        rateLimitMap.delete(key);
+      }
+    }
+  }
+
   next();
 }
 
-// Basic input sanitizer
 function sanitizeInput(value) {
-  if (typeof value !== 'string') return '';
-  return value.trim();
+  return typeof value === 'string' ? value.trim() : '';
 }
+
+// Wrapper to catch async errors
+const asyncHandler = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 router.use(rateLimiter);
 
-// Health check ping
+// Health check
 router.get('/ping', (req, res) => {
   const timestamp = new Date().toISOString();
-  console.log(`[PING] /api/ping called at ${timestamp}`);
-  res.status(200).json({ status: 'ok', timestamp });
+  logger.info(`/api/ping at ${timestamp}`);
+  res.json({ status: 'ok', timestamp });
 });
 
-// Cron last run status
+// Cron status - expects server to set app.locals.lastCron
 router.get('/cron/status', (req, res) => {
-  const lastRun = global.lastCronTimestamp || 'Unknown';
-  res.status(200).json({ cronLastRun: lastRun });
+  const lastRun = req.app.locals.lastCron || 'unknown';
+  res.json({ cronLastRun: lastRun });
 });
 
-// Debug list users
-router.get('/debug/list-users', async (req, res) => {
-  console.log('[DEBUG] List users route triggered');
-  try {
-    const result = await db.query('SELECT * FROM users ORDER BY id ASC');
-    console.log(`[DEBUG] Retrieved ${result.rows.length} user(s) from Postgres`);
-    res.status(200).json(result.rows);
-  } catch (err) {
-    console.error('[DEBUG] Query error in /debug/list-users:', err);
-    res.status(500).json({ error: 'Database query error', details: err.message });
-  }
-});
+// Debug: list users
+router.get('/debug/list-users', asyncHandler(async (req, res) => {
+  logger.info('Debug list-users');
+  const { rows } = await db.query('SELECT id, email, plan, usage_count FROM users ORDER BY id');
+  res.json(rows);
+}));
 
 // Signup route
-router.post('/signup', async (req, res) => {
-  console.log('Signup request received:', req.body);
-
+router.post('/signup', asyncHandler(async (req, res) => {
   const email = sanitizeInput(req.body.email);
-  const name = sanitizeInput(req.body.name);
+  const name = sanitizeInput(req.body.name) || null;
   const gender = sanitizeInput(req.body.gender);
   const plan = sanitizeInput(req.body.plan);
-  // normalize goal_stage: anything not 'reconnect' becomes 'moveon'
   const rawGoal = sanitizeInput(req.body.goal_stage);
   const goal_stage = rawGoal === 'reconnect' ? 'reconnect' : 'moveon';
 
-  // Validate required fields
   if (!email || !gender || !plan || !rawGoal) {
-    console.error('❌ Signup validation failed: Missing fields.', { email, gender, plan, rawGoal });
+    logger.error(`Signup validation failed: missing ${JSON.stringify({ email, gender, plan, rawGoal })}`);
     return res.status(400).json({ error: 'Email, gender, plan, and goal_stage are required.' });
   }
 
-  if (!VALID_PLANS.includes(plan)) {
-    console.error('❌ Signup validation failed: Invalid plan provided:', plan);
-    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365.' });
+  if (!['30','90','365'].includes(plan)) {
+    logger.error(`Invalid plan: ${plan}`);
+    return res.status(400).json({ error: 'Invalid plan. Allowed: 30, 90, 365.' });
   }
-  if (!VALID_GOAL_STAGES.includes(goal_stage)) {
-    console.error('❌ Signup validation failed: Invalid goal_stage provided:', goal_stage);
+  if (!['moveon','reconnect'].includes(goal_stage)) {
+    logger.error(`Invalid goal_stage: ${goal_stage}`);
     return res.status(400).json({ error: 'Invalid goal_stage. Allowed: moveon, reconnect.' });
   }
 
+  const welcomeTemplate = await loadTemplate('welcome.html');
+
   try {
-    const { rows: existingUserRows } = await db.query(
-      'SELECT plan, plan_limit, usage_count FROM users WHERE email = $1',
+    const { rows } = await db.query(
+      'SELECT plan_limit, usage_count FROM users WHERE email = $1',
       [email]
     );
-    const welcomeTemplate = await loadTemplate('welcome.html');
 
-    if (existingUserRows.length > 0) {
-      const user = existingUserRows[0];
-      const isActive = user.usage_count < user.plan_limit;
-
-      if (isActive) {
-        console.warn(`⚠️ Signup blocked — user has an active countdown plan: ${email}`);
+    if (rows.length) {
+      const user = rows[0];
+      if (user.usage_count < user.plan_limit) {
+        logger.warn(`Active plan exists for ${email}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
       }
-
-      console.log(`🔄 Re-signing expired user: ${email}`);
+      logger.info(`Renewing plan for ${email}`);
       await db.query(
-        `UPDATE users
-        SET plan = $1,
-            goal_stage = $2,
-            plan_limit = $3,
-            usage_count = 0,
-            first_guide_sent_at = NULL
-        WHERE email = $4`,
-        [plan, goal_stage, parseInt(plan, 10), email]
+        `UPDATE users SET plan = $1, goal_stage = $2, plan_limit = $3, usage_count = 0, first_guide_sent_at = NULL
+         WHERE email = $4`,
+        [plan, goal_stage, parseInt(plan,10), email]
       );
-
-      await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
-      console.log('✅ Welcome email sent to returning user:', email);
-
     } else {
-      const insertValues = [
-        email,
-        name || null,
-        gender,
-        plan,
-        parseInt(plan, 10),
-        0,
-        goal_stage
-      ];
-      console.log('🧩 Insert values:', insertValues);
-
+      logger.info(`Creating new user ${email}`);
       await db.query(
-        'INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        insertValues
+        `INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage)
+         VALUES ($1,$2,$3,$4,$5,0,$6)`,
+        [email, name, gender, plan, parseInt(plan,10), goal_stage]
       );
-
-      await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
-      console.log('✅ Welcome email sent to new user:', email);
     }
 
-    // Create Stripe checkout session
+    await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
+    logger.info(`Welcome email sent to ${email}`);
+
     const url = await createCheckoutSession(email, plan, gender, goal_stage);
-    console.log('✅ Stripe checkout session created, redirecting user.');
-    res.status(200).json({ message: 'Sign-up successful', url });
-
+    res.json({ message: 'Sign-up successful', url });
   } catch (err) {
-    console.error('❌ Database error during signup:', err);
-    res.status(500).json({ error: 'Sign-up failed: Database issue' });
+    logger.error(`Signup failed for ${email}: ${err.message}`);
+    res.status(500).json({ error: 'Sign-up failed' });
   }
-});
+}));
 
-// Create Stripe checkout session
-router.post('/create-checkout-session', async (req, res) => {
+// Create checkout session
+router.post('/create-checkout-session', asyncHandler(async (req, res) => {
   const email = sanitizeInput(req.body.email);
   const plan = sanitizeInput(req.body.plan);
   const gender = sanitizeInput(req.body.gender);
   const rawGoal = sanitizeInput(req.body.goal_stage);
   const goal_stage = rawGoal === 'reconnect' ? 'reconnect' : 'moveon';
 
-  console.log('Creating checkout session:', { email, plan, goal_stage });
-
   if (!email || !plan || !rawGoal) {
-    console.error('❌ Validation failed for /create-checkout-session: Missing fields.', { email, plan, rawGoal });
+    logger.error(`Validation failed for checkout: missing ${JSON.stringify({ email, plan, rawGoal })}`);
     return res.status(400).json({ error: 'Email, plan, and goal_stage are required.' });
   }
 
-  if (!VALID_PLANS.includes(plan)) {
-    console.error('❌ Validation failed for /create-checkout-session: Invalid plan provided.', plan);
-    return res.status(400).json({ error: 'Invalid plan. Allowed plans: 30, 90, 365.' });
+  if (!['30','90','365'].includes(plan)) {
+    logger.error(`Invalid plan for checkout: ${plan}`);
+    return res.status(400).json({ error: 'Invalid plan. Allowed: 30, 90, 365.' });
   }
-  if (!VALID_GOAL_STAGES.includes(goal_stage)) {
-    console.error('❌ Validation failed for /create-checkout-session: Invalid goal_stage provided.', goal_stage);
-    return res.status(400).json({ error: 'Invalid goal_stage. Allowed: moveon, reconnect.' });
+  if (!['moveon','reconnect'].includes(goal_stage)) {
+    logger.error(`Invalid goal_stage for checkout: ${goal_stage}`);
+    return res.status(400).json({ error: 'Invalid goal_stage.' });
   }
 
   try {
     const url = await createCheckoutSession(email, plan, gender, goal_stage);
-    console.log('✅ Stripe checkout session created for', email);
     res.json({ url });
-  } catch (error) {
-    console.error('❌ Checkout session creation error:', error.message);
+  } catch (err) {
+    logger.error(`Checkout session error for ${email}: ${err.message}`);
     res.status(500).json({ error: 'Payment setup failed' });
   }
-});
+}));
 
 module.exports = router;
-

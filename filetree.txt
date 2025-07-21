@@ -40,6 +40,8 @@
 |  ├── sitemap.xml
 |  ├── success.html
 |  └── terms.html
+├── scripts
+|  └── prune_old_logs.sql
 ├── setup.md
 ├── src
 |  ├── db
@@ -50,6 +52,7 @@
 |  |  └── webhooks.js
 |  ├── server.js
 |  └── utils
+|     ├── backup.js
 |     ├── content.js
 |     ├── cron.js
 |     ├── db_logger.js
@@ -66,7 +69,7 @@
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 470 file: 2388
+directory: 493 file: 2425
 
 ignored: directory (12)
 

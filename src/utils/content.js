@@ -1,182 +1,165 @@
-// src/utils/content.js
-
-require('dotenv').config();
 const axios = require('axios');
 const path = require('path');
-const { format, subDays } = require('date-fns');
+const { subDays } = require('date-fns');
 const db = require('../db/db');
+const { logEvent } = require('./db_logger');
 
-// ⚠️ Preload and validate prompt files at startup
+// Validate required environment variables at load time
+const { GROK_API_KEY, GROK_MODEL_PRIMARY, GROK_MODEL_FALLBACKS } = process.env;
+if (!GROK_API_KEY) {
+  logEvent('content', 'error', 'Missing GROK_API_KEY for AI guide generation');
+  throw new Error('Missing GROK_API_KEY');
+}
+
+// Helper: UTC date string YYYY-MM-DD
+function todayUtc() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// Load and validate prompt files synchronously at startup
 const VARIANTS = [
   'male_moveon', 'male_reconnect',
   'female_moveon', 'female_reconnect',
   'neutral_moveon', 'neutral_reconnect'
 ];
 const promptCache = {};
-(function initPrompts() {
-  for (const variant of VARIANTS) {
-    try {
-      const promptList = require(
-        path.join(__dirname, `../../content/prompts/${variant}.js`)
-      );
-      if (!Array.isArray(promptList) || promptList.length === 0) {
-        throw new Error(`Prompt file is not a non-empty array: ${variant}`);
-      }
-      promptCache[variant] = promptList;
-    } catch (err) {
-      console.error(`[initPrompts] Failed to load ${variant}:`, err);
-      // Exit on startup to ensure missing prompts are addressed immediately
-      process.exit(1);
-    }
-  }
-})();
-
-// 🔧 Centralized log writer for monitoring
-async function logEvent(source, level, message) {
+for (const variant of VARIANTS) {
+  const promptPath = path.resolve(__dirname, `../../content/prompts/${variant}.js`);
   try {
-    await db.query(
-      `INSERT INTO guide_generation_logs (timestamp, source, level, message)
-       VALUES (NOW(), $1, $2, $3)`,
-      [source, level, message]
-    );
+    const promptList = require(promptPath);
+    if (!Array.isArray(promptList) || promptList.length === 0) {
+      throw new Error(`Prompt list invalid or empty for ${variant}`);
+    }
+    promptCache[variant] = promptList;
   } catch (err) {
-    console.error(`[logEvent] Failed to write log:`, err);
+    logEvent('content', 'error', `Failed to load prompts for ${variant}: ${err.message}`);
+    throw err;
   }
 }
 
-// 🧠 Generate one AI-generated guide (with model fallback logic)
+/**
+ * Generate a guide tip using AI, with primary and fallback models and backoff.
+ * @param {string} gender
+ * @param {string} goalStage
+ * @returns {Promise<string>}
+ */
 async function generateTip(gender, goalStage) {
   const variant = `${gender}_${goalStage}`;
-  const promptList = promptCache[variant];
-
-  if (!promptList) {
-    await logEvent('content', 'error', `Missing prompt list: ${variant}`);
-    return `Your guide is temporarily unavailable — please check back soon.`;
+  const prompts = promptCache[variant];
+  if (!prompts) {
+    logEvent('content', 'error', `No prompts for variant ${variant}`);
+    return 'Guide unavailable at this time.';
   }
 
-  // Pick a random prompt object and validate
-  const idx = Math.floor(Math.random() * promptList.length);
-  const promptObj = promptList[idx];
-  if (!promptObj) {
-    await logEvent('content', 'error', `Empty prompt at index ${idx} for ${variant}`);
-    return `Your guide is temporarily unavailable — please check back soon.`;
-  }
-
+  // Select random prompt
+  const idx = Math.floor(Math.random() * prompts.length);
+  const promptObj = prompts[idx];
   let promptText;
   try {
-    if (typeof promptObj.prompt === 'function') {
-      promptText = promptObj.prompt(gender, goalStage);
-    } else if (typeof promptObj === 'string') {
+    if (typeof promptObj === 'string') {
       promptText = promptObj;
-    } else if (typeof promptObj === 'function') {
-      promptText = promptObj(gender, goalStage);
+    } else if (typeof promptObj.prompt === 'function') {
+      promptText = promptObj.prompt(gender, goalStage);
     } else {
-      throw new Error(`Invalid prompt object format at ${variant}[${idx}]`);
+      throw new Error('Invalid prompt object');
     }
   } catch (err) {
-    await logEvent('content', 'error', `Error building prompt for ${variant}: ${err.message}`);
-    return `Your guide is temporarily unavailable — please check back soon.`;
+    logEvent('content', 'error', `Building prompt for ${variant} failed: ${err.message}`);
+    return 'Guide generation error.';
   }
 
-  const modelList = [];
-  if (process.env.GROK_MODEL_PRIMARY) modelList.push(process.env.GROK_MODEL_PRIMARY);
-  if (process.env.GROK_MODEL_FALLBACKS) {
-    for (const m of process.env.GROK_MODEL_FALLBACKS.split(',').map(s => s.trim())) {
-      if (m) modelList.push(m);
+  // Build model list: primary then fallbacks, default to 'grok-4'
+  const models = [];
+  if (GROK_MODEL_PRIMARY) models.push(GROK_MODEL_PRIMARY);
+  if (GROK_MODEL_FALLBACKS) {
+    for (const m of GROK_MODEL_FALLBACKS.split(',').map(s => s.trim())) {
+      if (m) models.push(m);
     }
   }
-  if (modelList.length === 0) {
-    modelList.push('grok-4');
-  }
+  if (models.length === 0) models.push('grok-4');
 
-  for (const model of modelList) {
+  // Attempt each model with retry/backoff
+  for (const [i, model] of models.entries()) {
     try {
-      console.log(`[generateTip] ${variant} → Using model: ${model}`);
+      logEvent('content', 'info', `Using model ${model} for ${variant}`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
       const res = await axios.post(
         'https://api.x.ai/v1/chat/completions',
-        {
-          messages: [{ role: 'user', content: promptText }],
-          model,
-          stream: false,
-          temperature: 0.7,
-          max_tokens: 1100
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${process.env.GROK_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 15000
-        }
+        { messages: [{ role: 'user', content: promptText }], model, stream: false },
+        { headers: { Authorization: `Bearer ${GROK_API_KEY}` }, signal: controller.signal }
       );
+      clearTimeout(timeout);
       return res.data.choices[0].message.content.trim();
     } catch (err) {
-      await logEvent('content', 'warn', `Model ${model} failed for ${variant}: ${err.message}`);
-      console.warn(`[generateTip] Model ${model} failed for ${variant}.`);
+      const msg = err.name === 'AbortError' ? 'timeout' : err.message;
+      logEvent('content', 'warn', `Model ${model} failed (${msg}) for ${variant}`);
+      // exponential backoff before next model
+      const delay = 1000 * Math.pow(2, i);
+      await new Promise(r => setTimeout(r, delay));
     }
   }
 
-  await logEvent('content', 'error', `All models failed for ${variant}`);
-  return `We're experiencing a temporary issue generating your guide — please try again later.`;
+  logEvent('content', 'error', `All models failed for ${variant}`);
+  return 'Temporary AI failure. Please try again later.';
 }
 
-// 📅 Generate and cache all 6 variants
+/**
+ * Generate and store all six daily guides in DB.
+ */
 async function generateAndCacheDailyGuides() {
-  const utcDate = new Date().toISOString().slice(0, 10);
-  await logEvent('content', 'info', `Starting guide generation for ${utcDate}`);
+  const date = todayUtc();
+  await logEvent('content', 'info', `Starting guide generation for ${date}`);
+  const guideObj = { date };
 
-  const combos = [
-    ['male', 'moveon'], ['male', 'reconnect'],
-    ['female', 'moveon'], ['female', 'reconnect'],
-    ['neutral', 'moveon'], ['neutral', 'reconnect']
-  ];
-  const guideObject = { date: utcDate };
-
-  for (const [gender, goalStage] of combos) {
-    const variant = `${gender}_${goalStage}`;
+  for (const variant of VARIANTS) {
+    const [gender, stage] = variant.split('_');
     try {
       await logEvent('content', 'info', `Generating ${variant}`);
-      const content = await generateTip(gender, goalStage);
+      const content = await generateTip(gender, stage);
       const lines = content.split('\n').filter(Boolean);
-      const title = lines[0].replace(/^#+/, '').trim() || 'Your Premium Guide';
-      guideObject[variant] = { title, content };
+      const title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
+      guideObj[variant] = { title, content };
     } catch (err) {
-      await logEvent('content', 'error', `Failed ${variant}: ${err.message}`);
-      guideObject[variant] = { title: null, content: null, error: err.message };
+      logEvent('content', 'error', `Generation error for ${variant}: ${err.message}`);
+      guideObj[variant] = { title: null, content: null };
     }
   }
 
   try {
     await db.query(
       `INSERT INTO daily_guides (date, guide)
-       VALUES ($1, $2)
+       VALUES ($1, $2::jsonb)
        ON CONFLICT (date) DO UPDATE SET guide = EXCLUDED.guide`,
-      [utcDate, JSON.stringify(guideObject)]
+      [date, guideObj]
     );
-    await logEvent('content', 'info', `Daily guide stored for ${utcDate}`);
+    await logEvent('content', 'info', `Stored daily guide for ${date}`);
   } catch (err) {
-    await logEvent('content', 'error', `DB insert failed: ${err.message}`);
-    console.error('[generateAndCacheDailyGuides] DB error:', err);
+    await logEvent('content', 'error', `DB write failed for ${date}: ${err.message}`);
   }
 }
 
-// 📖 Load from DB by date
+/**
+ * Load guide JSON for a given date.
+ */
 async function loadGuideByDate(dateStr) {
   try {
     const { rows } = await db.query(
       `SELECT guide FROM daily_guides WHERE date = $1`,
       [dateStr]
     );
-    return rows.length ? rows[0].guide : null;
+    return rows[0]?.guide || null;
   } catch (err) {
-    await logEvent('content', 'error', `loadGuideByDate(${dateStr}): ${err.message}`);
+    await logEvent('content', 'error', `loadGuideByDate(${dateStr}) failed: ${err.message}`);
     return null;
   }
 }
 
-// 📖 Load today's guide (fallback to yesterday)
+/**
+ * Load today's guide, falling back to yesterday if missing.
+ */
 async function loadTodayGuide() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayUtc();
   const yesterday = subDays(new Date(), 1).toISOString().slice(0, 10);
   return (await loadGuideByDate(today)) || (await loadGuideByDate(yesterday));
 }
