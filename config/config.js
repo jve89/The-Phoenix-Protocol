@@ -25,6 +25,12 @@ if (!isValidEmail(fromEmail)) {
   throw new Error(`Invalid FROM_EMAIL: ${fromEmail}`);
 }
 
+// SUPPORT_EMAIL
+const supportEmail = process.env.SUPPORT_EMAIL || 'support@thephoenixprotocol.app';
+if (!isValidEmail(supportEmail)) {
+  throw new Error(`Invalid SUPPORT_EMAIL: ${supportEmail}`);
+}
+
 // ADMIN_EMAIL (optional)
 const adminEmail = process.env.ADMIN_EMAIL || '';
 if (adminEmail && !isValidEmail(adminEmail)) {
@@ -34,5 +40,6 @@ if (adminEmail && !isValidEmail(adminEmail)) {
 module.exports = {
   port,
   fromEmail,
+  supportEmail,
   adminEmail
 };
