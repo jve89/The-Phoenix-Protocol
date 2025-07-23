@@ -94,14 +94,21 @@
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between p-8 md:p-16 space-y-8 md:space-y-0 md:space-x-12">
       <!-- Text Section -->
       <div class="flex-1 text-center md:text-left md:max-w-lg">
-        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-[#393f4a]">Daily AI-Guided Breakup Recovery</h1>
-        <p class="text-lg md:text-xl mb-8 text-[#393f4a]">Transform heartbreak into personal power with premium daily guidance designed to help you heal and rebuild confidence.</p>
-        <!-- Hero CTA Button -->
-        <a href="#pricing" class="inline-block bg-indigo-600 text-white font-semibold px-6 py-3 rounded shadow-lg hover:bg-indigo-700 transition">
-          Start Your Recovery Today
-        </a>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-[#393f4a]">Breakup Recovery, Tailored for You</h1>
+        <p class="text-lg md:text-xl mb-8 text-[#393f4a]">
+          Structured, private, AI-powered daily support. 
+          <span class="block mt-1">Feel better, one day at a time.</span>
+        </p>
+        <!-- Dual CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+          <a href="sample-guide.html" class="inline-block bg-indigo-600 text-white font-semibold px-6 py-3 rounded shadow-lg hover:bg-indigo-700 transition">
+            View a Real Sample Guide
+          </a>
+          <a href="#pricing" class="inline-block border border-indigo-600 text-indigo-700 font-semibold px-6 py-3 rounded shadow hover:bg-indigo-50 transition">
+            Start Recovery Now
+          </a>
+        </div>
       </div>
-
       <!-- Image Section with Carousel -->
       <div class="flex-1 max-w-md relative overflow-hidden rounded-xl shadow-lg">
         <img id="hero-carousel-image"
@@ -178,16 +185,84 @@
     </div>
   </section>
 
-  <!-- Testimonials -->
-  <!--<section id="testimonials" class="bg-white py-16 px-6">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">What Others Say</h2>
-      <div class="space-y-6">
-        <p class="italic text-[#8c7878]">“The Phoenix Protocol gave me clarity during my breakup, and I felt supported every day.”</p>
-        <p class="italic text-[#8c7878]">“Every morning I woke up to a message that helped me reframe my thoughts and heal.”</p>
+  <!-- Social Proof / Testimonials -->
+  <section class="bg-white py-10 px-4">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-center text-[#393f4a] mb-10">What Our Users Say</h2>
+      <div class="space-y-12">
+        
+        <!-- Testimonial 1 (Photo Left) -->
+        <div class="flex flex-col sm:flex-row items-center gap-5">
+          <div class="flex flex-col items-center min-w-[70px]">
+            <img src="ai-female-32.jpg" alt="Female, 32" class="w-14 h-14 rounded-full shadow-md object-cover">
+            <span class="mt-2 text-xs text-[#393f4a]">Female, 32</span>
+          </div>
+          <div class="relative flex-1">
+            <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pr-8 text-gray-700 text-base leading-relaxed relative">
+              <span class="block">
+                “I finally felt understood — every day, one step stronger. These emails felt like having a wise friend on call.”
+              </span>
+              <!-- Arrow for left side -->
+              <span class="absolute -left-4 top-6 w-5 h-5 bg-white border-l border-b border-purple-100 rounded-bl-2xl rotate-45 shadow -z-1"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 (Photo Right) -->
+        <div class="flex flex-col sm:flex-row-reverse items-center gap-5">
+          <div class="flex flex-col items-center min-w-[70px]">
+            <img src="ai-male-37.jpg" alt="Male, 37" class="w-14 h-14 rounded-full shadow-md object-cover">
+            <span class="mt-2 text-xs text-[#393f4a]">Male, 37</span>
+          </div>
+          <div class="relative flex-1">
+            <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pl-8 text-gray-700 text-base leading-relaxed relative">
+              <span class="block">
+                “No therapist ever made me feel this seen, and the advice was practical—not just ‘think positive’ stuff.”
+              </span>
+              <!-- Arrow for right side -->
+              <span class="absolute -right-4 top-6 w-5 h-5 bg-white border-r border-b border-purple-100 rounded-br-2xl rotate-45 shadow -z-1"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 (Photo Left) -->
+        <div class="flex flex-col sm:flex-row items-center gap-5">
+          <div class="flex flex-col items-center min-w-[70px]">
+            <img src="ai-female-29.jpg" alt="Female, 29" class="w-14 h-14 rounded-full shadow-md object-cover">
+            <span class="mt-2 text-xs text-[#393f4a]">Female, 29</span>
+          </div>
+          <div class="relative flex-1">
+            <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pr-8 text-gray-700 text-base leading-relaxed relative">
+              <span class="block">
+                “The daily guides made me feel less alone. It’s like they knew exactly what I was struggling with.”
+              </span>
+              <!-- Arrow for left side -->
+              <span class="absolute -left-4 top-6 w-5 h-5 bg-white border-l border-b border-purple-100 rounded-bl-2xl rotate-45 shadow -z-1"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 4 (Photo Right) -->
+        <div class="flex flex-col sm:flex-row-reverse items-center gap-5">
+          <div class="flex flex-col items-center min-w-[70px]">
+            <img src="ai-male-41.jpg" alt="Male, 41" class="w-14 h-14 rounded-full shadow-md object-cover">
+            <span class="mt-2 text-xs text-[#393f4a]">Male, 41</span>
+          </div>
+          <div class="relative flex-1">
+            <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pl-8 text-gray-700 text-base leading-relaxed relative">
+              <span class="block">
+                “More helpful than months of counseling. I could actually see progress, day by day.”
+              </span>
+              <!-- Arrow for right side -->
+              <span class="absolute -right-4 top-6 w-5 h-5 bg-white border-r border-b border-purple-100 rounded-br-2xl rotate-45 shadow -z-1"></span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-  </section>-->
+  </section>
+
 
   <!-- Pricing -->
   <section id="pricing" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-16 px-6 text-center">
@@ -216,6 +291,11 @@
         <a href="#" data-plan="365" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
       </div>
     </div>
+    <div class="mt-8 flex flex-col items-center space-y-2">
+      <span class="text-white/90 text-sm">100% private — your info is never shared</span>
+      <span class="text-white/90 text-sm">7-day no-questions refund guarantee</span>
+      <img src="stripe-badge.png" alt="Powered by Stripe" class="h-6 mt-2" />
+    </div>
   </section>
 
 
@@ -229,12 +309,11 @@
 
   <!-- Final CTA -->
   <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-12 px-6">
-    <h2 class="text-2xl md:text-3xl font-semibold mb-4">Ready to Transform Your Heartbreak Into Strength?</h2>
-    <div class="space-y-4">
-      <a href="#pricing" class="inline-block bg-white text-purple-700 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100 transition">Get Started Now</a>
-      <br />
-      <a href="sample-guide.html" class="inline-block text-white text-sm underline hover:text-gray-200">Still unsure? View a sample guide first</a>
-    </div>
+    <h2 class="text-2xl md:text-3xl font-semibold mb-4">Not sure yet? See the real thing.</h2>
+    <a href="sample-guide.html" class="inline-block bg-white text-purple-700 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100 transition">
+      View a Real Sample Guide
+    </a>
+    <p class="text-sm text-white/80 mt-2">No sign-up needed. See exactly what you get before you buy.</p>
   </section>
 
   <footer class="text-center text-sm text-[#8c7878] py-6 space-y-2">

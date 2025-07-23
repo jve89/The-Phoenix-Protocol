@@ -20,3 +20,7 @@ WHERE timestamp < NOW() - INTERVAL '90 days';
 -- Delete old guide generation logs
 DELETE FROM guide_generation_logs
 WHERE created_at < NOW() - INTERVAL '90 days';
+
+-- Delete testimonials older than 90 days and not published
+DELETE FROM testimonials
+WHERE created_at < NOW() - INTERVAL '90 days' AND status != 'published';

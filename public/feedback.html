@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Share Your Story – The Phoenix Protocol</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #fff; }
+  </style>
+</head>
+<body class="bg-white font-sans">
+  <div class="max-w-2xl mx-auto min-h-screen flex flex-col justify-center">
+    <div class="py-12 px-4">
+      <div class="bg-gray-50 rounded-2xl shadow-xl p-8 md:p-10 max-w-xl mx-auto">
+        <div class="flex flex-col items-center mb-8">
+          <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-16 mb-4">
+          <h1 class="text-2xl md:text-3xl font-bold text-[#393f4a] mb-2 text-center">
+            Share Your Story
+          </h1>
+          <p class="text-[#8c7878] text-center max-w-md">
+            Thank you for taking a moment to share your experience.<br>
+            Your story helps others and makes the Phoenix Protocol stronger for everyone.
+          </p>
+        </div>
+        <form id="feedbackForm" enctype="multipart/form-data" class="space-y-5">
+          <div>
+            <label class="block text-sm font-semibold text-[#393f4a] mb-1" for="firstName">First Name (optional)</label>
+            <input type="text" id="firstName" name="firstName" class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" maxlength="32" autocomplete="given-name">
+          </div>
+          <div class="flex gap-4">
+            <div class="flex-1">
+              <label class="block text-sm font-semibold text-[#393f4a] mb-1" for="age">Age (optional)</label>
+              <input type="number" id="age" name="age" min="12" max="100" class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" maxlength="3" autocomplete="off">
+            </div>
+            <div class="flex-1">
+              <label class="block text-sm font-semibold text-[#393f4a] mb-1" for="gender">Gender (optional)</label>
+              <select id="gender" name="gender" class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                <option value="">–</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Non-binary">Non-binary</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+          <!-- PHOTO UPLOAD FIELD (optional) -->
+          <div>
+            <label class="block text-sm font-semibold text-[#393f4a] mb-1" for="photo">
+              Add a Photo (optional)<br>
+              <span class="text-xs text-gray-400">JPG, PNG, or WEBP. Max 3MB. No faces required — can be symbolic.</span>
+            </label>
+            <input type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png,.webp"
+                   class="block border border-gray-300 rounded p-2 w-full" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-[#393f4a] mb-1" for="testimonial">Your Story / Testimonial <span class="text-red-500">*</span></label>
+            <textarea id="testimonial" name="testimonial" rows="5" minlength="50" required class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+            <span class="text-xs text-gray-400">Minimum 50 characters. Don’t worry about spelling — speak from the heart.</span>
+          </div>
+          <div>
+            <label class="inline-flex items-center">
+              <input type="checkbox" id="permission" name="permission" required class="mr-2">
+              <span class="text-xs text-[#393f4a]">I agree my story may be published, using only my first name, age, and gender (if provided).</span>
+            </label>
+          </div>
+          <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-md hover:bg-indigo-700 transition">Submit Story</button>
+        </form>
+        <div id="thankYouMsg" class="hidden mt-8 text-center">
+          <h2 class="text-xl font-bold mb-2 text-[#393f4a]">Thank You!</h2>
+          <p class="text-[#8c7878]">Your story means a lot. If we use your words on the website, we’ll only show your first name, age, and gender.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Prevent resubmit on reload
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+
+    // Handle submission (AJAX + file upload)
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+
+      // Client-side validation
+      const testimonial = form.testimonial.value.trim();
+      const permission = form.permission.checked;
+      const photo = form.photo.files[0];
+      if (!testimonial || testimonial.length < 50 || !permission) {
+        alert('Please provide a testimonial of at least 50 characters and grant permission.');
+        return;
+      }
+      if (photo && photo.size > 3 * 1024 * 1024) {
+        alert('Photo is too large (max 3MB).');
+        return;
+      }
+      // POST to API (AJAX)
+      try {
+        const res = await fetch('/api/submit-feedback', {
+          method: 'POST',
+          body: data
+        });
+        if (res.ok) {
+          form.classList.add('hidden');
+          document.getElementById('thankYouMsg').classList.remove('hidden');
+        } else {
+          alert('Something went wrong. Please try again later.');
+        }
+      } catch (err) {
+        alert('Unable to submit. Please try again soon.');
+      }
+    });
+  </script>
+</body>
+</html>

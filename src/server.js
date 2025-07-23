@@ -4,6 +4,7 @@ const express = require('express');
 const routes = require('./routes/routes');
 const webhookRoutes = require('./routes/webhooks');
 const unsubscribeRoute = require('./routes/unsubscribe');
+const feedbackRoutes = require('./routes/feedback');
 const { startCron } = require('./utils/cron');
 const { connectAndInit } = require('./db/db');
 
@@ -38,11 +39,17 @@ if (!process.env.ADMIN_EMAIL) {
   console.log('ADMIN_EMAIL: ✅ Present');
 }
 
+// CREATE THE APP *AFTER* ALL VARS ARE VALIDATED
 const app = express();
+
+// Middleware (order matters)
 app.use('/', unsubscribeRoute);
 app.use('/webhook', webhookRoutes);
 app.use(express.json());
 app.use(express.static('public'));
+
+// Register feedback *before* general routes, both under /api
+app.use('/api', feedbackRoutes);
 app.use('/api', routes);
 
 const port = process.env.PORT || 3000;
