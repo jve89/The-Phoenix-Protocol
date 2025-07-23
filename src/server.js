@@ -8,6 +8,14 @@ const feedbackRoutes = require('./routes/feedback');
 const { startCron } = require('./utils/cron');
 const { connectAndInit } = require('./db/db');
 
+const fs = require('fs');
+const path = require('path');
+
+const uploadsDir = path.join(__dirname, '../public/uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 // Crash safety: handle uncaught exceptions and rejections
 process.on('uncaughtException', err => {
   console.error('🔥 Uncaught Exception:', err);
