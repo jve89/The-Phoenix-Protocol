@@ -6,203 +6,201 @@
   <title>The Phoenix Protocol - Sample Guide</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
-
-  <!-- Open Graph (Facebook, LinkedIn, etc.) -->
-  <meta property="og:title" content="The Phoenix Protocol" />
-  <meta property="og:description" content="Heartbreak Recovery, Rewired. Transform your pain into strength with daily, AI-powered guidance." />
-  <meta property="og:image" content="https://www.thephoenixprotocol.app/og-banner.png" />
-  <meta property="og:url" content="https://www.thephoenixprotocol.app" />
-  <meta property="og:type" content="website" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="The Phoenix Protocol" />
-  <meta name="twitter:description" content="Heartbreak Recovery, Rewired. Transform your pain into strength with daily, AI-powered guidance." />
-  <meta name="twitter:image" content="https://www.thephoenixprotocol.app/og-banner.png" />
-
-  <!-- Search Engine Metadata -->
-  <meta name="description" content="The Phoenix Protocol is your AI-powered heartbreak recovery companion. Rebuild your strength with structured, daily emotional guidance." />
-  <link rel="canonical" href="https://www.thephoenixprotocol.app/" />
-
-  <!-- Schema.org JSON-LD Branding -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "The Phoenix Protocol",
-    "url": "https://www.thephoenixprotocol.app/",
-    "logo": "https://www.thephoenixprotocol.app/og-banner.png",
-    "sameAs": [
-      "https://www.instagram.com/thephoenixprotocol",
-      "https://www.facebook.com/thephoenixprotocol",
-      "https://www.linkedin.com/company/thephoenixprotocol"
-    ]
-  }
-  </script>
   <style>
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    body { background: #fff; }
+    .max-w-email { max-width: 630px; }
+    .email-mockup {
+      background: #f7f6fa;
+      border: 1.6px solid #dad6ed;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px 0 rgba(83,57,183,0.04);
+      margin-bottom: 38px;
+      padding: 0;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+      position: relative;
     }
-
-    .animate-fade-in {
-      animation: fade-in 0.8s ease-out both;
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ece9f6;
+      padding: 0.68rem 1.1rem 0.66rem 1.1rem;
+      border-bottom: 1.5px solid #e2e2ef;
+    }
+    .browser-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .dot { width: 16px; height: 16px; border-radius: 50%; border: 1.3px solid #cacaca; display: inline-block; }
+    .dot.red { background: #fd6b61; }
+    .dot.yellow { background: #feca41; }
+    .dot.green { background: #42d66a; }
+    .browser-actions { display: flex; align-items: center; }
+    .collapse-btn {
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; background: transparent; border: none;
+      transition: filter 0.12s;
+    }
+    .collapse-btn:active { filter: brightness(0.87); }
+    .email-meta-row {
+      display: flex; align-items: center;
+      padding: 1.0rem 1.7rem 0.7rem 1.7rem;
+      gap: 1.1rem;
+      background: #f7f6fa;
+    }
+    .email-mini-logo {
+      width: 44px; height: 44px; border-radius: 50%;
+      box-shadow: 0 0 0 2.5px #ede9fe;
+      object-fit: contain;
+      margin-right: 12px;
+      background: #fff;
+      border: 1.2px solid #ede9fe;
+    }
+    .email-meta-text { display: flex; flex-direction: column; }
+    .email-subject { font-size: 1.09rem; font-weight: 700; color: #393f4a; margin-bottom: 1px; }
+    .email-fromto { font-size: 0.95rem; color: #8888a6; }
+    .email-body {
+      padding: 2.1rem 2.1rem 1.2rem 2.1rem;
+      background: #fff;
+      font-size: 1.04rem;
+      line-height: 1.68;
+      color: #393f4a;
+      max-height: 370px;
+      overflow-y: auto;
+      border-radius: 0 0 18px 18px;
+      transition: max-height 0.33s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .email-mockup.collapsed .email-body { display: none; }
+    .email-mockup.collapsed .email-logo-top { display: none; }
+    .email-body::-webkit-scrollbar { width: 7px; background: #eee; border-radius: 4px;}
+    .email-body::-webkit-scrollbar-thumb { background: #dad6ed; border-radius: 4px;}
+    @media (max-width: 700px) {
+      .max-w-email { padding-left: 0.7rem; padding-right: 0.7rem; }
+      .email-meta-row, .email-body { padding-left: 1.0rem; padding-right: 1.0rem; }
+      .controls-bar { flex-direction: column; align-items: stretch; gap: 12px !important; }
+      .controls-bar select { width: 100%; }
+    }
+    /* Sticky CTA only above footer */
+    .sticky-cta {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to right, #4261f6, #7554d1);
+      color: #fff; box-shadow: 0 -4px 18px 0 rgba(83,57,183,0.06);
+      z-index: 40; display: flex; flex-direction: column; align-items: center;
+      padding: 1.3rem 1rem 1.1rem 1rem;
+      transition: transform 0.25s;
+    }
+    .sticky-cta.hide { transform: translateY(120%); }
+    .sticky-cta a {
+      background: #fff;
+      color: #7554d1;
+      font-weight: 600;
+      padding: 0.8rem 2.1rem;
+      border-radius: 10px;
+      margin-top: 0.7rem;
+      box-shadow: 0 2px 8px 0 rgba(83,57,183,0.07);
+      transition: background 0.12s, color 0.12s;
+    }
+    .sticky-cta a:hover { background: #f1eefc; color: #4261f6; }
+    .pp-card-quote {
+      background: #f7f6fa;
+      border-radius: 16px;
+      box-shadow: 0 2px 14px 0 rgba(83,57,183,0.03);
+      padding: 1.3rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      font-size: 1.08rem;
+      color: #7b78b1;
+      max-width: 630px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .pp-card-quote .quote-mark {
+      font-size: 2.1rem;
+      color: #d2cde8;
+      line-height: 0.8;
+    }
+    .pp-card-quote .author {
+      font-style: italic;
+      color: #655fa1;
+      margin-top: 0.3em;
+      display: block;
+    }
+    .controls-bar { display: flex; gap: 18px; align-items: center; margin-bottom: 25px;}
+    .controls-bar label { font-weight: 600; color: #655fa1; font-size: 1rem; }
+    .controls-bar select {
+      border: 1.2px solid #dad6ed;
+      border-radius: 7px;
+      background: #f7f6fa;
+      color: #393f4a;
+      padding: 0.6rem 1.3rem;
+      font-size: 1.02rem;
+      outline: none;
+      min-width: 120px;
     }
   </style>
 </head>
+<body class="font-sans">
 
-<body class="bg-white font-sans">
-  <!-- Header -->
-  <header class="text-center py-12 px-6">
-    <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-16 mx-auto mb-4">
-    <h1 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-4">Experience The Phoenix Protocol</h1>
-    <p class="text-[#8c7878] max-w-xl mx-auto">Preview three real days of our guided breakup recovery journey and see how structured, daily steps can transform your healing process.</p>
+  <!-- Centered top logo -->
+  <header class="flex flex-col items-center py-8">
+    <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-16 w-auto mx-auto mb-2">
   </header>
-  <section class="max-w-3xl mx-auto px-6 py-12">
-    <!-- 🧠 Let Go to Grow — Releasing the Emotional Hold -->
-    <div class="bg-white border border-purple-200 rounded-xl shadow-md p-6 md:p-8 mb-10 transition duration-300 hover:shadow-lg animate-fade-in">
-      <div class="flex items-center mb-4">
-        <svg class="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 4.354a4 4 0 00-2.828 6.828L12 16l2.828-4.818A4 4 0 0012 4.354z" />
-        </svg>
-        <h3 class="text-xl font-semibold text-gray-800">Let Go to Grow — Releasing the Emotional Hold</h3>
+
+  <main class="max-w-email mx-auto">
+
+    <!-- Title section -->
+    <section class="text-center mb-5">
+      <h1 class="text-4xl font-extrabold mb-4 text-[#22203a] leading-tight">
+        Experience The Phoenix Protocol
+      </h1>
+      <div class="text-lg text-[#393f4a] mb-7">
+        Preview three real days of our guided breakup recovery journey and see how structured, daily steps can transform your healing process.
       </div>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        The end of a relationship often feels like stepping into fog. You wake up and reach for someone who's no longer there — not just physically, but emotionally. The rituals, the inside jokes, the unconscious way you shaped your day around them… gone. And in that emptiness, your mind clings. It replays every moment, every smile, every mistake — trying to rewrite a story that's already ended.
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        But letting go doesn’t mean forgetting or devaluing the connection. It means unhooking your present from a past that can no longer evolve. It’s giving yourself permission to stop obsessing over “what could’ve been” and start asking “what could be next?”
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Mike, a former client, struggled with this after a 5-year relationship. At first, he checked her Instagram daily, hoping for signs of regret. But nothing changed — except his own suffering. The real shift came when he stopped chasing closure and started creating rituals of his own: morning walks without his phone, handwritten letters he never sent, and one brave decision — to stop looking at her updates altogether.
-      </p>
-      <p class="text-gray-700 leading-relaxed">
-        You don’t need to “move on” today. Just loosen the grip. Create space. And when the weight lifts — even for a second — fill that space with something that belongs only to you.
-      </p>
+    </section>
+
+    <!-- Controls bar -->
+    <div class="controls-bar mb-8 justify-center">
+      <label for="gender">Gender</label>
+      <select id="gender">
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="nb">Non-binary</option>
+      </select>
+      <label for="goal">Goal</label>
+      <select id="goal">
+        <option value="moveon">Move On</option>
+        <option value="reconnect">Reconnect</option>
+      </select>
     </div>
 
-    <!-- ✅ Emotional Reset Routine — A Day of Small Wins -->
-    <div class="bg-white border border-purple-200 rounded-xl shadow-md p-6 md:p-8 mb-10 transition duration-300 hover:shadow-lg animate-fade-in">
-      <div class="flex items-center mb-4">
-        <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M5 13l4 4L19 7" />
-        </svg>
-        <h3 class="text-xl font-semibold text-gray-800">Reset Routine — A Day of Small Wins</h3>
-      </div>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Healing can feel like chaos. Some days you’re fine. Other days, a song, a smell, a random memory drags you under. That’s normal. What matters is having anchors — routines that give your nervous system a chance to calm down, realign, and reset. Here’s one day. One structure. One blueprint. Follow it, modify it, or steal just one idea that feels right today.
-      </p>
-      <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
-        <li><strong>Morning:</strong> 5-minute deep breathing — inhale for 4, hold for 4, exhale for 6. Eyes closed. Shoulders dropped.</li>
-        <li><strong>Digital Check:</strong> Mute or archive chats with your ex. It’s not about erasing — it’s about protecting your peace.</li>
-        <li><strong>Affirmation (out loud):</strong> “Their absence doesn’t erase my value.”</li>
-        <li><strong>Midday Anchor:</strong> Do one task fully. Fold laundry, answer emails, or organise your desk — but do it with focus.</li>
-        <li><strong>Evening:</strong> Journal: “What did I learn about myself today that I didn’t see before?”</li>
-      </ul>
-      <p class="text-gray-700 leading-relaxed">
-        There’s no finish line. Just these little wins. Stack them. Repeat them. One day, you’ll look back and realise your old pain is no longer your daily reality.
-      </p>
+    <!-- Main Email Samples Section -->
+    <section id="email-samples" class="mt-2"></section>
+
+    <!-- Testimonials Card -->
+    <div class="pp-card-quote mt-8">
+      <span class="quote-mark">“</span>
+      <span>
+        “I finally felt understood — every day, one step stronger.” <span class="author">— future you</span><br>
+        “It felt like every email knew exactly what I needed.” <span class="author">— anonymous</span>
+      </span>
     </div>
+  </main>
 
-    <!-- 🔁 Identity Reboot — Who Are You Without Them? -->
-    <div class="bg-white border border-purple-200 rounded-xl shadow-md p-6 md:p-8 mb-10 transition duration-300 hover:shadow-lg animate-fade-in">
-      <div class="flex items-center mb-4">
-        <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <h3 class="text-xl font-semibold text-gray-800">Identity Reboot — Who Are You Without Them?</h3>
-      </div>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        When a relationship ends, it’s not just the loss of a person — it’s the loss of the role you played. The version of yourself that existed *within* that relationship. So the real question isn’t “How do I get over them?” — it’s “Who am I without the version of me that needed them?”
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Start small. Ask yourself:
-        <em>What did I stop doing just to keep the peace?</em> What hobbies, opinions, habits, or dreams did you set aside to avoid arguments, stay likable, or avoid rocking the boat?
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Now reverse-engineer your way back to those parts:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
-        <li>Revive one playlist that made you feel alive — not them, <strong>you</strong>.</li>
-        <li>Write a note to your past self: “I’m sorry I left you behind.”</li>
-        <li>Make plans for something your ex would’ve rolled their eyes at.</li>
-      </ul>
-      <p class="text-gray-700 leading-relaxed">
-        You’re not broken. You’re just between chapters. This isn’t the end — it’s the first real moment you get to be fully, unapologetically you.
-      </p>
-    </div>
+  <!-- Sticky CTA (shows/hides on footer scroll) -->
+  <div id="sticky-cta" class="sticky-cta">
+    <span class="font-semibold text-lg mb-2">Ready to start your recovery journey?</span>
+    <a href="index.html#pricing">Choose Your Plan</a>
+  </div>
 
-    <!-- 🧭 Story Card: What If I Still Want Them Back? -->
-    <div class="bg-white border border-purple-200 rounded-xl shadow-md p-6 md:p-8 mb-10 transition duration-300 hover:shadow-lg animate-fade-in">
-      <div class="flex items-center mb-4">
-        <svg class="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 14l9-5-9-5-9 5 9 5z" />
-          <path d="M12 14l6.16-3.422a12.042 12.042 0 01-.56 6.958L12 14z" />
-          <path d="M12 14l-6.16-3.422a12.042 12.042 0 00.56 6.958L12 14z" />
-        </svg>
-        <h3 class="text-xl font-semibold text-gray-800">What If I Still Want Them Back?</h3>
-      </div>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Missing someone doesn’t always mean you should go back. It means something mattered deeply — and you’re human enough to feel the loss. That emotion is valid. But now it’s time to ask: what do I want to rebuild — my relationship, or myself?
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        The Phoenix Protocol doesn’t push you to "move on" or "get them back." It guides you to heal first, so that whatever comes next — reconciliation or release — is grounded in clarity, not desperation.
-      </p>
-      <div class="bg-gray-50 border border-purple-100 rounded-lg p-4 md:p-5 mt-6">
-        <p class="text-sm text-gray-600 font-semibold mb-2">If you want to reconnect:</p>
-        <ul class="list-disc list-inside text-gray-700 text-sm mb-4">
-          <li>Begin by restoring your own emotional baseline</li>
-          <li>Resist reaching out — let space do its work</li>
-          <li>Use this time to reflect on *why* reconnection would serve both of you</li>
-        </ul>
-        <p class="text-sm text-gray-600 font-semibold mb-2">If you're ready to move on:</p>
-        <ul class="list-disc list-inside text-gray-700 text-sm">
-          <li>Identify the patterns you never want to repeat</li>
-          <li>Detach your self-worth from their validation</li>
-          <li>Start building a post-breakup identity rooted in your own power</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 🔍 Story Card: Who Are You Becoming? -->
-    <div class="bg-white border border-purple-200 rounded-xl shadow-md p-6 md:p-8 mb-10 transition duration-300 hover:shadow-lg animate-fade-in">
-      <div class="flex items-center mb-4">
-        <svg class="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M5 13l4 4L19 7" />
-        </svg>
-        <h3 class="text-xl font-semibold text-gray-800">Who Are You Becoming?</h3>
-      </div>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Every ending is also an invitation. Not just to survive, but to evolve. You are not broken — you are between versions. This isn’t about fixing yourself, it’s about discovering who you’re becoming without the weight of who you were trying to be.
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Before you reach for closure, or clarity, reach inward. Ask: what kind of person do I want to emerge as — not for anyone else, but for myself? This is the seed of a new identity, and your answers will shape the life that follows.
-      </p>
-      <div class="bg-gray-50 border border-purple-100 rounded-lg p-4 md:p-5 mt-6">
-        <p class="text-sm text-gray-600 font-semibold mb-2">🧠 Self-Reflection Prompt</p>
-        <ul class="list-disc list-inside text-gray-700 text-sm">
-          <li>Who am I without this relationship?</li>
-          <li>What parts of myself am I reclaiming?</li>
-          <li>What traits do I admire — and how can I embody them more fully?</li>
-          <li>What do I want to create in this new space?</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-12 px-6">
-    <h2 class="text-2xl md:text-3xl font-semibold mb-4">Ready to Start Your Recovery Journey?</h2>
-    <p class="mb-6 max-w-xl mx-auto">Join The Phoenix Protocol and receive structured daily guides that support your emotional healing, rebuild your confidence, and help you move forward with clarity.</p>
-    <a href="index.html#pricing" class="inline-block bg-white text-blue-700 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100 transition">Choose Your Plan</a>
-  </section>
-
-  <!-- Back to Home -->
-  <section class="text-center py-8">
-    <a href="index.html#top" class="text-blue-600 hover:underline mt-8 block text-sm">← Back to Home</a>
-  </section>
-
-  <footer class="text-center text-sm text-[#8c7878] py-6 space-y-2">
+  <footer id="footer" class="text-center text-sm text-[#8c7878] py-6 space-y-2 mt-10">
     <div>© 2025 The Phoenix Protocol. All rights reserved.</div>
     <div>
       <a href="privacy.html" class="hover:underline mr-4">Privacy Policy</a>
@@ -210,5 +208,207 @@
     </div>
   </footer>
 
+  <script>
+    // ---- Sample Email Data (placeholder, replace later) ----
+    const samples = {
+      female: {
+        moveon: [
+          {
+            subject: "Day 3: Reclaim Your Morning",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>This morning, pause before you reach for your phone. Instead, write down three things that are *yours alone* — things that don’t depend on your ex or anyone else. Make your coffee, stretch, and claim the day as a fresh start. This is your time.</p>
+            `
+          },
+          {
+            subject: "Day 10: Grieve Without Shame",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Crying is not a setback. It’s your nervous system releasing the pressure. Let it out. Then ask: What do I need right now — comfort, space, or movement? Honour that need, with no apology.</p>
+            `
+          }
+        ],
+        reconnect: [
+          {
+            subject: "Day 3: Pause Before Reaching Out",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>The urge to text them is normal. Don’t judge it, but don’t obey it either. Today, write the message you *wish* you could send — but keep it in your notes. Let time give you clarity before you hit send.</p>
+            `
+          },
+          {
+            subject: "Day 11: Self-Respect First",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Before you chase, check: Is reconnecting truly about love, or escaping loneliness? Today’s task: Invest in yourself — read, run, learn. You’ll show up as your best self, no matter the outcome.</p>
+            `
+          }
+        ]
+      },
+      male: {
+        moveon: [
+          {
+            subject: "Day 3: Reclaim Your Morning",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Start the day on your own terms. List three things that make you feel strong — not memories, but present actions. Get outside for 10 minutes. Movement is momentum.</p>
+            `
+          },
+          {
+            subject: "Day 9: Channel The Energy",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Sadness is energy with nowhere to go. Give it a direction — hit the gym, or just take a walk. Notice how moving your body changes your mind, even a little.</p>
+            `
+          }
+        ],
+        reconnect: [
+          {
+            subject: "Day 2: Space is Power",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>The hardest thing is not reaching out. But space isn’t punishment — it’s respect, for both of you. Today, block one hour for something that made you feel alive before this breakup. That version of you still exists.</p>
+            `
+          },
+          {
+            subject: "Day 15: Rebuild Before Reaching",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>If you want her back, make sure you’re becoming someone you’re proud of — not chasing out of pain. Do one thing today that’s just for your growth, not the relationship.</p>
+            `
+          }
+        ]
+      },
+      nb: {
+        moveon: [
+          {
+            subject: "Day 4: Small Rituals, Big Change",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Pick one tiny daily ritual that’s only for you. A playlist, a walk, a drawing. This is how you reclaim life on your terms.</p>
+            `
+          },
+          {
+            subject: "Day 12: Rewrite the Story",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Your breakup isn’t a failure — it’s a turning point. What’s one narrative you’re ready to let go of? Write it down. Name it. Then, imagine what story comes next.</p>
+            `
+          }
+        ],
+        reconnect: [
+          {
+            subject: "Day 7: Pause and Reflect",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>The space you create is powerful. Today, don’t rush into action — just observe what thoughts come up. You’re learning about yourself as much as about the relationship.</p>
+            `
+          },
+          {
+            subject: "Day 13: The Power of Patience",
+            body: `
+              <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
+              <p>Sometimes, love returns when you’re not looking for it. Focus on what you control: your healing, your habits. Let time do the rest.</p>
+            `
+          }
+        ]
+      }
+    };
+
+    // Collapsible email logic
+    function renderEmails(gender, goal) {
+      const container = document.getElementById('email-samples');
+      container.innerHTML = '';
+      const guides = samples[gender][goal];
+      guides.forEach((sample, idx) => {
+        container.innerHTML += `
+          <div class="email-mockup" id="email-card-${idx}">
+            <div class="browser-bar">
+              <div class="browser-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="browser-actions">
+                <button class="collapse-btn" onclick="toggleCollapse(${idx})" title="Collapse/Expand">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#b8b8d2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path id="collapse-icon-${idx}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="email-meta-row">
+              <img src="logo-purple.svg" alt="Phoenix Protocol" class="email-mini-logo">
+              <div class="email-meta-text">
+                <div class="email-subject">${sample.subject}</div>
+                <div class="email-fromto">
+                  <span><strong>From:</strong> The Phoenix Protocol &lt;recovery@thephoenixprotocol.app&gt;</span><br>
+                  <span><strong>To:</strong> You</span>
+                </div>
+              </div>
+            </div>
+            <div class="email-body">${sample.body}</div>
+          </div>
+        `;
+      });
+    }
+
+    // Collapse/expand logic
+    function toggleCollapse(idx) {
+      const card = document.getElementById('email-card-' + idx);
+      if (!card) return;
+      const isCollapsed = card.classList.toggle('collapsed');
+      // Change icon direction
+      const icon = document.getElementById('collapse-icon-' + idx);
+      if (icon) {
+        icon.setAttribute('d',
+          isCollapsed
+            ? "M12 4v16" // vertical line for "expand"
+            : "M20 12H4" // horizontal line for "collapse"
+        );
+      }
+    }
+
+    // Dropdown logic
+    let gender = 'female';
+    let goal = 'moveon';
+
+    function setGender(g) {
+      gender = g;
+      document.getElementById('gender').value = g;
+      renderEmails(gender, goal);
+    }
+    function setGoal(g) {
+      goal = g;
+      document.getElementById('goal').value = g;
+      renderEmails(gender, goal);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      // Init dropdowns
+      document.getElementById('gender').addEventListener('change', function(e){
+        setGender(e.target.value);
+      });
+      document.getElementById('goal').addEventListener('change', function(e){
+        setGoal(e.target.value);
+      });
+      renderEmails(gender, goal);
+
+      // Sticky CTA hide-on-footer
+      const stickyCTA = document.getElementById('sticky-cta');
+      const footer = document.getElementById('footer');
+      function checkStickyCTA() {
+        const footerRect = footer.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        if (footerRect.top < windowHeight) {
+          stickyCTA.classList.add('hide');
+        } else {
+          stickyCTA.classList.remove('hide');
+        }
+      }
+      window.addEventListener('scroll', checkStickyCTA);
+      window.addEventListener('resize', checkStickyCTA);
+      checkStickyCTA();
+    });
+  </script>
 </body>
 </html>
