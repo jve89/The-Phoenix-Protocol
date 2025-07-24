@@ -227,6 +227,55 @@ async function runPruneOldLogs() {
   }
 }
 
+// utils/cron.js (add after runDeliverDailyGuides)
+
+// Job 5: Send farewell email to users who maxed out their plan and haven’t received farewell yet
+async function runSendFarewellEmails() {
+  console.log('[CRON] 💌 Checking for farewell emails');
+  logger.info('💌 Checking for farewell emails');
+  // Select users who maxed out plan and haven't been sent farewell
+  let users = [];
+  try {
+    ({ rows: users } = await db.query(
+      `SELECT id, email FROM users
+      WHERE plan_limit > 0 AND usage_count >= plan_limit
+      AND NOT farewell_sent`
+    ));
+  } catch (err) {
+    console.error('[CRON] Farewell user query failed:', err.message);
+    logger.error(`Farewell user query failed: ${err.message}`);
+    return;
+  }
+  if (!users.length) {
+    console.log('[CRON] No farewells to send');
+    return;
+  }
+  // Load template ONCE
+  let farewellHtml;
+  try {
+    farewellHtml = await loadTemplate('farewell_email.html');
+  } catch (err) {
+    console.error('[CRON] Could not load farewell email template:', err.message);
+    return;
+  }
+  for (const user of users) {
+    try {
+      await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
+      console.log(`[CRON] 🎉 Farewell sent: ${user.email}`);
+      logger.info(`🎉 Farewell sent: ${user.email}`);
+      const { rows: updated } = await db.query(
+        `UPDATE users SET farewell_sent = TRUE WHERE id = $1 RETURNING email`, [user.id]
+      );
+      if (updated.length) {
+        console.log(`[CRON] DB: Marked farewell_sent for ${updated[0].email}`);
+      }
+    } catch (err) {
+      console.error(`[CRON] ❌ Farewell send failed for ${user.email}:`, err.message);
+      logger.error(`Farewell send failed for ${user.email}: ${err.message}`);
+    }
+  }
+}
+
 // Schedule tasks
 function startCron() {
   if (!validateEnv()) return;
@@ -242,6 +291,13 @@ function startCron() {
     if (!jobRunning.deliver) {
       jobRunning.deliver = true;
       try { await runDeliverDailyGuides(); } finally { jobRunning.deliver = false; }
+    }
+  }, { timezone: 'Etc/UTC' });
+
+  cron.schedule('5 16 * * *', async () => {
+    if (!jobRunning.farewell) {
+      jobRunning.farewell = true;
+      try { await runSendFarewellEmails(); } finally { jobRunning.farewell = false; }
     }
   }, { timezone: 'Etc/UTC' });
 
