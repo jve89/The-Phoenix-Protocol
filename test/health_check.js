@@ -8,7 +8,13 @@ const sgMail = require('@sendgrid/mail');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const db = new Client({ connectionString: process.env.DATABASE_URL });
+const db = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
 
 (async () => {
   // 1. OpenAI
