@@ -39,7 +39,8 @@ function buildAdminGuideEmailHtml(guide) {
 
     if (guide && process.env.ADMIN_EMAIL) {
       // Save JSON to /tmp for attachment
-      const jsonPath = `/tmp/daily_guide_${today}.json`;
+      const os = require('os');
+      const jsonPath = path.join(os.tmpdir(), `daily_guide_${today}.json`);
       await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
 
       const html = buildAdminGuideEmailHtml(guide);

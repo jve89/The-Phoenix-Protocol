@@ -24,3 +24,7 @@ WHERE created_at < NOW() - INTERVAL '90 days';
 -- Delete testimonials older than 90 days and not published
 DELETE FROM testimonials
 WHERE created_at < NOW() - INTERVAL '90 days' AND status != 'published';
+
+-- Delete old used prompt tracking (optional, if table grows large)
+DELETE FROM used_prompts
+WHERE date < NOW() - INTERVAL '90 days';

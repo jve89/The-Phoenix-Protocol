@@ -128,7 +128,12 @@ async function generateAndCacheDailyGuides() {
       await logEvent('content', 'info', `Generating ${variant}`);
       const content = await generateTip(gender, stage);
       const lines = content.split('\n').filter(Boolean);
-      const title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
+      let title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
+
+      // Normalize: fallback to capitalized variant name if title missing or too long
+      if (!title || title.length > 100) {
+        title = variant.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      }
       guideObj[variant] = { title, content };
     } catch (err) {
       logEvent('content', 'error', `Generation error for ${variant}: ${err.message}`);
