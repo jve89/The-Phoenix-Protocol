@@ -1,15 +1,12 @@
-const axios = require('axios');
 const path = require('path');
 const { subDays } = require('date-fns');
 const db = require('../db/db');
 const { logEvent } = require('./db_logger');
-
-// Validate required environment variables at load time
-const { GROK_API_KEY, GROK_MODEL_PRIMARY, GROK_MODEL_FALLBACKS } = process.env;
-if (!GROK_API_KEY) {
-  logEvent('content', 'error', 'Missing GROK_API_KEY for AI guide generation');
-  throw new Error('Missing GROK_API_KEY');
-}
+const { Configuration, OpenAIApi } = require('openai'); // npm install openai
+const MODELS = ['gpt-4o', 'gpt-4', 'gpt-3.5-turbo'];
+const openai = new OpenAIApi(new Configuration({
+  apiKey: process.env.OPENAI_API_KEY
+}));
 
 // Helper: UTC date string YYYY-MM-DD
 function todayUtc() {
@@ -38,7 +35,7 @@ for (const variant of VARIANTS) {
 }
 
 /**
- * Generate a guide tip using AI, with primary and fallback models and backoff.
+ * Generate a guide tip using AI, with model fallback and anti-repeat prompt logic.
  * @param {string} gender
  * @param {string} goalStage
  * @returns {Promise<string>}
@@ -51,8 +48,29 @@ async function generateTip(gender, goalStage) {
     return 'Guide unavailable at this time.';
   }
 
-  // Select random prompt
-  const idx = Math.floor(Math.random() * prompts.length);
+  // --- Anti-repeat: Avoid last N days' prompts
+  const N = 7; // Days to avoid repeats (adjust as needed)
+  let used = [];
+  try {
+    const { rows } = await db.query(
+      `SELECT prompt_idx FROM used_prompts WHERE variant = $1 AND date >= $2`,
+      [variant, subDays(new Date(), N).toISOString().slice(0, 10)]
+    );
+    used = rows.map(r => r.prompt_idx);
+  } catch (err) {
+    logEvent('content', 'warn', `Could not query used_prompts for ${variant}: ${err.message}`);
+  }
+  const usedSet = new Set(used);
+
+  // Get unused prompt indexes; fallback to all if pool exhausted
+  const allIndexes = prompts.map((_, i) => i);
+  const unusedIndexes = allIndexes.filter(i => !usedSet.has(i));
+  let idx;
+  if (unusedIndexes.length === 0) {
+    idx = Math.floor(Math.random() * prompts.length);
+  } else {
+    idx = unusedIndexes[Math.floor(Math.random() * unusedIndexes.length)];
+  }
   const promptObj = prompts[idx];
   let promptText;
   try {
@@ -68,39 +86,29 @@ async function generateTip(gender, goalStage) {
     return 'Guide generation error.';
   }
 
-  // Build model list: primary then fallbacks, default to 'grok-4'
-  const models = [];
-  if (GROK_MODEL_PRIMARY) models.push(GROK_MODEL_PRIMARY);
-  if (GROK_MODEL_FALLBACKS) {
-    for (const m of GROK_MODEL_FALLBACKS.split(',').map(s => s.trim())) {
-      if (m) models.push(m);
-    }
-  }
-  if (models.length === 0) models.push('grok-4');
-
-  // Attempt each model with retry/backoff
-  for (const [i, model] of models.entries()) {
+  // Model fallback logic
+  for (let i = 0; i < MODELS.length; i++) {
     try {
-      logEvent('content', 'info', `Using model ${model} for ${variant}`);
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
-      const res = await axios.post(
-        'https://api.x.ai/v1/chat/completions',
-        { messages: [{ role: 'user', content: promptText }], model, stream: false },
-        { headers: { Authorization: `Bearer ${GROK_API_KEY}` }, signal: controller.signal }
+      const completion = await openai.createChatCompletion({
+        model: MODELS[i],
+        messages: [{ role: 'user', content: promptText }],
+        temperature: 1.0,
+        max_tokens: 1100
+      });
+      // Log this prompt as used for this variant and day
+      await db.query(
+        `INSERT INTO used_prompts (date, variant, prompt_idx)
+         VALUES ($1, $2, $3)
+         ON CONFLICT DO NOTHING`,
+        [todayUtc(), variant, idx]
       );
-      clearTimeout(timeout);
-      return res.data.choices[0].message.content.trim();
+      return completion.data.choices[0].message.content.trim();
     } catch (err) {
-      const msg = err.name === 'AbortError' ? 'timeout' : err.message;
-      logEvent('content', 'warn', `Model ${model} failed (${msg}) for ${variant}`);
-      // exponential backoff before next model
-      const delay = 1000 * Math.pow(2, i);
-      await new Promise(r => setTimeout(r, delay));
+      logEvent('content', 'warn', `OpenAI model ${MODELS[i]} failed for ${variant}: ${err.message}`);
+      // fallback to next model
     }
   }
-
-  logEvent('content', 'error', `All models failed for ${variant}`);
+  logEvent('content', 'error', `All OpenAI models failed for ${variant}`);
   return 'Temporary AI failure. Please try again later.';
 }
 

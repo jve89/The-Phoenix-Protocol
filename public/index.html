@@ -58,7 +58,7 @@
       <a href="#howitworks" class="hover:text-[#8c7878] transition">How It Works</a>
       <a href="#teaser" class="hover:text-[#8c7878] transition">What You Get</a>
       <a href="#why-choose" class="hover:text-[#8c7878] transition">Why Us</a>
-      <!--<a href="#testimonials" class="hover:text-[#8c7878] transition">Reviews</a>-->
+      <a href="#testimonials" class="hover:text-[#8c7878] transition">Reviews</a>
       <a href="#pricing" class="hover:text-[#8c7878] transition">Pricing</a>
       <a href="#about" class="hover:text-[#8c7878] transition">About</a>
     </nav>
@@ -101,10 +101,10 @@
         </p>
         <!-- Dual CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-          <a href="sample-guide.html" class="inline-block bg-indigo-600 text-white font-semibold px-6 py-3 rounded shadow-lg hover:bg-indigo-700 transition">
+          <a href="sample-guide.html" aria-label="See a real Phoenix Protocol guide" class="inline-block bg-indigo-600 text-white font-semibold px-6 py-3 rounded shadow-lg hover:bg-indigo-700 transition">
             View a Real Sample Guide
           </a>
-          <a href="#pricing" class="inline-block border border-indigo-600 text-indigo-700 font-semibold px-6 py-3 rounded shadow hover:bg-indigo-50 transition">
+          <a href="#pricing" aria-label="Start your recovery with The Phoenix Protocol" class="inline-block border border-indigo-600 text-indigo-700 font-semibold px-6 py-3 rounded shadow hover:bg-indigo-50 transition">
             Start Recovery Now
           </a>
         </div>
@@ -185,75 +185,93 @@
     </div>
   </section>
 
-  <!-- Social Proof / Testimonials -->
-  <section class="bg-white py-10 px-4">
+  <!-- Temporary testimonials-->
+  <section id="testimonials" class="bg-white py-12 px-4">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#393f4a] mb-4">User Stories Coming Soon</h2>
+      <p class="text-[#8c7878] mb-6">
+        The Phoenix Protocol has just launched, and our first users are beginning their recovery journeys. We’re collecting real testimonials right now — check back soon to see authentic stories from people just like you.
+      </p>
+      <img src="logo-purple.svg" alt="The Phoenix Protocol" class="h-16 mx-auto my-5" />
+      <p class="text-sm text-gray-400 mt-3">
+        Want to share your experience?<br>
+        <a href="mailto:support@thephoenixprotocol.app" class="underline hover:text-indigo-700">
+          Email us
+        </a>
+        and help inspire others.
+      </p>
+    </div>
+  </section>
+
+  <!-- Social Proof / Testimonials
+  <section id="testimonials" class="bg-white py-10 px-4">
     <div class="max-w-3xl mx-auto">
       <h2 class="text-2xl font-bold text-center text-[#393f4a] mb-10">What Our Users Say</h2>
       <div class="space-y-12">
         
-        <!-- Testimonial 1 (Photo Left) -->
+        <!- Testimonial 1 (Photo Left) ->
         <div class="flex flex-col sm:flex-row items-center gap-5">
           <div class="flex flex-col items-center min-w-[70px]">
             <img src="ai-female-32.jpg" alt="Female, 32" class="w-14 h-14 rounded-full shadow-md object-cover">
-            <span class="mt-2 text-xs text-[#393f4a]">Female, 32</span>
           </div>
           <div class="relative flex-1">
             <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pr-8 text-gray-700 text-base leading-relaxed relative">
-              <span class="block">
+              <blockquote>
                 “I finally felt understood — every day, one step stronger. These emails felt like having a wise friend on call.”
-              </span>
-              <!-- Arrow for left side -->
+                <br>
+                <cite class="not-italic text-xs text-[#393f4a] block mt-2">Female, 32</cite>
+              </blockquote>
               <span class="absolute -left-4 top-6 w-5 h-5 bg-white border-l border-b border-purple-100 rounded-bl-2xl rotate-45 shadow -z-1"></span>
             </div>
           </div>
         </div>
 
-        <!-- Testimonial 2 (Photo Right) -->
+        <!- Testimonial 2 (Photo Right) ->
         <div class="flex flex-col sm:flex-row-reverse items-center gap-5">
           <div class="flex flex-col items-center min-w-[70px]">
             <img src="ai-male-37.jpg" alt="Male, 37" class="w-14 h-14 rounded-full shadow-md object-cover">
-            <span class="mt-2 text-xs text-[#393f4a]">Male, 37</span>
           </div>
           <div class="relative flex-1">
             <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pl-8 text-gray-700 text-base leading-relaxed relative">
-              <span class="block">
+              <blockquote>
                 “No therapist ever made me feel this seen, and the advice was practical—not just ‘think positive’ stuff.”
-              </span>
-              <!-- Arrow for right side -->
+                <br>
+                <cite class="not-italic text-xs text-[#393f4a] block mt-2">Male, 37</cite>
+              </blockquote>
               <span class="absolute -right-4 top-6 w-5 h-5 bg-white border-r border-b border-purple-100 rounded-br-2xl rotate-45 shadow -z-1"></span>
             </div>
           </div>
         </div>
 
-        <!-- Testimonial 3 (Photo Left) -->
+        <!- Testimonial 3 (Photo Left) ->
         <div class="flex flex-col sm:flex-row items-center gap-5">
           <div class="flex flex-col items-center min-w-[70px]">
             <img src="ai-female-29.jpg" alt="Female, 29" class="w-14 h-14 rounded-full shadow-md object-cover">
-            <span class="mt-2 text-xs text-[#393f4a]">Female, 29</span>
           </div>
           <div class="relative flex-1">
             <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pr-8 text-gray-700 text-base leading-relaxed relative">
-              <span class="block">
+              <blockquote>
                 “The daily guides made me feel less alone. It’s like they knew exactly what I was struggling with.”
-              </span>
-              <!-- Arrow for left side -->
+                <br>
+                <cite class="not-italic text-xs text-[#393f4a] block mt-2">Female, 29</cite>
+              </blockquote>
               <span class="absolute -left-4 top-6 w-5 h-5 bg-white border-l border-b border-purple-100 rounded-bl-2xl rotate-45 shadow -z-1"></span>
             </div>
           </div>
         </div>
 
-        <!-- Testimonial 4 (Photo Right) -->
+        <!- Testimonial 4 (Photo Right) ->
         <div class="flex flex-col sm:flex-row-reverse items-center gap-5">
           <div class="flex flex-col items-center min-w-[70px]">
             <img src="ai-male-41.jpg" alt="Male, 41" class="w-14 h-14 rounded-full shadow-md object-cover">
-            <span class="mt-2 text-xs text-[#393f4a]">Male, 41</span>
           </div>
           <div class="relative flex-1">
             <div class="bg-white border border-purple-100 shadow-lg rounded-2xl p-5 pl-8 text-gray-700 text-base leading-relaxed relative">
-              <span class="block">
+              <blockquote>
                 “More helpful than months of counseling. I could actually see progress, day by day.”
-              </span>
-              <!-- Arrow for right side -->
+                <br>
+                <cite class="not-italic text-xs text-[#393f4a] block mt-2">Male, 41</cite>
+              </blockquote>
               <span class="absolute -right-4 top-6 w-5 h-5 bg-white border-r border-b border-purple-100 rounded-br-2xl rotate-45 shadow -z-1"></span>
             </div>
           </div>
@@ -262,7 +280,7 @@
       </div>
     </div>
   </section>
-
+  -->
 
   <!-- Pricing -->
   <section id="pricing" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-16 px-6 text-center">
@@ -293,8 +311,11 @@
     </div>
     <div class="mt-8 flex flex-col items-center space-y-2">
       <span class="text-white/90 text-sm">100% private — your info is never shared</span>
-      <span class="text-white/90 text-sm">7-day no-questions refund guarantee</span>
-      <img src="stripe-badge.png" alt="Powered by Stripe" class="h-6 mt-2" />
+      <!-- <span class="text-white/90 text-sm">7-day no-questions refund guarantee</span> -->
+      <div class="flex items-center space-x-2 justify-center mt-2">
+        <img src="stripe-ar21.svg" alt="Stripe logo" class="h-6" />
+        <span class="text-xs text-white font-medium">Powered by Stripe</span>
+      </div>
     </div>
   </section>
 
@@ -304,7 +325,15 @@
     <img src="founder.png" alt="Johan van Erkel" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover object-center">
     <h2 class="text-2xl font-semibold mb-2 text-[#393f4a]">Johan van Erkel</h2>
     <p class="text-[#8c7878] mb-4">Founder of The Phoenix Protocol</p>
-    <p class="max-w-xl mx-auto text-[#8c7878]">I turned my own heartbreak into a clear, day‑by‑day framework so you can rebuild your confidence and find real peace. Every email is rooted in practical exercises and hard‑earned lessons—so you don’t have to learn the hard way.</p>
+    <p class="max-w-xl mx-auto text-[#8c7878] mb-4">
+      After my own breakup, I found myself searching everywhere for clear, practical help — and all I saw were vague platitudes or one-size-fits-all advice. I needed real steps, real support, and a plan to move forward, one day at a time. That’s why I created The Phoenix Protocol.
+    </p>
+    <p class="max-w-xl mx-auto text-[#8c7878] mb-4">
+      Every lesson and exercise comes from what actually helped me get out of bed, rebuild my self-worth, and make sense of what happened. I know how lonely heartbreak feels. My goal is to make sure you never feel stuck or powerless — and that you always have something concrete you can do today.
+    </p>
+    <p class="max-w-xl mx-auto text-[#8c7878]">
+      If you’re reading this, know that I’ve been where you are. You’re not alone, and you don’t have to figure it out on your own. This program is the roadmap I wish I’d had — and now, it’s yours.
+    </p>
   </section>
 
   <!-- Final CTA -->
@@ -317,7 +346,12 @@
   </section>
 
   <footer class="text-center text-sm text-[#8c7878] py-6 space-y-2">
-    <div>© 2025 The Phoenix Protocol. All rights reserved.</div>
+    <div id="copyright-line"></div>
+      <script>
+        // Always show current year in copyright
+        const year = new Date().getFullYear();
+        document.getElementById('copyright-line').innerHTML = `© ${year} The Phoenix Protocol. All rights reserved.`;
+      </script>
     <div>
       <a href="privacy.html" class="hover:underline mr-4">Privacy Policy</a>
       <a href="terms.html" class="hover:underline">Terms & Conditions</a>
@@ -328,7 +362,7 @@
     "use strict";
     document.addEventListener("DOMContentLoaded", () => {
       // 🖼️ Hero carousel functionality
-      const images = ['hero.jpg', 'hero_female.jpg'];
+      const images = ['hero.jpg', 'hero_female.jpg', 'hero_asian.png', 'hero_black.png'];
       let currentIndex = 0;
       const carouselImage = document.getElementById('hero-carousel-image');
 
@@ -340,7 +374,7 @@
             carouselImage.src = images[currentIndex];
             carouselImage.classList.remove('opacity-0');
           }, 1000);
-        }, 30000);
+        }, 7000);
       }
 
       // 🛒 Redirect Buy Now buttons to checkout.html with preselected plan

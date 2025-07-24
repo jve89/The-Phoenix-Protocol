@@ -151,7 +151,9 @@
 
   <!-- Centered top logo -->
   <header class="flex flex-col items-center py-8">
-    <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-16 w-auto mx-auto mb-2">
+    <a href="index.html" aria-label="Back to home">
+      <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-16 w-auto mx-auto mb-2 hover:opacity-80 transition">
+    </a>
   </header>
 
   <main class="max-w-email mx-auto">
@@ -184,7 +186,8 @@
     <!-- Main Email Samples Section -->
     <section id="email-samples" class="mt-2"></section>
 
-    <!-- Testimonials Card -->
+    <!--
+    <!- Testimonials Card ->
     <div class="pp-card-quote mt-8">
       <span class="quote-mark">“</span>
       <span>
@@ -192,12 +195,20 @@
         “It felt like every email knew exactly what I needed.” <span class="author">— anonymous</span>
       </span>
     </div>
+    -->
   </main>
 
   <!-- Sticky CTA (shows/hides on footer scroll) -->
   <div id="sticky-cta" class="sticky-cta">
     <span class="font-semibold text-lg mb-2">Ready to start your recovery journey?</span>
     <a href="index.html#pricing">Choose Your Plan</a>
+  </div>
+
+  <!-- Back to Home Link -->
+  <div class="flex justify-center my-12">
+    <a href="index.html" class="text-indigo-600 font-semibold underline hover:text-indigo-800 transition" aria-label="Back to home">
+      ← Back to Home
+    </a>
   </div>
 
   <footer id="footer" class="text-center text-sm text-[#8c7878] py-6 space-y-2 mt-10">
@@ -214,10 +225,10 @@
       female: {
         moveon: [
           {
-            subject: "Day 3: Reclaim Your Morning",
+            subject: "He Wasn’t a Mistake — He Was a Mirror",
             body: `
               <img src="logo-purple.svg" alt="Phoenix Protocol" style="height:48px;width:auto;display:block;margin:0 auto 1.5rem auto;">
-              <p>This morning, pause before you reach for your phone. Instead, write down three things that are *yours alone* — things that don’t depend on your ex or anyone else. Make your coffee, stretch, and claim the day as a fresh start. This is your time.</p>
+              <p>He Wasn’t a Mistake — He Was a Mirror\n\nBreakups can feel like a jagged wound, tearing through the fabric of who you thought you were. The pain is real, and it’s okay to sit with it for a while. But here’s a truth I want you to hold close: your relationship wasn’t a mistake. It wasn’t a waste of time or a failure to cross off your list. It was a mirror—a reflection of who you were, what you needed, and what you’re still learning about yourself. This isn’t about sugarcoating the hurt; it’s about seeing the purpose beneath it. Let’s reframe this ending as a beginning, a chance to grow into a version of yourself you’ve yet to meet.\n\nConsider the story of Maya, a woman I worked with after a devastating breakup. She had been with her partner for six years, building a life she thought was forever. When it ended, she felt like she’d lost everything—her identity, her future, her worth. But as we dug deeper, Maya began to see her relationship as a teacher. She realized she’d often silenced her own needs to keep the peace, ignored red flags because she feared being alone, and tied her happiness to someone else’s validation. The breakup wasn’t just a loss; it was a wake-up call. Through the tears and late-night journaling, Maya rediscovered her voice. She started pursuing hobbies she’d abandoned, set boundaries in new relationships, and rebuilt her confidence. Today, she describes that painful chapter as the catalyst that made her unapologetically herself. Her story isn’t unique—it’s a reminder that even in heartbreak, there’s room for transformation.\n\nYour relationship, too, has lessons to offer if you’re willing to look. Here are three “gifts” of clarity and self-awareness you can uncover from this mirror:\n\n1. **The Gift of Knowing Your Worth**: Reflect on the moments you compromised yourself—whether it was staying silent, accepting less than you deserved, or chasing approval. This relationship showed you where you undervalued yourself. Now, you have the chance to rebuild that foundation, to demand respect not just from others, but from yourself. You are enough, just as you are.\n\n2. **The Gift of Recognizing Patterns**: Look at the dynamics that played out. Were you drawn to someone who mirrored old wounds or familiar struggles? Maybe you sought a fixer-upper, hoping to “save” them, or clung to someone who couldn’t meet you halfway. This isn’t about blame—it’s about awareness. Seeing these patterns empowers you to break them, to choose differently next time.\n\n3. **The Gift of Rediscovering Your Voice**: Relationships often teach us what we’re afraid to say or ask for. Did you hold back your truth to avoid conflict? Did you lose parts of yourself trying to fit someone else’s mold? This breakup is an invitation to reclaim your voice, to honor your needs and desires without apology. Speak up, even if it’s just to yourself at first.\n\nThese gifts aren’t wrapped in pretty bows. They come with tears, sleepless nights, and moments of doubt. But they’re yours to claim. Growth doesn’t erase the pain; it gives it meaning. As you heal, remember that this relationship wasn’t a detour—it was a necessary part of your path. It reflected back to you the parts of yourself that needed attention, healing, or strength. You’re not starting over; you’re starting wiser.\n\nSome lessons are hard. But they are ours.</p>
             `
           },
           {
