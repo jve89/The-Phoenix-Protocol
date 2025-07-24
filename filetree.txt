@@ -25,6 +25,8 @@
 |  ├── founder.jpg
 |  ├── founder.png
 |  ├── hero.jpg
+|  ├── hero_asian.png
+|  ├── hero_black.png
 |  ├── hero_female.jpg
 |  ├── index.html
 |  ├── logo-purple.jpg
@@ -39,6 +41,7 @@
 |  ├── sample-guide.html
 |  ├── script.js
 |  ├── sitemap.xml
+|  ├── stripe-ar21.svg
 |  ├── success.html
 |  ├── terms.html
 |  └── uploads
@@ -72,7 +75,7 @@
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 515 file: 2461
+directory: 525 file: 2556
 
 ignored: directory (12)
 

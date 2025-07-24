@@ -2,11 +2,13 @@ const path = require('path');
 const { subDays } = require('date-fns');
 const db = require('../db/db');
 const { logEvent } = require('./db_logger');
-const { Configuration, OpenAIApi } = require('openai'); // npm install openai
+const OpenAI = require('openai');
 const MODELS = ['gpt-4o', 'gpt-4', 'gpt-3.5-turbo'];
-const openai = new OpenAIApi(new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
-}));
+});
+
+
 
 // Helper: UTC date string YYYY-MM-DD
 function todayUtc() {
@@ -89,7 +91,7 @@ async function generateTip(gender, goalStage) {
   // Model fallback logic
   for (let i = 0; i < MODELS.length; i++) {
     try {
-      const completion = await openai.createChatCompletion({
+      const completion = await openai.chat.completions.create({
         model: MODELS[i],
         messages: [{ role: 'user', content: promptText }],
         temperature: 1.0,
