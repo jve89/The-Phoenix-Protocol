@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 const { generateAndCacheDailyGuides, loadGuideByDate } = require('../src/utils/content');
-const { sendEmail } = require('../src/utils/email');
+const { sendRawEmail } = require('../src/utils/email');
 const { logEvent } = require('../src/utils/db_logger');
 const path = require('path');
 const fs = require('fs').promises;
@@ -39,7 +39,7 @@ function buildAdminGuideEmailHtml(guide) {
 
     if (guide && process.env.ADMIN_EMAIL) {
       const html = buildAdminGuideEmailHtml(guide);
-      await sendEmail(
+      await sendRawEmail(
         process.env.ADMIN_EMAIL,
         `Daily Guide Summary for ${today}`,
         html

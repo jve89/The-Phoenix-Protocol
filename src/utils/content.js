@@ -104,10 +104,10 @@ async function generateTip(gender, goalStage) {
          ON CONFLICT DO NOTHING`,
         [todayUtc(), variant, idx]
       );
-      return completion.data.choices[0].message.content.trim();
+      return completion.choices[0].message.content.trim();
     } catch (err) {
       logEvent('content', 'warn', `OpenAI model ${MODELS[i]} failed for ${variant}: ${err.message}`);
-      // fallback to next model
+      console.error(`[GuideGen] Model ${MODELS[i]} failed for ${variant}:`, err);
     }
   }
   logEvent('content', 'error', `All OpenAI models failed for ${variant}`);
