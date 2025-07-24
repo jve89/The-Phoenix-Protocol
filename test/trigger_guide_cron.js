@@ -38,14 +38,19 @@ function buildAdminGuideEmailHtml(guide) {
     const guide = await loadGuideByDate(today);
 
     if (guide && process.env.ADMIN_EMAIL) {
+      // Save JSON to /tmp for attachment
+      const jsonPath = `/tmp/daily_guide_${today}.json`;
+      await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
+
       const html = buildAdminGuideEmailHtml(guide);
       await sendRawEmail(
         process.env.ADMIN_EMAIL,
         `Daily Guide Summary for ${today}`,
-        html
+        html,
+        jsonPath // Attach the JSON file
       );
-      console.log('[MANUAL CRON] ✅ Admin summary email sent.');
-      await logEvent('cron', 'info', '✅ Admin summary email sent.');
+      console.log('[MANUAL CRON] ✅ Admin summary email sent with JSON attachment.');
+      await logEvent('cron', 'info', '✅ Admin summary email sent with JSON.');
     } else {
       console.log('[MANUAL CRON] ℹ️ No ADMIN_EMAIL or guide not found.');
     }
