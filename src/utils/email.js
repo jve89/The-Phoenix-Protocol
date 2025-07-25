@@ -28,7 +28,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const fromEmail = {
   name: 'The Phoenix Protocol',
-  email: 'no-reply@thephoenixprotocol.app'
+  email: 'support@thephoenixprotocol.app'
 };
 
 /**
@@ -90,17 +90,21 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
 
   const msg = { to, from: fromEmail, subject: finalSubject, html: finalHtml, text };
 
-  // Attach file if provided
+  // Attach one or multiple files if provided
   if (attachmentPath) {
-    try {
-      const content = await fs.readFile(attachmentPath, { encoding: 'base64' });
-      msg.attachments = [{
-        content,
-        filename: path.basename(attachmentPath),
-        disposition: 'attachment'
-      }];
-    } catch (err) {
-      logger.warn(`Attachment failed for ${to}: ${err.message}`);
+    msg.attachments = [];
+    const paths = Array.isArray(attachmentPath) ? attachmentPath : [attachmentPath];
+    for (const filePath of paths) {
+      try {
+        const content = await fs.readFile(filePath, { encoding: 'base64' });
+        msg.attachments.push({
+          content,
+          filename: path.basename(filePath),
+          disposition: 'attachment'
+        });
+      } catch (err) {
+        logger.warn(`Attachment failed for ${to}: ${err.message}`);
+      }
     }
   }
 
@@ -125,7 +129,7 @@ async function sendMarkdownEmail(to, subject, markdown) {
   h1, h2, h3 { color: #5f259f; }
 </style>
 </head>
-<body>\${marked.parse(markdown)}</body>
+<body>${marked.parse(markdown)}</body>
 </html>`;
 
   await sendRawEmail(to, subject, html);

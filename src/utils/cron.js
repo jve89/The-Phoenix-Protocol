@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const db = require('../db/db');
 const fs = require('fs').promises;
 const path = require('path');
+const os = require('os');
 const { sendRawEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
@@ -15,6 +16,12 @@ const logger = {
   warn:  msg => logEvent('cron', 'warn', msg),
   error: msg => logEvent('cron', 'error', msg)
 };
+
+const VARIANTS = [
+  'male_moveon', 'male_reconnect',
+  'female_moveon', 'female_reconnect',
+  'neutral_moveon', 'neutral_reconnect'
+];
 
 // Prevent overlapping runs
 const jobRunning = { generate: false, deliver: false, retry: false, prune: false };
@@ -54,15 +61,34 @@ async function runGenerateDailyGuides() {
     try {
       const guide = await loadGuideByDate(date);
       if (guide) {
+        // HTML for admin email body
         let adminHtml = `<h1>Daily Guide Summary - ${date}</h1>`;
-        Object.entries(guide)
-          .filter(([key]) => key !== 'date')
-          .forEach(([variant, section]) => {
-            if (section?.content) {
-              adminHtml += `<h2>${section.title}</h2>` + marked.parse(section.content) + '<hr/>';
-            }
-          });
-        await sendDailyGuideBackup(guide, adminHtml);
+        for (const variant of VARIANTS) {
+          const section = guide[variant];
+          if (!section?.content) {
+            logger.warn(`[CRON] Missing content for variant ${variant} on ${date}`);
+            continue; // skip to next variant
+          }
+          adminHtml += `<h2>${section.title}</h2>` + marked.parse(section.content) + '<hr/>';
+        }
+
+        // Write JSON + Markdown temp files for attachment
+        const jsonPath = path.join(os.tmpdir(), `daily_guide_${date}.json`);
+        const mdPath = path.join(os.tmpdir(), `daily_guide_${date}.md`);
+        await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
+
+        // Build markdown string (not HTML!)
+        let md = `# Daily Guide Summary - ${date}\n\n`;
+        for (const variant of VARIANTS) {
+          const section = guide[variant];
+          if (section?.content) {
+            md += `## ${section.title}\n\n${section.content.trim()}\n\n---\n`;
+          }
+        }
+        await fs.writeFile(mdPath, md);
+
+        // Send email using backup util, attach both
+        await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
         console.log('[CRON] ✅ Admin guide + backup sent');
         logger.info('✅ Admin guide + backup sent');
       }

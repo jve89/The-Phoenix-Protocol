@@ -50,7 +50,7 @@ const db = new Client({
       to: TEST_EMAIL,
       from: {
         name: 'Phoenix Health Check',
-        email: 'no-reply@thephoenixprotocol.app'
+        email: 'support@thephoenixprotocol.app'
       },
       subject: 'Phoenix Protocol Health Check',
       text: 'If you see this, SendGrid is working.'

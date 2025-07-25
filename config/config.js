@@ -20,7 +20,7 @@ if (isNaN(port) || port <= 0 || port > 65535) {
 }
 
 // FROM_EMAIL
-const fromEmail = process.env.FROM_EMAIL || 'no-reply@thephoenixprotocol.app';
+const fromEmail = process.env.FROM_EMAIL || 'support@thephoenixprotocol.app';
 if (!isValidEmail(fromEmail)) {
   throw new Error(`Invalid FROM_EMAIL: ${fromEmail}`);
 }
