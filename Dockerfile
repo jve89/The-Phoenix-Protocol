@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Optimized layer caching: install deps first
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install
 
 # Copy source files
 COPY . .
