@@ -9,6 +9,7 @@ const { loadTemplate } = require('./loadTemplate');
 const { logEvent } = require('./db_logger');
 const { sendDailyGuideBackup } = require('./backup');
 const { marked } = require('marked'); // Markdown to HTML converter
+const { validateGuideContent } = require('./validateGuide');
 
 // Structured logger
 const logger = {
@@ -61,6 +62,13 @@ async function runGenerateDailyGuides() {
     try {
       const guide = await loadGuideByDate(date);
       if (guide) {
+        // Optional validation before sending admin backup
+        const { isValid, warnings } = validateGuideContent(guide, VARIANTS);
+        if (!isValid && warnings.length) {
+          console.warn('[CRON] ⚠️ Guide content warnings:');
+          for (const w of warnings) console.warn(' -', w);
+          logger.warn('⚠️ Guide content warnings:\n' + warnings.map(w => ' - ' + w).join('\n'));
+        }
         // HTML for admin email body
         let adminHtml = `<h1>Daily Guide Summary - ${date}</h1>`;
         for (const variant of VARIANTS) {
