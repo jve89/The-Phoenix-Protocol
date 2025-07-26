@@ -1,3 +1,4 @@
+require('./loadEnv');
 const cron = require('node-cron');
 const db = require('../db/db');
 const fs = require('fs').promises;
@@ -64,13 +65,25 @@ async function runGenerateDailyGuides() {
       if (guide) {
         // Optional validation before sending admin backup
         const { isValid, warnings } = validateGuideContent(guide, VARIANTS);
+
+        let warningBlockHtml = '';
+        let warningBlockMd = '';
+
         if (!isValid && warnings.length) {
           console.warn('[CRON] ⚠️ Guide content warnings:');
           for (const w of warnings) console.warn(' -', w);
           logger.warn('⚠️ Guide content warnings:\n' + warnings.map(w => ' - ' + w).join('\n'));
+
+          // Build visible warning blocks
+          warningBlockHtml = `<div style="background:#fff3cd;padding:10px;border-left:5px solid #ffc107;margin-bottom:20px;">
+            <strong>⚠️ Guide Warnings:</strong><ul>` + 
+            warnings.map(w => `<li>${w}</li>`).join('') +
+            `</ul></div>`;
+
+          warningBlockMd = warnings.map(w => `> ⚠️ ${w}`).join('\n') + '\n\n---\n';
         }
         // HTML for admin email body
-        let adminHtml = `<h1>Daily Guide Summary - ${date}</h1>`;
+        let adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml;
         for (const variant of VARIANTS) {
           const section = guide[variant];
           if (!section?.content) {
@@ -86,7 +99,7 @@ async function runGenerateDailyGuides() {
         await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
 
         // Build markdown string (not HTML!)
-        let md = `# Daily Guide Summary - ${date}\n\n`;
+        let md = `# Daily Guide Summary - ${date}\n\n` + warningBlockMd;
         for (const variant of VARIANTS) {
           const section = guide[variant];
           if (section?.content) {

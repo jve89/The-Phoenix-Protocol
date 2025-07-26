@@ -1,5 +1,4 @@
-// Load environment variables first
-require('dotenv').config();
+require('./utils/loadEnv');
 const express = require('express');
 const routes = require('./routes/routes');
 const webhookRoutes = require('./routes/webhooks');
