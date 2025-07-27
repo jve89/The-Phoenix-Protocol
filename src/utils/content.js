@@ -127,6 +127,17 @@ async function generateAndCacheDailyGuides() {
     try {
       await logEvent('content', 'info', `Generating ${variant}`);
       const content = await generateTip(gender, stage);
+
+      // Optional: run review and scoring passes
+      const reviewed = await reviewStory(content);
+      const score = await scoreStory(content);
+
+      if (score) {
+        await logEvent('qa', 'info', `[${variant}] Scores: ${JSON.stringify(score)}`);
+      }
+      if (reviewed && reviewed !== content) {
+        await logEvent('qa', 'info', `[${variant}] Review delta:\n--- Original ---\n${content}\n--- Reviewed ---\n${reviewed}`);
+      }
       const lines = content.split('\n').filter(Boolean);
       let title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
 
@@ -177,6 +188,90 @@ async function loadTodayGuide() {
   const today = todayUtc();
   const yesterday = subDays(new Date(), 1).toISOString().slice(0, 10);
   return (await loadGuideByDate(today)) || (await loadGuideByDate(yesterday));
+}
+
+/**
+ * Optional: Run GPT-based QA scoring for generated story.
+ * Returns { scores: {}, notes: string }
+ * This is only logged — not shown to users.
+ */
+async function scoreStory(storyContent) {
+  const prompt = `
+You are an expert editor for a healing-focused email product. Evaluate the following story on a scale from 1–10 for:
+
+1. Clarity
+2. Emotional relevance
+3. Depth of insight
+4. Originality
+5. Usefulness to the reader
+
+Also provide a short, constructive critique in 2–3 sentences.
+
+Respond in the following JSON format:
+{
+  "clarity": X,
+  "emotional_relevance": X,
+  "depth": X,
+  "originality": X,
+  "usefulness": X,
+  "notes": "your brief critique here"
+}
+
+Story:
+${storyContent}
+  `.trim();
+
+  try {
+    const result = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 300
+    });
+
+    const raw = result.choices[0].message.content.trim();
+    return JSON.parse(raw);
+  } catch (err) {
+    logEvent('qa', 'warn', `Scoring failed: ${err.message}`);
+    return null;
+  }
+}
+
+/**
+ * Optional: Run GPT-based editing pass to improve structure, tone, and clarity.
+ * Returns the edited version of the story.
+ * For dev use only — not shown to users yet.
+ */
+async function reviewStory(storyContent) {
+  const prompt = `
+You are a senior editor for a breakup recovery email product. This story will be sent to emotionally vulnerable readers.
+
+Please:
+- Improve clarity and flow
+- Remove generic fluff
+- Sharpen emotional resonance
+- Structure it clearly using best-practice storytelling
+- Avoid repetition and vague language
+
+Rewrite the story with care and insight. Return only the edited story.
+  
+Story to improve:
+${storyContent}
+  `.trim();
+
+  try {
+    const result = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 1300
+    });
+
+    return result.choices[0].message.content.trim();
+  } catch (err) {
+    logEvent('qa', 'warn', `Review failed: ${err.message}`);
+    return null;
+  }
 }
 
 module.exports = {
