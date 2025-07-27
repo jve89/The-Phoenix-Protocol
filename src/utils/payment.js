@@ -11,7 +11,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 
 // Pricing map in cents
-const pricingMap = { '30': 1900, '90': 4900, '365': 9900 };
+const pricingMap = { '7': 900, '30': 1900, '90': 4900 };
 
 // Default URLs from env (fallback to constants)
 const SUCCESS_URL = process.env.SUCCESS_URL || 'https://www.thephoenixprotocol.app/success.html?session_id={CHECKOUT_SESSION_ID}';
@@ -34,6 +34,10 @@ async function createCheckoutSession(email, plan, gender = '', goalStage = '') {
   const planKey = String(plan);
   const amount = pricingMap[planKey];
   if (!amount) {
+    if (planKey === '365') {
+      logEvent('payment', 'info', `Attempted use of deprecated plan: ${planKey}`);
+      throw new Error('This plan is no longer available. Please select a different option.');
+    }
     logEvent('payment', 'warn', `Invalid plan passed: ${planKey}`);
     throw new Error(`Invalid plan: ${plan}`);
   }
@@ -46,7 +50,7 @@ async function createCheckoutSession(email, plan, gender = '', goalStage = '') {
       line_items: [{
         price_data: {
           currency: 'usd',
-          product_data: { name: 'The Phoenix Protocol' },
+          product_data: { name: `The Phoenix Protocol — ${planKey}-Day Plan` },
           unit_amount: amount,
         },
         quantity: 1,

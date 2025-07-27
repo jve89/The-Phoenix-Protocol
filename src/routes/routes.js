@@ -87,9 +87,9 @@ router.post('/signup', asyncHandler(async (req, res) => {
     return res.status(400).json({ error: 'Email, gender, plan, and goal_stage are required.' });
   }
 
-  if (!['30','90','365'].includes(plan)) {
+  if (!['7','30','90'].includes(plan)) {
     logger.error(`Invalid plan: ${plan}`);
-    return res.status(400).json({ error: 'Invalid plan. Allowed: 30, 90, 365.' });
+    return res.status(400).json({ error: 'Invalid plan. Allowed: 7, 30, 90.' });
   }
   if (!['moveon','reconnect'].includes(goal_stage)) {
     logger.error(`Invalid goal_stage: ${goal_stage}`);
@@ -128,11 +128,13 @@ router.post('/signup', asyncHandler(async (req, res) => {
     await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
     logger.info(`Welcome email sent to ${email}`);
 
+    console.log(`🧪 Creating checkout session for: ${email}, plan: ${plan}, gender: ${gender}, goal: ${goal_stage}`);
     const url = await createCheckoutSession(email, plan, gender, goal_stage);
     res.json({ message: 'Sign-up successful', url });
   } catch (err) {
     logger.error(`Signup failed for ${email}: ${err.message}`);
     res.status(500).json({ error: 'Sign-up failed' });
+    console.error('❌ Stripe error:', err);
   }
 }));
 
@@ -149,9 +151,9 @@ router.post('/create-checkout-session', asyncHandler(async (req, res) => {
     return res.status(400).json({ error: 'Email, plan, and goal_stage are required.' });
   }
 
-  if (!['30','90','365'].includes(plan)) {
-    logger.error(`Invalid plan for checkout: ${plan}`);
-    return res.status(400).json({ error: 'Invalid plan. Allowed: 30, 90, 365.' });
+  if (!['7','30','90'].includes(plan)) {
+    logger.error(`Invalid plan: ${plan}`);
+    return res.status(400).json({ error: 'Invalid plan. Allowed: 7, 30, 90.' });
   }
   if (!['moveon','reconnect'].includes(goal_stage)) {
     logger.error(`Invalid goal_stage for checkout: ${goal_stage}`);
@@ -163,6 +165,7 @@ router.post('/create-checkout-session', asyncHandler(async (req, res) => {
     res.json({ url });
   } catch (err) {
     logger.error(`Checkout session error for ${email}: ${err.message}`);
+    console.error(err);  // For full stack trace in terminal
     res.status(500).json({ error: 'Payment setup failed' });
   }
 }));

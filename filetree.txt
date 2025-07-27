@@ -4,10 +4,10 @@
 ├── LICENSE
 ├── Procfile
 ├── README.md
+├── README_LOCK.md
 ├── config
 |  └── config.js
 ├── content
-|  ├── fallback
 |  └── prompts
 |     ├── female_moveon.js
 |     ├── female_reconnect.js
@@ -63,21 +63,25 @@
 |     ├── cron.js
 |     ├── db_logger.js
 |     ├── email.js
+|     ├── loadEnv.js
 |     ├── loadTemplate.js
-|     └── payment.js
+|     ├── payment.js
+|     └── validateGuide.js
 ├── templates
 |  ├── email.html
 |  ├── farewell_email.html
 |  ├── premium_guide_email.html
 |  └── welcome.html
 └── test
+   ├── health_check.js
+   ├── openai_test.js
    ├── resend_guide_email.js
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 525 file: 2556
+directory: 517 file: 2562
 
-ignored: directory (12)
+ignored: directory (11)
 
 
 [2K[1G

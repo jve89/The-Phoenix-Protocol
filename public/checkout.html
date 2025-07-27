@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-store" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Phoenix Protocol - Checkout</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -77,9 +78,9 @@
       </fieldset>
       <select id="plan" name="plan" required
               class="w-full p-3 border rounded focus:outline-none focus:border-blue-500">
-        <option value="30">30 Days - $19</option>
-        <option value="90">90 Days - $49</option>
-        <option value="365">365 Days - $99</option>
+        <option value="7">7 Days – $9</option>
+        <option value="30">30 Days – $19</option>
+        <option value="90">90 Days – $49</option>
       </select>
       <button type="submit"
               class="w-full bg-purple-600 text-white font-semibold p-3 rounded hover:bg-purple-700 transition">
@@ -142,6 +143,13 @@
       } catch (err) {
         console.error(err);
         alert('Server error. Please try again.');
+      }
+    });
+
+    // Always force a clean form load if user comes back via back/forward nav
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted || window.performance?.navigation.type === 2) {
+        window.location.reload();
       }
     });
   </script>
