@@ -11,8 +11,13 @@ const fs = require('fs');
 const path = require('path');
 
 const uploadsDir = path.join(__dirname, '../public/uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch (err) {
+  console.error('❌ Failed to create uploads dir:', err);
+  process.exit(1);
 }
 
 // Crash safety: handle uncaught exceptions and rejections
