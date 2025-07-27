@@ -341,7 +341,7 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
-  cron.schedule('5 16 * * *', async () => {
+  cron.schedule('30 16 * * *', async () => {
     if (!jobRunning.farewell) {
       jobRunning.farewell = true;
       try { await runSendFarewellEmails(); } finally { jobRunning.farewell = false; }
