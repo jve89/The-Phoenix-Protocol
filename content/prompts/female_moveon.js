@@ -1,5 +1,4 @@
 module.exports = [
-
   // 1 - 10
   {
     format: "grief validation",

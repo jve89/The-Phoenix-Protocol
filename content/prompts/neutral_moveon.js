@@ -1,5 +1,5 @@
 module.exports = [
-
+// 1 - 10
   {
     format: "emotional release",
     tone: "gentle, honest, emotionally mature",
@@ -220,7 +220,7 @@ module.exports = [
   Avoid forced optimism. Make hope actionable. Honour emotional setbacks as part of growth.
   `
   },
-
+// 11 - 20
   {
     format: "mental pattern disruption",
     tone: "compassionate, sharp, reflective",
@@ -434,7 +434,7 @@ module.exports = [
   Avoid toxic rewriting (“everything happens for a reason”). Honour the truth while reclaiming voice.
   `
   },
-
+// 21 - 30
   {
     format: "normalising plateaus",
     tone: "calm, validating, steady",
@@ -644,7 +644,7 @@ module.exports = [
   Avoid encouraging total isolation. Distinguish healthy privacy from shutdown.
   `
   },
-
+// 31 - 40
   {
     format: "thought loop reframe",
     tone: "gentle, focused, grounding",
@@ -854,7 +854,7 @@ module.exports = [
   Avoid isolating the reader. Encourage connection with emotionally safe people.
   `
   },
-
+// 41 - 50
   {
     format: "reframing",
     tone: "gentle, wise, uplifting",

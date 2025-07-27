@@ -1,5 +1,5 @@
 module.exports = [
-
+// 1 - 10
   {
     format: "introspective analysis",
     tone: "honest, calm, hopeful",
@@ -218,7 +218,7 @@ module.exports = [
   Don’t glorify emotional withdrawal or over-independence. The goal is steady inner calm, not indifference.
   `
   },
-
+// 11 - 20
   {
     format: "emotional foresight",
     tone: "wise, calm, alert",
@@ -432,7 +432,7 @@ module.exports = [
   Never encourage reply out of fear, loneliness, or external pressure. Centre the user’s *self-trust*.
   `
   },
-
+// 21 - 30
   {
     format: "mindset guidance",
     tone: "peaceful, balanced, emotionally wise",
@@ -642,7 +642,7 @@ module.exports = [
   Never pressure the reader to message. This is about internal readiness, not external response.
   `
   },
-
+// 31 - 40
   {
     format: "uncertainty unpacking",
     tone: "reassuring, emotionally mature, steady",
@@ -854,7 +854,7 @@ module.exports = [
   Do not shame romantic memory. This guide should honour truth and emotional clarity, not destroy hope.
   `
   },
-
+// 41 - 50
   {
     format: "emotional needs inventory",
     tone: "curious, honest, emotionally mature",
@@ -1063,5 +1063,6 @@ module.exports = [
   ⚠️ SAFETY:
   This guide should centre the reader’s emotional safety. No chasing, no proving. Just *showing up with truth*.
   `
-  }
+  },
+
 ];

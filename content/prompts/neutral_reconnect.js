@@ -1,5 +1,5 @@
 module.exports = [
-
+// 1 - 10
   {
     format: "relationship audit",
     tone: "honest, reflective, calm",
@@ -210,7 +210,7 @@ module.exports = [
   Avoid implying people must compromise values. Honour clarity over comfort.
   `
   },
-
+// 11 - 20
   {
     format: "emotional readiness audit",
     tone: "gentle, realistic, grounded",
@@ -420,7 +420,7 @@ module.exports = [
   Avoid polarising views. Respect diverse perspectives while affirming autonomy.
   `
   },
-
+// 21 - 30
   {
     format: "past reframing",
     tone: "thoughtful, spacious, reframing",
@@ -630,7 +630,7 @@ module.exports = [
   Avoid placing all burden on the reader. Frame empathy as mutual, but initiated inwardly.
   `
   },
-
+// 31 - 40
   {
     format: "self-compassion",
     tone: "gentle, encouraging, grounded",
@@ -840,7 +840,7 @@ module.exports = [
   Avoid cynicism or overconfidence. Offer grounded curiosity.
   `
   },
-
+// 41 - 50
   {
     format: "expectation management",
     tone: "gentle, honest, illuminating",

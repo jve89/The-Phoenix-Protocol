@@ -1,5 +1,5 @@
 module.exports = [
-
+// 1 - 10
   {
     format: "introspective analysis",
     tone: "honest, calm, hopeful",
@@ -212,7 +212,7 @@ module.exports = [
   Do not encourage public confessions or performative apologies. Keep it inward and real.
   `
   },
-
+// 11 - 20
   {
     format: "visualisation exercise",
     tone: "calm, strategic, reality-based",
@@ -432,7 +432,7 @@ module.exports = [
   Challenge objectification or mental games. Bring the reader back to real connection.
   `
   },
-
+// 21 - 30
   {
     format: "behavioural reframe",
     tone: "pragmatic, confident, motivating",
@@ -651,7 +651,7 @@ module.exports = [
   Avoid the “alpha male” lens. Honour subtle emotional intelligence.
   `
   },
-
+// 31 - 40
   {
     format: "realistic recovery",
     tone: "steady, composed, strategic",
@@ -875,7 +875,7 @@ module.exports = [
   Do not reduce women to puzzles or reward systems. Prioritise empathy over strategy.
   `
   },
-
+// 41 - 50
   {
     format: "reverse lens",
     tone: "revealing, honest, emotionally intelligent",

@@ -1,5 +1,5 @@
 module.exports = [
-
+// 1 - 10
   {
     format: "narrative advice",
     tone: "grounded, future-focused, clear",
@@ -228,7 +228,7 @@ module.exports = [
   Avoid glorifying hustle or productivity. Prioritise **meaning** over metrics.
   `
   },
-
+// 11 - 20
   {
     format: "mental trap deconstruction",
     tone: "clear, challenging, insightful",
@@ -446,7 +446,7 @@ module.exports = [
   Avoid pressuring timelines or outcomes. This is about belief, not deadlines.
   `
   },
-
+// 21 - 30
   {
     format: "private truth exploration",
     tone: "raw, honest, introspective",
@@ -657,7 +657,7 @@ module.exports = [
   Do not mock ambition — just separate it from emotional dependency.
   `
   },
-
+// 31 - 40
   {
     format: "emotional mapping",
     tone: "insightful, calm, therapeutic",
@@ -867,7 +867,7 @@ module.exports = [
   Don’t imply that being busy fixes emotional pain. Emphasize balance, not distraction.
   `
   },
-
+// 41 - 50
   {
     format: "scenario guidance",
     tone: "measured, clear, emotionally intelligent",
