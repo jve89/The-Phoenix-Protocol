@@ -1,5 +1,6 @@
 module.exports = [
 
+  // 1 - 10
   {
     format: "grief validation",
     tone: "gentle, emotionally intelligent, validating",
@@ -212,6 +213,8 @@ module.exports = [
   `
   },
 
+  // 11 - 20
+
   {
     format: "self-trust building",
     tone: "rebuilding, sincere, strong",
@@ -421,6 +424,8 @@ module.exports = [
   Don’t romanticize rushing forward. Honour healing in motion.
   `
   },
+
+  // 21 - 30
 
   {
     format: "subconscious reflection",
@@ -632,6 +637,8 @@ module.exports = [
   `
   },
 
+  // 31 - 40
+
   {
     format: "emotional reframing",
     tone: "soothing, wise, compassionate",
@@ -842,6 +849,7 @@ module.exports = [
   `
   },
 
+  // 41 = 50
   {
     format: "emotional processing",
     tone: "soothing, honest, grief-aware",

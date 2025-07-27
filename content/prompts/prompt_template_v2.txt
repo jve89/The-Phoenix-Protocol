@@ -1,0 +1,25 @@
+module.exports = [
+  {
+    format: "<Format Type>",                  // e.g., "mindset shift," "emotional detox"
+    tone: "<Detailed Tone Descriptors>",      // e.g., "gentle, insightful, validating"
+    theme: "<Central Theme>",                 // e.g., "letting go of jealousy"
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a female user who wants to move on**.
+
+### Topic: <Clear, Engaging Topic Title>
+
+### Requirements:
+- <Defined word-count range (e.g., 450–700 words)>
+- Clearly follow the structural flow:
+  1. **Introductory Hook**
+  2. **Emotional Insight**
+  3. **Practical Emotional Tool**
+  4. **Empowering Closing**
+- <List specific insights, exercises, original metaphors, or scenarios explicitly>
+
+⚠️ SAFETY:
+- <Explicit emotional and psychological safety instructions>
+`
+  },
+  // Additional prompts...
+]
