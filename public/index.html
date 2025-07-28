@@ -99,17 +99,26 @@
           Structured, private, AI-powered daily support. 
           <span class="block mt-1">Feel better, one day at a time.</span>
         </p>
-        <!-- Dual CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-          <a href="sample-guide.html" aria-label="See a real Phoenix Protocol guide" class="inline-block bg-indigo-600 text-white font-semibold px-6 py-3 rounded shadow-lg hover:bg-indigo-700 transition">
-            View a Real Sample Guide
-          </a>
-          <a href="#pricing" aria-label="Start your recovery with The Phoenix Protocol" class="inline-block border border-indigo-600 text-indigo-700 font-semibold px-6 py-3 rounded shadow hover:bg-indigo-50 transition">
-            Start Recovery Now
+        <!-- CTA Button Layout -->
+        <div class="flex flex-col items-center gap-4 mt-6">
+          <!-- Top row: two smaller buttons -->
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="/sample-guide.html" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded hover:bg-indigo-700 shadow-lg transition text-sm sm:text-base">
+              View a Sample Guide
+            </a>
+            <a href="#trial-section" class="border border-indigo-600 text-indigo-600 font-semibold px-5 py-2.5 rounded hover:bg-indigo-50 transition text-sm sm:text-base">
+              Start Free Trial
+            </a>
+          </div>
+
+          <!-- Bottom: wider main CTA -->
+          <a href="#pricing" class="bg-indigo-600 text-white font-semibold px-7 py-3 rounded w-full sm:w-auto text-center hover:bg-indigo-700 shadow-lg transition text-sm sm:text-base">
+            Become a Member
           </a>
         </div>
       </div>
-      <!-- Image Section with Carousel -->
+
+      <!-- Image Section -->
       <div class="flex-1 max-w-md relative overflow-hidden rounded-xl shadow-lg">
         <img id="hero-carousel-image"
             src="hero.jpg"
@@ -281,6 +290,47 @@
     </div>
   </section>
   -->
+
+  <!-- Trial Section -->
+  <section id="trial-section" class="bg-indigo-50 py-20 px-6 sm:px-12 text-center">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        Start Your 3-Day Free Trial
+      </h2>
+
+      <!-- Badge -->
+      <span class="inline-block bg-indigo-100 text-indigo-700 text-sm font-medium px-3 py-1 rounded-full mb-4">
+        No credit card required
+      </span>
+
+      <p class="text-lg text-gray-700 mb-8">
+        Get 3 days of personalised, AI-powered breakup recovery — completely free. You’ll also receive a bonus digital guide in your inbox right after sign-up.
+      </p>
+
+      <!-- Checklist Section -->
+      <div class="flex justify-center mt-6 mb-10">
+        <ul class="space-y-4 text-base w-full max-w-md px-6">
+          <li class="flex items-start gap-3">
+            <span class="text-indigo-600 text-lg pt-0.5">✔</span>
+            <span>Daily guide delivered to your inbox</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-indigo-600 text-lg pt-0.5">✔</span>
+            <span>Choose your emotional goal and focus</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-indigo-600 text-lg pt-0.5">✔</span>
+            <span>Private, structured, and easy to follow</span>
+          </li>
+        </ul>
+      </div>
+
+      <a href="/checkout.html?plan=trial"
+        class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded hover:bg-indigo-700 shadow-lg transition inline-block">
+        Start Free Trial Now
+      </a>
+    </div>
+  </section>
 
   <!-- Pricing -->
   <section id="pricing" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-16 px-6 text-center">
