@@ -110,24 +110,49 @@
   </footer>
 
   <script>
-    // Preselect plan if passed via URL
     const urlParams = new URLSearchParams(window.location.search);
     const plan = urlParams.get('plan');
-    if (plan) {
-      setTimeout(() => {
-        const planSelect = document.getElementById('plan');
-        planSelect.value = plan;
-        planSelect.dispatchEvent(new Event('change'));
-      }, 10); // Short delay to force repaint and event propagation
+    const planSelect = document.getElementById('plan');
+    const planSummary = document.getElementById('plan-summary');
+
+    // Update plan summary when plan changes
+    if (planSelect && planSummary) {
+      planSelect.addEventListener('change', () => {
+        switch (planSelect.value) {
+          case '3':
+            planSummary.textContent = 'You\'ll receive 3 daily guides + digital book. No payment required.';
+            break;
+          case '7':
+            planSummary.textContent = '7 days of AI-powered emotional support.';
+            break;
+          case '30':
+            planSummary.textContent = '30 days of structured daily recovery guides.';
+            break;
+          case '90':
+            planSummary.textContent = '90 days of deep healing and emotional strength.';
+            break;
+          default:
+            planSummary.textContent = '';
+        }
+      });
+
+      // Pre-select plan from URL if present
+      if (plan) {
+        requestAnimationFrame(() => {
+          planSelect.value = plan;
+          planSelect.dispatchEvent(new Event('change'));
+        });
+      }
     }
 
+    // Handle form submission
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const email = document.getElementById('email').value.trim();
       const confirmEmail = document.getElementById('confirm-email').value.trim();
       const gender = document.getElementById('gender').value;
-      const plan = document.getElementById('plan').value;
+      const plan = planSelect.value;
       const goal_stage = document.querySelector('input[name="goal_stage"]:checked')?.value;
 
       if (email !== confirmEmail) {
@@ -135,7 +160,7 @@
         return;
       }
 
-      console.log({ email, gender, plan, goal_stage }); // ✅ Debug line
+      console.log({ email, gender, plan, goal_stage }); // ✅ Debug
 
       try {
         const response = await fetch('/api/signup', {
@@ -157,41 +182,13 @@
       }
     });
 
-    const planSummary = document.getElementById('plan-summary');
-    const planSelect = document.getElementById('plan');
-
-    if (planSelect && planSummary) {
-      planSelect.addEventListener('change', () => {
-        switch (planSelect.value) {
-          case '3':
-            planSummary.textContent = 'You\'ll receive 3 daily guides + digital book. No payment required.';
-            break;
-          case '7':
-            planSummary.textContent = '7 days of AI-powered emotional support.';
-            break;
-          case '30':
-            planSummary.textContent = '30 days of structured daily recovery guides.';
-            break;
-          case '90':
-            planSummary.textContent = '90 days of deep healing and emotional strength.';
-            break;
-          default:
-            planSummary.textContent = '';
-        }
-      });
-    }
-
-    // Always force a clean form load if user comes back via back/forward nav
+    // Force reload when navigating back/forward to reset autofill or URL state
     window.addEventListener("pageshow", function (event) {
       if (event.persisted || window.performance?.navigation.type === 2) {
         window.location.reload();
       }
     });
-
-    if (planSelect && planSummary) {
-      planSelect.dispatchEvent(new Event('change'));
-    }
-
   </script>
+
 </body>
 </html>
