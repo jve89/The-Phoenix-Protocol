@@ -174,8 +174,7 @@
         console.log('✅ Stripe session created:', data.url);
         window.location.href = data.url;
       } else if (plan === '3') {
-        alert('🎉 Trial signup complete! You’ll receive your welcome email shortly.');
-        window.location.href = '/thankyou.html'; // Optional: redirect to a thank-you page
+        window.location.href = '/success.html';
       } else {
         alert('❌ Unexpected error. Please try again later.');
       }

@@ -223,18 +223,19 @@ async function runDeliverTrialEmails() {
   if (!users.length) {
     console.log('[CRON] No trial users to send');
     logger.info('No trial users to send');
-    return;
   }
 
   for (const user of users) {
     const day = user.usage_count + 1;
-    const templatePath = `trial_day${day}.html`;
-    let html;
+    const gender = user.gender || 'neutral';
+    const goal = user.goal_stage || 'reconnect';
+    const templatePath = `trial/${gender}_${goal}_day${day}.html`;
 
+    let html;
     try {
       html = await loadTemplate(templatePath);
     } catch (err) {
-      console.error(`[CRON] Missing template for Day ${day}:`, err.message);
+      console.error(`[CRON] Missing trial template: ${templatePath} — skipping ${user.email}`);
       logger.error(`Missing trial template ${templatePath}: ${err.message}`);
       continue;
     }
@@ -253,6 +254,38 @@ async function runDeliverTrialEmails() {
       console.error(`[CRON] ❌ Trial send failed for ${user.email}:`, err.message);
       logger.error(`Trial send failed: ${err.message}`);
     }
+  }
+
+  // ⬇️ Inserted block: Send farewell email if trial is over
+  try {
+    const { rows: farewellUsers } = await db.query(
+      `SELECT id, email FROM users
+       WHERE is_trial_user = TRUE
+         AND usage_count >= 3
+         AND farewell_sent = FALSE`
+    );
+
+    for (const user of farewellUsers) {
+      try {
+        const html = await loadTemplate('trial/trial_farewell.html');
+        const subject = 'Your Phoenix Trial Has Ended';
+
+        await sendRawEmail(user.email, subject, html);
+        logger.info(`🟣 Farewell trial email sent to ${user.email}`);
+        console.log(`[CRON] 🟣 Farewell sent: ${user.email}`);
+
+        await db.query(
+          `UPDATE users SET farewell_sent = TRUE WHERE id = $1`,
+          [user.id]
+        );
+      } catch (err) {
+        logger.error(`Farewell trial email failed for ${user.email}: ${err.message}`);
+        console.error(`[CRON] ❌ Farewell send failed: ${user.email}`, err.message);
+      }
+    }
+  } catch (err) {
+    logger.error(`Farewell trial user query failed: ${err.message}`);
+    console.error('[CRON] Farewell trial user query failed:', err.message);
   }
 }
 
