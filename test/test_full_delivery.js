@@ -34,9 +34,10 @@ async function testAllDeliveries() {
       const variant = `${gender || 'neutral'}_${goal_stage || 'moveon'}`;
       const trialPath = `trial/${variant}_day${day}.html`;
       try {
-        const html = await loadTemplate(trialPath);
+        const rawHtml = await loadTemplate(trialPath);
+        const finalHtml = rawHtml.replace('{{unsubscribe_token}}', 'test-token');
         const subject = `Phoenix Protocol — Trial Day ${day}`;
-        await sendRawEmail(email, subject, html);
+        await sendRawEmail(email, subject, finalHtml);
         console.log(`✅ Trial Day ${day} sent`);
       } catch (err) {
         console.warn(`⚠️ Trial template missing or failed to send: ${trialPath} — ${err.message}`);

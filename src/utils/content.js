@@ -128,7 +128,6 @@ async function generateAndCacheDailyGuides() {
       await logEvent('content', 'info', `Generating ${variant}`);
       const content = await generateTip(gender, stage);
 
-      // Optional: run review and scoring passes
       const reviewed = await reviewStory(content);
       const score = await scoreStory(content);
 
@@ -138,17 +137,21 @@ async function generateAndCacheDailyGuides() {
       if (reviewed && reviewed !== content) {
         await logEvent('qa', 'info', `[${variant}] Review delta:\n--- Original ---\n${content}\n--- Reviewed ---\n${reviewed}`);
       }
+
       const lines = content.split('\n').filter(Boolean);
       let title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
-
-      // Normalize: fallback to capitalized variant name if title missing or too long
       if (!title || title.length > 100) {
         title = variant.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
       }
-      guideObj[variant] = { title, content };
+
+      guideObj[variant] = {
+        title,
+        content,
+        markdown: content  // 🔥 This fixes markdown email errors
+      };
     } catch (err) {
       logEvent('content', 'error', `Generation error for ${variant}: ${err.message}`);
-      guideObj[variant] = { title: null, content: null };
+      guideObj[variant] = { title: null, content: null, markdown: null };
     }
   }
 
