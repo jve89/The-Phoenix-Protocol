@@ -60,10 +60,14 @@ async function sendWithRetry(msg, retries = 2) {
  * Sends a fully rendered HTML email with optional attachment
  */
 async function sendRawEmail(to, subject, html, attachmentPath = null) {
-  if (!to || !subject || !html) {
-    logger.error('Invalid parameters for sendRawEmail', { to, subject });
-    throw new Error('Invalid raw email parameters');
-  }
+    if (!to || !subject || typeof html !== 'string' || html.trim().length === 0) {
+      logger.error('Invalid parameters for sendRawEmail', {
+        to,
+        subject,
+        htmlLength: html ? html.length : 'undefined'
+      });
+      throw new Error('Invalid raw email parameters');
+    }
 
   // Truncate long subjects
   let finalSubject = subject;

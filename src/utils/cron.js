@@ -32,7 +32,9 @@ const jobRunning = {
   deliver: false,
   retry: false,
   prune: false,
-  trialFarewell: false
+  trial: false,          // added missing flag
+  trialFarewell: false,
+  farewell: false        // added missing flag used in cron
 };
 
 // Helper: get YYYY-MM-DD in UTC
@@ -119,6 +121,15 @@ async function runGenerateDailyGuides() {
         await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
         console.log('[CRON] ✅ Admin guide + backup sent');
         logger.info('✅ Admin guide + backup sent');
+        try {
+          await fs.unlink(jsonPath);
+          await fs.unlink(mdPath);
+          console.log('[CRON] 🧹 Temp backup files cleaned up');
+          logger.info('🧹 Temp backup files cleaned up');
+        } catch (err) {
+          console.warn('[CRON] ⚠️ Failed to clean temp backup files:', err.message);
+          logger.warn(`⚠️ Failed to clean temp backup files: ${err.message}`);
+        }
       }
     } catch (err) {
       console.error('[CRON] Backup email failed:', err.message);
@@ -519,5 +530,37 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 }
+
+async function runAllOnStartup() {
+  if (!validateEnv()) {
+    console.error('[CRON] Critical ENV missing — aborting startup jobs');
+    return;
+  }
+  if (!jobRunning.generate) {
+    jobRunning.generate = true;
+    try {
+      await runGenerateDailyGuides();
+    } catch (err) {
+      console.error('[CRON] Startup generate failed:', err);
+    } finally {
+      jobRunning.generate = false;
+    }
+  }
+  if (!jobRunning.deliver) {
+    jobRunning.deliver = true;
+    try {
+      await runDeliverDailyGuides();
+    } catch (err) {
+      console.error('[CRON] Startup deliver failed:', err);
+    } finally {
+      jobRunning.deliver = false;
+    }
+  }
+}
+
+// Immediately invoke on module load
+runAllOnStartup().catch(err => {
+  console.error('[CRON] Immediate startup task failed:', err);
+});
 
 module.exports = { startCron };

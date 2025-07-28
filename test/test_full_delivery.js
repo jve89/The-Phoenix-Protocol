@@ -35,7 +35,14 @@ async function testAllDeliveries() {
       const trialPath = `trial/${variant}_day${day}.html`;
       try {
         const rawHtml = await loadTemplate(trialPath);
+        if (!rawHtml) {
+          throw new Error(`Trial template ${trialPath} is empty or failed to load`);
+        }
         const finalHtml = rawHtml.replace('{{unsubscribe_token}}', 'test-token');
+
+        console.log(`🧪 Trial email: ${trialPath} → Sending to ${email}`);
+        console.log(finalHtml.slice(0, 300)); // Preview the HTML
+
         const subject = `Phoenix Protocol — Trial Day ${day}`;
         await sendRawEmail(email, subject, finalHtml);
         console.log(`✅ Trial Day ${day} sent`);
@@ -46,6 +53,12 @@ async function testAllDeliveries() {
 
     if (is_subscriber) {
       try {
+        if (!todayGuide || !todayGuide.markdown) {
+          throw new Error(`Guide content missing — cannot send premium email to ${email}`);
+        }
+        console.log(`🧪 Premium guide content for ${email}:`);
+        console.log(todayGuide.markdown.slice(0, 300)); // Preview first part of content
+
         const subject = `Phoenix Protocol — Your Daily Guide`;
         await sendMarkdownEmail(email, subject, todayGuide.markdown);
         console.log(`✅ Premium daily guide sent`);
