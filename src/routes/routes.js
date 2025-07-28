@@ -127,9 +127,9 @@ router.post('/signup', asyncHandler(async (req, res) => {
       logger.info(`Creating new user ${email}`);
       const isTrial = plan === '3';
       await db.query(
-        `INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage, is_trial_user)
-        VALUES ($1,$2,$3,$4,$5,0,$6,$7)`,
-        [email, name, gender, plan, parseInt(plan,10), goal_stage, isTrial]
+        `INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage, is_trial_user, trial_started_at)
+        VALUES ($1, $2, $3, $4, $5, 0, $6, $7, $8)`,
+        [email, name, gender, plan, parseInt(plan, 10), goal_stage, isTrial, isTrial ? new Date() : null]
       );
     }
 
