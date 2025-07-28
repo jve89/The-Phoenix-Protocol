@@ -87,10 +87,11 @@ router.post('/signup', asyncHandler(async (req, res) => {
     return res.status(400).json({ error: 'Email, gender, plan, and goal_stage are required.' });
   }
 
-  if (!['7','30','90'].includes(plan)) {
+  if (!['3','7','30','90'].includes(plan)) {
     logger.error(`Invalid plan: ${plan}`);
-    return res.status(400).json({ error: 'Invalid plan. Allowed: 7, 30, 90.' });
+    return res.status(400).json({ error: 'Invalid plan. Allowed: 3, 7, 30, 90.' });
   }
+
   if (!['moveon','reconnect'].includes(goal_stage)) {
     logger.error(`Invalid goal_stage: ${goal_stage}`);
     return res.status(400).json({ error: 'Invalid goal_stage. Allowed: moveon, reconnect.' });
@@ -106,6 +107,12 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
     if (rows.length) {
       const user = rows[0];
+      
+      if (user.plan === '3' && user.usage_count < 3) {
+        logger.warn(`Trial already in progress for ${email}`);
+        return res.status(400).json({ error: 'You already have an active trial.' });
+      }
+
       if (user.usage_count < user.plan_limit) {
         logger.warn(`Active plan exists for ${email}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
@@ -118,15 +125,21 @@ router.post('/signup', asyncHandler(async (req, res) => {
       );
     } else {
       logger.info(`Creating new user ${email}`);
+      const isTrial = plan === '3';
       await db.query(
-        `INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage)
-         VALUES ($1,$2,$3,$4,$5,0,$6)`,
-        [email, name, gender, plan, parseInt(plan,10), goal_stage]
+        `INSERT INTO users (email, name, gender, plan, plan_limit, usage_count, goal_stage, is_trial_user)
+        VALUES ($1,$2,$3,$4,$5,0,$6,$7)`,
+        [email, name, gender, plan, parseInt(plan,10), goal_stage, isTrial]
       );
     }
 
     await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
     logger.info(`Welcome email sent to ${email}`);
+
+    if (plan === '3') {
+      logger.info(`Trial user created: ${email}`);
+      return res.json({ message: 'Trial signup successful', url: null });
+    }
 
     console.log(`🧪 Creating checkout session for: ${email}, plan: ${plan}, gender: ${gender}, goal: ${goal_stage}`);
     const url = await createCheckoutSession(email, plan, gender, goal_stage);

@@ -1,25 +1,24 @@
 module.exports = [
-// 1 - 10
   {
     format: "introspective analysis",
     tone: "honest, calm, hopeful",
     theme: "breakup clarity",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What Went Wrong? Understanding the Breakup
+### Topic: What Went Wrong? Understanding the Breakup
 
-  ### Requirements:
-  - 550–950 words
-  - Help the reader process the emotional and behavioural dynamics that contributed to the breakup — without self-blame
-  - Introduce Attachment Theory (anxious/avoidant patterns) or Imago-based conflict cycles
-  - Use a micro-case of a woman who gained self-awareness and gently grew through the pain
-  - Offer a guided journaling ritual: “What did I *expect*, and what did I *communicate*?”
-  - End with 3 clear reflection prompts focused on patterns, not people
+### Requirements:
+- 550–950 words
+- Walk the reader through a self-aware reflection on the relationship timeline
+- Introduce Attachment Theory or Imago-based conflict cycles
+- Use a micro-narrative: a woman slowly recognises her old reactive patterns
+- Include a journaling ritual: “What did I *expect* from love, and what did I *communicate*?”
+- End with 3 reflection prompts focused on **relational patterns**, not blame
 
-  ⚠️ SAFETY:
-  Avoid oversimplified blame (on self or partner). This is about pattern recognition and emotional maturity — not rehashing old wounds.
-  `
+⚠️ SAFETY:
+This is about emotional insight, not assigning blame. Avoid suggesting the reader "caused" the breakup.
+`,
   },
 
   {
@@ -27,21 +26,21 @@ module.exports = [
     tone: "warm, grounded, emotionally aware",
     theme: "intentional reconnection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Reconnect Without Repeating the Past
+### Topic: Reconnect Without Repeating the Past
 
-  ### Requirements:
-  - 600–950 words
-  - Teach the emotional difference between *restarting* and *rebuilding*
-  - Outline the **5 signs of true emotional readiness** (not desperation)
-  - Share a story of a woman who waited, reflected, and reconnected with better boundaries
-  - Offer a 4-step checklist titled: “Am I reacting… or relating?”
-  - End with a writing prompt: “If this worked out, who would I be inside it?”
+### Requirements:
+- 600–950 words
+- Define the difference between emotional readiness and emotional urgency
+- Offer 5 signs of healthy reconnection mindset (e.g. clarity > hope)
+- Weave in a story: woman who waited, worked inwardly, and reconnected stronger
+- Add a 4-step self-check ritual: “Am I reacting… or relating?”
+- End with a prompt: “Who would I be *inside* a healthy version of us?”
 
-  ⚠️ SAFETY:
-  Do not promote reaching out without emotional stability. The message is: alignment first, action second.
-  `
+⚠️ SAFETY:
+Discourage action before alignment. Stability must come *before* outreach.
+`,
   },
 
   {
@@ -49,21 +48,21 @@ module.exports = [
     tone: "clarifying, insightful, steady",
     theme: "communication",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: If You Reach Out, Say This (And Why)
+### Topic: If You Reach Out, Say This (And Why)
 
-  ### Requirements:
-  - 550–900 words
-  - Help the reader understand the **emotional goal of first contact** (not outcome-driven)
-  - Introduce Nonviolent Communication (Observation, Feeling, Need, Request)
-  - Share a before/after example: “Just checking in…” vs. grounded message
-  - Provide a personalisable message framework and tone calibration checklist
-  - End with a script journaling ritual: “If I spoke from truth, it would sound like…”
+### Requirements:
+- 550–900 words
+- Teach the purpose of *first contact* — to express truth, not to gain approval
+- Introduce Nonviolent Communication with examples (Observation, Feeling, Need, Request)
+- Include 2 example messages: one emotionally fuzzy, one clear
+- Offer a tone-check checklist: “Is this true, kind, and free of agenda?”
+- End with a journaling script: “If I wrote from truth, it would sound like…”
 
-  ⚠️ SAFETY:
-  Avoid pushy or hope-based language. Prioritise honesty, not outcome control.
-  `
+⚠️ SAFETY:
+Avoid persuasion-based writing. Encourage grounded honesty over outcome-control.
+`,
   },
 
   {
@@ -71,21 +70,20 @@ module.exports = [
     tone: "nurturing, self-loving, intelligent",
     theme: "self before story",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Rediscovering Yourself Before Reconnecting
+### Topic: Rediscovering Yourself Before Reconnecting
 
-  ### Requirements:
-  - 600–950 words
-  - Help the reader gently reclaim her identity as *whole*, not half
-  - Use a visual metaphor: “a garden you tended before anyone else arrived”
-  - Offer 3 self-worth journal prompts across these themes: Joy, Boundaries, Self-Expression
-  - Share a healing story of a woman who returned to herself — and reconnected in strength
-  - End with a morning ritual: “Write one truth about yourself before checking your phone”
+### Requirements:
+- 600–950 words
+- Use a metaphor: “Your inner garden was here long before he visited”
+- Include a healing story of reconnection after rediscovering self-expression
+- Offer 3 journal themes: Joy, Boundaries, Identity
+- Suggest a morning ritual: “Write one true thing about yourself before you check your phone”
 
-  ⚠️ SAFETY:
-  Avoid the “self-improvement” trap. This is about remembering value, not earning it.
-  `
+⚠️ SAFETY:
+Avoid “glow-up” framing. This is about self-remembering, not self-fixing.
+`,
   },
 
   {
@@ -93,21 +91,20 @@ module.exports = [
     tone: "sincere, respectful, clear",
     theme: "understanding his process",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What Might He Be Feeling Right Now?
+### Topic: What Might He Be Feeling Right Now?
 
-  ### Requirements:
-  - 500–800 words
-  - Help the reader explore **emotional possibilities**, not assumptions
-  - Compare two common male post-breakup states: avoidant grief vs slow-processing reflection
-  - Share a story of a woman who learned to honour silence — and eventually reopened connection
-  - Offer a reflection prompt: “What might *space* be teaching me about us?”
-  - End with a practice: emotional journaling with the prompt “If I were him, I might feel…”
+### Requirements:
+- 500–800 words
+- Explore male post-breakup states: avoidant grief vs. delayed grief
+- Share a story of a woman who respected silence and later found a deeper reconnection
+- Include 2 reflective exercises: “What does *his* silence teach me about *me*?”
+- End with a perspective shift: “If I were him, I might feel…”
 
-  ⚠️ SAFETY:
-  No projection or detective thinking. Invite compassion and patience, not control.
-  `
+⚠️ SAFETY:
+Avoid making assumptions. This guide must foster compassion, not detective work.
+`,
   },
 
   {
@@ -115,21 +112,20 @@ module.exports = [
     tone: "reassuring, honest, emotionally mature",
     theme: "self-worth",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: You Don’t Have to Be Perfect to Be Loved Again
+### Topic: You Don’t Have to Be Perfect to Be Loved Again
 
-  ### Requirements:
-  - 600–950 words
-  - Help the reader release perfectionism and the idea of “earning” love
-  - Use a story of a woman who reconnected through **vulnerability, not performance**
-  - Include a reflection exercise: mirror journaling with the question, “What if I am already enough?”
-  - Explore the emotional cost of self-fixing and how to return to *truth over effort*
-  - End with a self-compassion ritual or mantra practice
+### Requirements:
+- 600–950 words
+- Dismantle the idea that love is “earned” through self-improvement
+- Tell a story: woman who reconnected by showing up vulnerably, not flawlessly
+- Include a mirror journaling ritual: “What if I’m already enough?”
+- End with a mantra: “Love meets truth, not performance”
 
-  ⚠️ SAFETY:
-  Do not suggest “fixing yourself” is the path to reconnection. Promote love based on presence and truth.
-  `
+⚠️ SAFETY:
+Do not promote fixing as a prerequisite for reconnection. Support grounded self-acceptance.
+`,
   },
 
   {
@@ -137,21 +133,20 @@ module.exports = [
     tone: "empathetic, honest, validating",
     theme: "emotional echoes",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Why It Still Hurts (Even If You’re Healing)
+### Topic: Why It Still Hurts (Even If You’re Healing)
 
-  ### Requirements:
-  - 550–900 words
-  - Explore emotional echoes — the reactivation of old pain *even during progress*
-  - Use metaphors like “weather fronts” or “echoes in the canyon” to explain lingering grief
-  - Include a short story of a woman who doubted her healing because of a single emotional wave
-  - Offer 3 journaling prompts for emotional re-grounding
-  - End with this reminder: “Healing isn’t linear — it’s honest.”
+### Requirements:
+- 550–900 words
+- Teach about “emotional echoes” — old wounds surfacing in new ways
+- Use vivid metaphor: “echoes in a canyon” or “weather systems in the body”
+- Share a story of a woman thrown off by a sudden wave of grief — and why it made sense
+- Include 3 journaling prompts to self-stabilise
 
-  ⚠️ SAFETY:
-  Do not pathologise emotion. Honour grief without equating it with failure.
-  `
+⚠️ SAFETY:
+Don’t treat emotion as regression. Grief is part of transformation, not a step backward.
+`,
   },
 
   {
@@ -159,21 +154,20 @@ module.exports = [
     tone: "strategic, thoughtful, grounded",
     theme: "emotional preparation",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Your 7-Day Reconnection Readiness Plan
+### Topic: Your 7-Day Reconnection Readiness Plan
 
-  ### Requirements:
-  - 650–950 words
-  - Offer a structured 7-day plan for *personal* readiness before initiating contact
-  - Each day has a focused task (e.g., “Day 2: Process What Still Hurts” / “Day 5: Rebuild Emotional Safety”)
-  - Clarify: this plan prepares *you*, not him
-  - Include a printable checklist: “Am I reconnecting from love, not fear?”
-  - End with a reminder: “This plan is about *you* — he may or may not meet you there.”
+### Requirements:
+- 650–950 words
+- Create a 7-day sequence focused on *her* — not him
+- Each day explores 1 theme (e.g., clarity, grief, boundaries, stillness)
+- Include a printable checklist: “Am I acting from love or fear?”
+- End with a grounding reminder: “You’re reconnecting with yourself — the rest is a bonus”
 
-  ⚠️ SAFETY:
-  Do not frame the plan as a manipulative tactic. It is an emotional alignment tool.
-  `
+⚠️ SAFETY:
+Do not present this as a method for controlling him. This is *inner* preparation only.
+`,
   },
 
   {
@@ -181,21 +175,20 @@ module.exports = [
     tone: "serious, introspective, self-respecting",
     theme: "boundaries",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What Are You No Longer Willing to Tolerate?
+### Topic: What Are You No Longer Willing to Tolerate?
 
-  ### Requirements:
-  - 550–900 words
-  - Help the reader define her *line in the sand* before revisiting the relationship
-  - Include emotional categories: communication, safety, availability, consistency
-  - Offer a “boundary audit” worksheet: past vs future non-negotiables
-  - Include a brief story of a woman who stayed true to her dealbreakers during reconnection
-  - End with 3 boundary-setting mantras for daily use
+### Requirements:
+- 550–900 words
+- Guide the reader in identifying past patterns she’ll never allow again
+- Include emotional categories: safety, honesty, consistency, presence
+- Add a worksheet prompt: past tolerations vs. new dealbreakers
+- End with 3 boundary mantras for clarity and dignity
 
-  ⚠️ SAFETY:
-  Avoid ultimatums or control-based framing. This is about inner clarity, not demands.
-  `
+⚠️ SAFETY:
+Avoid passive-aggressive tone or ultimatums. Boundaries are about self-truth, not threats.
+`,
   },
 
   {
@@ -203,42 +196,42 @@ module.exports = [
     tone: "neutral, realistic, empowering",
     theme: "emotional non-attachment",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Wanting Him Without Needing Him
+### Topic: Wanting Him Without Needing Him
 
-  ### Requirements:
-  - 500–850 words
-  - Explore what it means to want a person *without clinging to outcome*
-  - Share a story of a woman who emotionally detached without losing connection to her desire
-  - Offer 2 grounding tools (e.g., anchor statements or breath-based practices)
-  - End with a final self-reminder: “I can love with open hands, not tight fists.”
+### Requirements:
+- 500–850 words
+- Explain what it means to love without attachment to outcome
+- Tell a story: woman who stayed open-hearted while grounded in self
+- Offer 2 anchoring tools (e.g., breath ritual, thought recalibration)
+- End with a mantra: “I can love with open hands, not closed fists”
 
-  ⚠️ SAFETY:
-  Don’t glorify emotional withdrawal or over-independence. The goal is steady inner calm, not indifference.
-  `
+⚠️ SAFETY:
+Do not promote withdrawal as power. Focus on grounded desire without expectation.
+`,
   },
-// 11 - 20
+
   {
     format: "emotional foresight",
     tone: "wise, calm, alert",
     theme: "expectations management",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Silent Shift — When He Starts to Pull Back Again
+### Topic: The Silent Shift — When He Starts to Pull Back Again
 
-  ### Requirements:
-  - 550–900 words
-  - Explore what to do when reconnection seems to begin, but then he withdraws again
-  - Introduce the concept of emotional elasticity — not everyone moves at the same speed
-  - Use a story of a woman who respected space without spiraling
-  - Offer 3 grounding questions to ask *yourself* when his energy changes
-  - End with a line like: “Not all silences are rejections — sometimes, they’re pauses.”
+### Requirements:
+- 550–900 words
+- Explore how reconnection may start strong, then slow down without warning
+- Introduce “emotional elasticity” — different emotional processing speeds
+- Share the story of a woman who respected space without spiraling
+- Offer 3 grounding questions for navigating moments of withdrawal
+- End with: “Not all silences are rejections — sometimes, they’re pauses.”
 
-  ⚠️ SAFETY:
-  Avoid encouraging pursuit or over-analysis. Honour both timelines.
-  `
+⚠️ SAFETY:
+Avoid encouraging pursuit or over-analysis. Honour emotional pacing. Stay grounded in self-trust.
+`,
   },
 
   {
@@ -246,21 +239,20 @@ module.exports = [
     tone: "empowering, reality-anchored, reassuring",
     theme: "progress awareness",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Reconnecting ≠ Regressing
+### Topic: Reconnecting ≠ Regressing
 
-  ### Requirements:
-  - 500–800 words
-  - Help the reader understand that going back doesn’t mean she’s failed
-  - Reframe reconnection as *a new version*, not a rewind
-  - Include a metaphor (e.g. a sequel to a story that didn’t end well the first time)
-  - Offer 2 journal prompts to clarify growth
-  - End with a redefinition exercise: “What does a better version of *us* look like?”
+### Requirements:
+- 500–800 words
+- Reframe reconnection as a new chapter, not a repeat of the past
+- Include a metaphor (e.g. a sequel that improves on the original)
+- Offer 2 journal prompts to highlight personal growth
+- End with a redefinition prompt: “What does a better version of *us* look like now?”
 
-  ⚠️ SAFETY:
-  Do not glorify “going back” as inherently good. It must be framed as intentional growth, not fear-based comfort.
-  `
+⚠️ SAFETY:
+Do not imply returning = success. Validate both growth and boundaries.
+`,
   },
 
   {
@@ -268,21 +260,21 @@ module.exports = [
     tone: "gentle, strategic, anticipatory",
     theme: "first contact",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Don’t Rush the Opening Scene
+### Topic: Don’t Rush the Opening Scene
 
-  ### Requirements:
-  - 600–1000 words
-  - Explore the emotional importance of *how* you initiate reconnection
-  - Share a case of a woman who jumped too soon — and one who waited
-  - Offer a short checklist: “Is this message about honesty or anxiety?”
-  - Provide 3 thoughtful openers and when to use them
-  - End with a visualisation: “What do I want this moment to represent?”
+### Requirements:
+- 600–1000 words
+- Explore the emotional tone of a first message — honest vs anxious
+- Use two micro-stories: one who rushed, one who timed it wisely
+- Include a checklist: “Am I grounded or seeking control?”
+- Provide 3 thoughtful openers and matching intentions
+- End with a visualisation: “What do I want this moment to stand for?”
 
-  ⚠️ SAFETY:
-  No text templates or “scripts to win him back.” Focus on intention, not tactics.
-  `
+⚠️ SAFETY:
+No text templates or tactical advice. Focus on intention, clarity, and emotional maturity.
+`,
   },
 
   {
@@ -290,21 +282,21 @@ module.exports = [
     tone: "reflective, mature, slightly poetic",
     theme: "emotional clarity",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What Your Future Self Knows
+### Topic: What Your Future Self Knows
 
-  ### Requirements:
-  - 450–850 words
-  - Invite the reader to write a letter from her 6-months-from-now self
-  - Prompt deep reflection: “Did you move from peace or panic?”
-  - Include a brief visualisation ritual to call in emotional wisdom
-  - Share an example future-self letter
-  - End with a quote or quiet line — no call to action
+### Requirements:
+- 450–850 words
+- Invite the reader to write from her 6-months-ahead self
+- Prompt: “Did I act from peace or panic?”
+- Offer a short ritual to connect with inner guidance
+- Include a sample letter from future self
+- End quietly with a line of insight — no action step
 
-  ⚠️ SAFETY:
-  No future-gazing or manifestation talk. Keep grounded in emotional maturity and realism.
-  `
+⚠️ SAFETY:
+No manifestation or fantasy. Keep grounded in lived maturity and realism.
+`,
   },
 
   {
@@ -312,20 +304,20 @@ module.exports = [
     tone: "firm, validating, empowering",
     theme: "emotional courage",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Willingness ≠ Weakness
+### Topic: Willingness ≠ Weakness
 
-  ### Requirements:
-  - 600–950 words
-  - Validate the emotional strength it takes to open your heart again — even if others see it as “desperate”
-  - Use a case of a woman who reached out with *dignity*, not apology
-  - Include a 3-part test: “Is this choice grounded in courage, not fear?”
-  - End with a note to self: “I am not weak for still wanting love.”
+### Requirements:
+- 600–950 words
+- Reframe the act of reaching out as strength, not desperation
+- Share a story of a woman who opened the door with dignity
+- Include a 3-part clarity test: “Is this grounded, clear, and free?”
+- End with: “I am not weak for still wanting love.”
 
-  ⚠️ SAFETY:
-  Avoid shaming readers for desire. Do not romanticize chasing — this is about integrity.
-  `
+⚠️ SAFETY:
+Do not glamorize chasing or risky emotional exposure. Anchor in self-respect and readiness.
+`,
   },
 
   {
@@ -333,20 +325,20 @@ module.exports = [
     tone: "honest, exploratory, non-judgmental",
     theme: "emotional clarity",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Is It Love — Or Is It the Idea of Him?
+### Topic: Is It Love — Or Is It the Idea of Him?
 
-  ### Requirements:
-  - 550–950 words
-  - Guide the reader to examine whether she misses the *real person* or the *idealised version*
-  - Offer a 5-question audit to separate projection from memory
-  - Include a story of someone who realised she was chasing closure, not connection
-  - End with a journaling task: “List what’s real vs what’s imagined”
+### Requirements:
+- 550–950 words
+- Guide the reader to distinguish fantasy from truth
+- Offer a 5-question audit to examine projection vs reality
+- Share a short story of a woman who mistook closure for connection
+- End with journaling prompt: “List what’s real vs imagined”
 
-  ⚠️ SAFETY:
-  Avoid shaming fantasy or longing. Promote emotional precision without invalidating feelings.
-  `
+⚠️ SAFETY:
+Validate longing while guiding clarity. Avoid shame. Stay emotionally precise.
+`,
   },
 
   {
@@ -354,20 +346,20 @@ module.exports = [
     tone: "gentle, symbolic, reassuring",
     theme: "hope without attachment",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Door Is Closed, But Not Locked
+### Topic: The Door Is Closed, But Not Locked
 
-  ### Requirements:
-  - 500–900 words
-  - Use the metaphor of a closed (but unlocked) door to symbolise potential, not pressure
-  - Explore what healthy waiting looks like: no fixation, no freezing
-  - Include a short story of a woman who left the door open but built a beautiful life in the meantime
-  - End with a quote or gentle mantra (no exercise)
+### Requirements:
+- 500–900 words
+- Use the metaphor of a closed-but-unlocked door to represent possibility without pressure
+- Explore what healthy waiting looks like — living fully, not freezing
+- Include a story of a woman who left the door open *and* moved forward
+- End with a gentle mantra or quote
 
-  ⚠️ SAFETY:
-  Avoid encouraging passivity or obsession. This is about openness *without* stagnation.
-  `
+⚠️ SAFETY:
+Avoid passivity, fixation, or emotional freezing. This is about open-hearted resilience.
+`,
   },
 
   {
@@ -375,20 +367,20 @@ module.exports = [
     tone: "nuanced, aware, calm",
     theme: "nonverbal reconnection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Energetic “Reach Out” — What You Communicate Without Words
+### Topic: The Energetic “Reach Out” — What You Communicate Without Words
 
-  ### Requirements:
-  - 550–1000 words
-  - Explore how intention, timing, and emotional energy affect how messages are *received*, even without speaking
-  - Use a case of a woman who sent a message that “felt off” vs when she was truly clear
-  - Offer 3 prompts to check the emotional frequency behind the desire to reconnect
-  - End with: “Energy speaks louder than words — tune yours first.”
+### Requirements:
+- 550–1000 words
+- Explore how emotional charge affects message tone, even without words
+- Compare two cases: one forced, one aligned
+- Offer 3 energy-check questions before writing or speaking
+- End with: “Energy speaks louder than words — tune yours first.”
 
-  ⚠️ SAFETY:
-  Do not introduce mystical or woo-woo frameworks. Keep grounded in emotional resonance and clarity.
-  `
+⚠️ SAFETY:
+Avoid mysticism or magical thinking. Keep grounded in emotional congruence.
+`,
   },
 
   {
@@ -396,20 +388,20 @@ module.exports = [
     tone: "nuanced, aware, calm",
     theme: "nonverbal reconnection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Energetic “Reach Out” — What You Communicate Without Words
+### Topic: The Energetic “Reach Out” — What You Communicate Without Words
 
-  ### Requirements:
-  - 550–1000 words
-  - Explore how intention, timing, and emotional energy affect how messages are *received*, even without speaking
-  - Use a case of a woman who sent a message that “felt off” vs when she was truly clear
-  - Offer 3 prompts to check the emotional frequency behind the desire to reconnect
-  - End with: “Energy speaks louder than words — tune yours first.”
+### Requirements:
+- 550–1000 words
+- Explore how emotional charge affects message tone, even without words
+- Compare two cases: one forced, one aligned
+- Offer 3 energy-check questions before writing or speaking
+- End with: “Energy speaks louder than words — tune yours first.”
 
-  ⚠️ SAFETY:
-  Do not introduce mystical or woo-woo frameworks. Keep grounded in emotional resonance and clarity.
-  `
+⚠️ SAFETY:
+Avoid mysticism or magical thinking. Keep grounded in emotional congruence.
+`,
   },
 
   {
@@ -417,652 +409,649 @@ module.exports = [
     tone: "steady, strategic, emotionally intelligent",
     theme: "response preparation",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What to Do When He Reaches Out First
+### Topic: What to Do When He Reaches Out First
 
-  ### Requirements:
-  - 600–950 words
-  - Break down the inner dialogue and risks of reacting impulsively
-  - Offer 3 levels of response depending on emotional readiness (e.g. “Pause”, “Acknowledge”, “Engage”)
-  - Include a micro-case study of a woman who navigated the first message wisely
-  - End with a journal task: “What do I want this reply to *mean* — for me?”
+### Requirements:
+- 600–950 words
+- Explore the emotional risk of reacting impulsively
+- Offer 3 levels of reply: Pause, Acknowledge, Engage — based on readiness
+- Share a micro-case of a woman who replied with calm clarity
+- End with: “What do I want this reply to *mean* — for me?”
 
-  ⚠️ SAFETY:
-  Never encourage reply out of fear, loneliness, or external pressure. Centre the user’s *self-trust*.
-  `
-  },
-// 21 - 30
-  {
-    format: "mindset guidance",
-    tone: "peaceful, balanced, emotionally wise",
-    theme: "holding space",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
-
-  ### Topic: How to Make Space Without Losing Hope
-
-  ### Requirements:
-  - 500–950 words
-  - Teach how to emotionally “hold space” without controlling the outcome
-  - Offer a metaphor (e.g., tending a garden while waiting for rain)
-  - Include a daily grounding ritual for the waiting period
-  - End with a simple 4-word mantra she can repeat in moments of doubt
-
-  ⚠️ SAFETY:
-  Don’t present waiting as passive or disempowering. Emphasise self-honour and life momentum.
-  `
+⚠️ SAFETY:
+Avoid promoting people-pleasing or fear-driven replies. Focus on emotional sovereignty.
+`,
   },
 
   {
-    format: "social insight",
-    tone: "empathetic, validating, perspective-shifting",
-    theme: "navigating judgment",
+    format: "mindset shift",
+    tone: "wise, calm, emotionally spacious",
+    theme: "letting go of control",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: When Your Friends Don’t Understand
+### Topic: Release the Timeline, Not the Hope
 
-  ### Requirements:
-  - 450–800 words
-  - Explore the tension between personal truth and social pressure
-  - Validate the reader’s experience while acknowledging concern from loved ones
-  - Include a story of a woman who rebuilt trust in her decision-making
-  - End with a self-trust checklist
+### Requirements:
+- 500–900 words
+- Reframe urgency as self-pressure that blocks reconnection energy
+- Use a metaphor (e.g., "choking the bloom by rushing the bud")
+- Offer a daily affirmation to invite openness without force
+- End with a visualisation of peaceful patience
 
-  ⚠️ SAFETY:
-  Never position friends as “wrong” or enemies. Promote empathy on all sides and mature discernment.
-  `
+⚠️ SAFETY:
+Do not shame her for wanting reconnection — frame this as emotional wisdom, not detachment.
+`,
   },
 
   {
-    format: "social insight",
-    tone: "empathetic, validating, perspective-shifting",
-    theme: "navigating judgment",
+    format: "emotional detox",
+    tone: "gentle, honest, emotionally liberating",
+    theme: "clearing emotional residue",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: When Your Friends Don’t Understand
+### Topic: The Emotional Cleanup Before Reconnection
 
-  ### Requirements:
-  - 450–800 words
-  - Explore the tension between personal truth and social pressure
-  - Validate the reader’s experience while acknowledging concern from loved ones
-  - Include a story of a woman who rebuilt trust in her decision-making
-  - End with a self-trust checklist
+### Requirements:
+- 550–950 words
+- Explore emotional leftovers: resentment, fear, guilt, fantasy
+- Include a self-assessment tool (“Which emotion still lingers most?”)
+- Teach a guided release practice (e.g., 3-step "internal cleanse")
+- End with this question: “What energy do I want to bring if we reconnect?”
 
-  ⚠️ SAFETY:
-  Never position friends as “wrong” or enemies. Promote empathy on all sides and mature discernment.
-  `
+⚠️ SAFETY:
+Do not suggest she must be fully “healed” — only clear enough to reconnect with intention.
+`,
   },
 
   {
-    format: "value alignment audit",
-    tone: "serious, introspective, empowering",
-    theme: "shared future clarity",
+    format: "identity reclaiming",
+    tone: "empowering, warm, reflective",
+    theme: "self-reconnection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Is There Still a Shared Vision?
+### Topic: Reconnecting With You First
 
-  ### Requirements:
-  - 600–1000 words
-  - Encourage the reader to reflect on whether a shared future *truly* exists
-  - Include visualisation of two diverging roads — and what it means to meet again
-  - Offer a 3-part exercise: vision sketch, value overlap, future test
-  - End with this question: “Do I want him in my *future*, or just in my *past comfort*?”
+### Requirements:
+- 500–850 words
+- Encourage the reader to explore who she became *without* him
+- Include a mini “identity snapshot” journaling practice
+- Offer examples of subtle ways we abandon ourselves in love
+- End with a mantra: “My wholeness is the invitation.”
 
-  ⚠️ SAFETY:
-  Avoid over-idealising reconciliation. Anchor this prompt in truth, not nostalgia.
-  `
+⚠️ SAFETY:
+Avoid promoting self-blame for past disconnection — frame this as a loving return to self.
+`,
   },
 
   {
-    format: "boundary empowerment",
-    tone: "clear, fierce, compassionate",
-    theme: "self-preservation",
+    format: "emotional contrast guide",
+    tone: "curious, clarifying, emotionally grounded",
+    theme: "new vs. old connection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Loving Without Losing Yourself (Again)
+### Topic: Would You Fall in Love With Him *Now*?
 
-  ### Requirements:
-  - 550–950 words
-  - Explore how to love fully while maintaining identity, space, and emotional sovereignty
-  - Include a short narrative of someone who forgot herself in love — then learned better
-  - Offer 3 warning signs of over-merging and how to interrupt them
-  - End with a power ritual: “My needs are not a burden.”
+### Requirements:
+- 500–850 words
+- Help the reader assess who *he* is now — not just who he was
+- Include a 3-question reality-check prompt
+- Offer a visual of meeting him again as strangers — what would she notice?
+- End with: “Do I love *him*, or the memory of us?”
 
-  ⚠️ SAFETY:
-  Do not promote guardedness or withdrawal. This is about *wholeness*, not hyper-independence.
-  `
+⚠️ SAFETY:
+Do not encourage rejection or idealisation — this is about *clear emotional reality*.
+`,
   },
 
   {
-    format: "emotional navigation",
-    tone: "delicate, realistic, emotionally steady",
-    theme: "navigating third-party pain",
+    format: "closure rewriting",
+    tone: "healing, soft, emotionally empowering",
+    theme: "unfinished goodbye",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: When He’s Seeing Someone New — And You Still Love Him
+### Topic: The Goodbye That Wasn’t Final
 
-  ### Requirements:
-  - 600–950 words
-  - Gently explore the emotional complexity of seeing him with someone else
-  - Offer 2 grounded choices: move forward or honour love quietly while healing
-  - Include a story of a woman who faced this situation with grace
-  - End with a journal prompt: “What is *still mine*, even if he isn’t?”
+### Requirements:
+- 600–950 words
+- Explore the pain of unclear endings or open loops
+- Offer a ritual to symbolically “complete” the past without closing the door
+- Include a visualization of walking away with love, not loss
+- End with a symbolic object to keep (e.g., a key, a ribbon)
 
-  ⚠️ SAFETY:
-  Never encourage interference in his current relationship. Focus on internal healing and honouring emotional truth.
-  `
+⚠️ SAFETY:
+Do not present this as emotional detachment — it’s about soft closure, not finality.
+`,
   },
 
   {
-    format: "grief processing",
-    tone: "deep, reflective, gently empowering",
-    theme: "unmet closure",
+    format: "communication prep",
+    tone: "practical, respectful, emotionally intelligent",
+    theme: "first contact after silence",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Apology You May Never Hear
+### Topic: What If He Reaches Out?
 
-  ### Requirements:
-  - 500–850 words
-  - Address the ache of unspoken hurt and lack of accountability
-  - Help the reader process without needing external validation
-  - Include a letter-writing ritual (not sent)
-  - End with a reflection: “What truth do *I* want to say goodbye to?”
+### Requirements:
+- 500–850 words
+- Prepare her emotionally and practically for unexpected contact
+- Offer a grounding checklist (“Before I respond, I will…”)
+- Include two example messages (warm, clear, boundaried)
+- End with: “My reply reflects my self-respect.”
 
-  ⚠️ SAFETY:
-  Don’t frame this as emotional suppression or martyrdom. Focus on dignity and self-closure, not forced detachment.
-  `
+⚠️ SAFETY:
+Avoid creating false hope. Focus on *preparedness*, not fantasy.
+`,
   },
 
   {
-    format: "grief processing",
-    tone: "deep, reflective, gently empowering",
-    theme: "unmet closure",
+    format: "confidence restorer",
+    tone: "uplifting, compassionate, steady",
+    theme: "emotional worth",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Apology You May Never Hear
+### Topic: You Are Still Worthy of Love
 
-  ### Requirements:
-  - 500–850 words
-  - Address the ache of unspoken hurt and lack of accountability
-  - Help the reader process without needing external validation
-  - Include a letter-writing ritual (not sent)
-  - End with a reflection: “What truth do *I* want to say goodbye to?”
+### Requirements:
+- 500–800 words
+- Challenge the belief that rejection equals unworthiness
+- Share a story of a woman who reclaimed her value without external validation
+- Offer 3 “self-worth rituals” to reconnect with emotional dignity
+- End with this reminder: “I do not need to earn love.”
 
-  ⚠️ SAFETY:
-  Don’t frame this as emotional suppression or martyrdom. Focus on dignity and self-closure, not forced detachment.
-  `
+⚠️ SAFETY:
+Avoid blame or “fix yourself first” tropes — this is about *intrinsic value*, not conditional love.
+`,
   },
 
   {
-    format: "self-inquiry guide",
-    tone: "gentle, curious, honest",
-    theme: "emotional clarity",
+    format: "emotional permission",
+    tone: "soft, safe, validating",
+    theme: "missing him",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Is It Love… Or Is It Loneliness?
+### Topic: It’s Okay to Miss Him
 
-  ### Requirements:
-  - 500–800 words
-  - Guide the reader through emotional differentiation between true connection and emotional hunger
-  - Include a 3-part “check your why” audit
-  - Share an anecdote of someone who mistook loneliness for love — and learned from it
-  - End with 3 reflective statements beginning with “If I truly loved him…”
+### Requirements:
+- 450–750 words
+- Validate that longing does not mean weakness
+- Include a ritual for “missing consciously” without spiralling
+- Share a calming affirmation to repeat when the ache comes
+- End with: “This feeling is mine, and I honour it.”
 
-  ⚠️ SAFETY:
-  Do not invalidate real love. The goal is clarity, not denial.
-  `
+⚠️ SAFETY:
+Do not imply that missing = waiting. This is about holding emotion safely, not chasing.
+`,
   },
 
   {
-    format: "courage-building guide",
-    tone: "clear, empowering, non-pushy",
-    theme: "vulnerable communication",
+    format: "future pacing",
+    tone: "clear, strategic, emotionally aware",
+    theme: "decision crossroads",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Message You’re Afraid to Send
+### Topic: If He Asked to Come Back
 
-  ### Requirements:
-  - 550–900 words
-  - Explore the fear behind vulnerability and reaching out
-  - Include a story of someone who sent a message not to “win him back” but to express peace
-  - Offer 3 filters to decide if now is the right time
-  - End with a confidence-boosting mantra and a “no-send” draft ritual
+### Requirements:
+- 600–950 words
+- Explore how to assess emotional readiness and relational health *before* saying yes
+- Include 5 hard questions she must ask herself
+- Offer a “green flag vs red flag” reference card
+- End with: “I say yes from wisdom — or I don’t.”
 
-  ⚠️ SAFETY:
-  Never pressure the reader to message. This is about internal readiness, not external response.
-  `
-  },
-// 31 - 40
-  {
-    format: "uncertainty unpacking",
-    tone: "reassuring, emotionally mature, steady",
-    theme: "mutual longing",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
-
-  ### Topic: Is He Missing Me Too?
-
-  ### Requirements:
-  - 600–950 words
-  - Unpack the emotional urge to feel “missed” and what it represents
-  - Reframe the desire as a signal of emotional connection, not proof
-  - Share two contrasting stories: one where both people missed each other and reconnected, and one where only one person did — and found peace
-  - End with a self-grounding mantra: “Even if he isn’t, I still matter.”
-
-  ⚠️ SAFETY:
-  Avoid trying to confirm or deny his emotions. Focus on validating the *reader’s* feelings.
-  `
+⚠️ SAFETY:
+Avoid romantic idealism. This is about **discernment before reunion**, not fantasy.
+`,
   },
 
   {
-    format: "relational repair guide",
-    tone: "hopeful, careful, emotionally intelligent",
-    theme: "trust rebuilding",
+    format: "narrative reframing",
+    tone: "hopeful, clear-eyed, emotionally supportive",
+    theme: "rewriting your story",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: How to Rebuild Trust — Gently
+### Topic: This Is *Your* Story Too
 
-  ### Requirements:
-  - 550–900 words
-  - Explain what *real trust repair* looks like after a breakup
-  - Use a metaphor (e.g., broken vase, scar tissue, cracked earth)
-  - Offer 3 foundational behaviours to practice *before* reconnection
-  - Include a story of two people who slowly rebuilt trust without pressure
-  - End with a reflection: “What does trust look like to *me* now?”
+### Requirements:
+- 500–850 words
+- Help her reclaim authorship of her healing — not just react to what he does
+- Include a journaling exercise: “If I were the heroine…”
+- Offer a reframe of reconnection as co-creation, not rescue
+- End with: “I am the writer, not the bystander.”
 
-  ⚠️ SAFETY:
-  Do not rush reconnection or over-promise results. Emphasize *mutual* effort.
-  `
+⚠️ SAFETY:
+Never suggest she can “win him back.” Emphasise agency, not pursuit.
+`,
   },
 
   {
-    format: "emotional triage",
-    tone: "calm, balanced, nurturing",
-    theme: "coping with silence",
+    format: "emotional grounding",
+    tone: "calm, validating, psychologically safe",
+    theme: "surviving uncertainty",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: When He’s Not Responding — But You’ve Already Reached Out
+### Topic: Coping When You Don’t Know Where You Stand
 
-  ### Requirements:
-  - 600–950 words
-  - Guide the reader through the emotional aftermath of silence
-  - Include a mini-case study: a woman who waited, processed, and grew
-  - Offer a 3-step internal reset: Pause, Regroup, Reflect
-  - End with 3 journal prompts that reduce self-judgment
+### Requirements:
+- 600–950 words
+- Teach emotional safety skills for navigating unclear contact or mixed signals
+- Use a metaphor: walking through fog with a compass, not a map
+- Offer a 3-step anchor: Breathe, Name, Return
+- End with a mantra: “Clarity starts with me.”
 
-  ⚠️ SAFETY:
-  Avoid blaming him or telling her to “move on.” Hold space for both grief and grace.
-  `
+⚠️ SAFETY:
+Avoid over-analysing his behaviour. Prioritise reader’s internal sense of truth and steadiness.
+`,
   },
 
   {
-    format: "mindset reset",
-    tone: "clarifying, honest, steady",
-    theme: "slowing down",
+    format: "visualisation guide",
+    tone: "gentle, hopeful, forward-moving",
+    theme: "emotional alignment",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Reconnection Doesn’t Mean Reunion (Yet)
+### Topic: Reimagining What Love Could Feel Like
 
-  ### Requirements:
-  - 550–850 words
-  - Differentiate between “opening the door” and “walking back in”
-  - Explain why pacing matters emotionally and relationally
-  - Include a story of someone who confused reconnection with reconciliation — and how she course-corrected
-  - End with a mantra: “I am planting, not harvesting.”
+### Requirements:
+- 500–850 words
+- Invite her to explore what a *healthy* reconnection might look and feel like
+- Include a guided visualisation: 3 scenes of future connection
+- Offer a journaling prompt: “What qualities would I need to feel safe again?”
+- End with a soft reflection: “I’m allowed to want better.”
 
-  ⚠️ SAFETY:
-  Do not discourage hope, but temper urgency. Promote long-term clarity.
-  `
+⚠️ SAFETY:
+Never promise outcomes. This is about cultivating self-led clarity, not fantasy.
+`,
   },
 
   {
-    format: "inner strength guide",
-    tone: "uplifting, soulful, emotionally rich",
-    theme: "self-renewal",
+    format: "emotional detox",
+    tone: "clear, unflinching, kind",
+    theme: "resentment release",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Part of You That Still Believes in Love
+### Topic: When Old Anger Clouds New Hope
 
-  ### Requirements:
-  - 600–1000 words
-  - Help the reader honour her deep longing as a strength, not a flaw
-  - Include a poetic metaphor (e.g., ember, lighthouse, root)
-  - Offer a visualization practice to reconnect with her inner romantic
-  - End with a gentle prompt: “Where is love still alive *in me*?”
+### Requirements:
+- 600–950 words
+- Help her recognise emotional residues that block reconnection
+- Share a realisation story: someone who had to forgive before she could even speak again
+- Offer a 2-part practice: emotional purge + forgiveness audit
+- End with this prompt: “What part of this anger is still protecting me?”
 
-  ⚠️ SAFETY:
-  Avoid suggesting her value depends on love returned. Reinforce *self-held* hope.
-  `
+⚠️ SAFETY:
+Never force forgiveness. Frame this as emotional hygiene, not a moral duty.
+`,
   },
 
   {
-    format: "expectation check-in",
-    tone: "gentle, patient, realistic",
-    theme: "timeline management",
+    format: "intimacy reframing",
+    tone: "curious, self-aware, tender",
+    theme: "emotional intimacy",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: When It’s Taking Longer Than You Thought
+### Topic: Is He the Only One Who Ever Saw the Real Me?
 
-  ### Requirements:
-  - 600–950 words
-  - Address frustration and doubt when time passes without progress
-  - Share a relatable story of a woman who faced long emotional limbo
-  - Offer 3 mental reframes for coping with delayed outcomes
-  - Include a pacing metaphor (e.g., seasons, ripening fruit)
-  - End with a checklist titled: “What I *can* influence today”
+### Requirements:
+- 500–800 words
+- Explore how past intimacy can feel irreplaceable — and how that belief can distort clarity
+- Include a story of someone who slowly discovered emotional intimacy again (in a surprising place)
+- Offer a 4-step truth check: memory, meaning, mirroring, moment
+- End with the question: “What if that part of me still exists — and can be seen again?”
 
-  ⚠️ SAFETY:
-  Never mock hope or shame waiting. Honour her longing without encouraging obsession.
-  `
+⚠️ SAFETY:
+Do not minimise past intimacy, but avoid romantic fatalism.
+`,
   },
 
   {
-    format: "fear unpacking",
-    tone: "compassionate, steady, emotionally intelligent",
-    theme: "facing emotional risk",
+    format: "micro-boundary guide",
+    tone: "firm, self-respecting, emotionally intelligent",
+    theme: "moment-to-moment boundaries",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What If He’s Moved On?
+### Topic: The Tiny Ways You Abandon Yourself
 
-  ### Requirements:
-  - 600–1000 words
-  - Gently unpack this fear with respect and realism
-  - Share two stories: one where reconnection wasn’t possible, and healing followed; one where space was temporary
-  - Help the reader honour both possibility *and* self-respect
-  - End with a reflection: “What kind of love do I want, no matter who it’s with?”
+### Requirements:
+- 600–900 words
+- Explore micro-boundaries (texting, tone-shifting, people-pleasing)
+- Offer 3 clear examples of self-abandonment and their emotional cost
+- Include a reclaiming script: “Next time, I will say…”
+- End with a checklist titled: “Do I still have *me* while I want *him*?”
 
-  ⚠️ SAFETY:
-  Do not encourage denial. This piece must respect both hope *and* outcome independence.
-  `
+⚠️ SAFETY:
+Frame this as self-empowerment — not as blame for being “too much” or “not enough.”
+`,
   },
 
   {
-    format: "emotional closure aid",
-    tone: "empathetic, soft, supportive",
-    theme: "unfinished words",
+    format: "shame disarmament",
+    tone: "gentle, validating, empowering",
+    theme: "emotional self-trust",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: When You’re Haunted by Your Last Conversation
+### Topic: When You Feel Ashamed of Still Wanting Him
 
-  ### Requirements:
-  - 550–850 words
-  - Explore the emotional echo of words left unsaid (or regretted)
-  - Share a story of a woman who replayed her last call/text — and released it
-  - Offer a writing ritual: “the message you’ll never send”
-  - End with a closing line: “You don’t need perfect last words to write a new chapter.”
+### Requirements:
+- 500–800 words
+- Normalise the slow process of emotional release and rekindled desire
+- Share a story of someone who overcame internalised shame and reclaimed her path
+- Include a 3-step shame disarm toolkit
+- End with a statement of dignity: “What I feel is human. What I choose next is mine.”
 
-  ⚠️ SAFETY:
-  Do not imply sending the message is needed. This is about inner reconciliation, not reopening wounds.
-  `
+⚠️ SAFETY:
+Avoid invalidating her longing. This piece must honour her inner world while offering tools to own it.
+`,
   },
 
   {
-    format: "clarity framework",
-    tone: "confident, respectful, boundary-aware",
-    theme: "empowered pursuit",
+    format: "emotional realism primer",
+    tone: "calm, honest, protective",
+    theme: "evaluating readiness",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Why Reconnecting Is Not Chasing
+### Topic: Are You Ready for the Version of Him That Exists Today?
 
-  ### Requirements:
-  - 600–900 words
-  - Define the emotional and behavioural difference between intentional reconnection and anxious pursuit
-  - Use the metaphor of *inviting* versus *pursuing*
-  - Offer 3 grounding statements to maintain personal power
-  - End with a mirror prompt: “Do I want this *connection*, or just relief?”
+### Requirements:
+- 600–950 words
+- Guide her to gently question whether she’s still loving the current man or a version from the past
+- Include a scenario walkthrough: What if he's changed? What if you have?
+- Offer a grounding tool: “Today Check-In”
+- End with the reflection: “Am I ready for *this* him, or just missing the old us?”
 
-  ⚠️ SAFETY:
-  Avoid language that criticizes hope or frames desire as weakness. Reclaim the *dignity* in vulnerable action.
-  `
+⚠️ SAFETY:
+Do not pressure disillusionment — this is about truth-telling, not detachment.
+`,
   },
 
   {
-    format: "memory detox guide",
-    tone: "clarifying, grounded, gently challenging",
-    theme: "emotional accuracy",
+    format: "emotional stamina builder",
+    tone: "encouraging, realistic, warm",
+    theme: "long-haul resilience",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Are You Remembering Him — or the Fantasy?
+### Topic: How to Stay Open — Without Losing Yourself
 
-  ### Requirements:
-  - 600–950 words
-  - Invite the reader to audit which memories are real, and which are idealized
-  - Share a story of a woman who reconnected with someone very different than she remembered
-  - Offer a 4-step journaling task to separate fact from longing
-  - End with a reflection: “What am I really holding on to?”
+### Requirements:
+- 600–1000 words
+- Teach how to remain emotionally available without becoming emotionally dependent
+- Share a personal metaphor (e.g., carrying an open hand instead of a white flag)
+- Offer a 3-part practice: Release, Reset, Re-open
+- End with a mantra: “Hope without expectation is power.”
 
-  ⚠️ SAFETY:
-  Do not shame romantic memory. This guide should honour truth and emotional clarity, not destroy hope.
-  `
-  },
-// 41 - 50
-  {
-    format: "emotional needs inventory",
-    tone: "curious, honest, emotionally mature",
-    theme: "clarifying emotional requirements",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
-
-  ### Topic: What Would You Need to Hear From Him?
-
-  ### Requirements:
-  - 550–850 words
-  - Guide the reader to clarify what reassurance, accountability, or clarity she would *need* to feel safe reconnecting
-  - Offer examples of internal vs. external validation needs
-  - Include 4 journaling prompts to surface emotional needs
-  - End with a gentle reminder: “His words can comfort you — but they can’t replace your own truth.”
-
-  ⚠️ SAFETY:
-  Do not encourage scripting his words. This is about identifying *needs*, not controlling responses.
-  `
+⚠️ SAFETY:
+Must clearly distinguish openness from overexposure. Preserve inner strength at all times.
+`,
   },
 
   {
-    format: "emotional needs inventory",
-    tone: "curious, honest, emotionally mature",
-    theme: "clarifying emotional requirements",
+    format: "emotional independence audit",
+    tone: "steady, self-honouring, reflective",
+    theme: "internal validation",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What Would You Need to Hear From Him?
+### Topic: What Would You Do If He Never Reached Out Again?
 
-  ### Requirements:
-  - 550–850 words
-  - Guide the reader to clarify what reassurance, accountability, or clarity she would *need* to feel safe reconnecting
-  - Offer examples of internal vs. external validation needs
-  - Include 4 journaling prompts to surface emotional needs
-  - End with a gentle reminder: “His words can comfort you — but they can’t replace your own truth.”
+### Requirements:
+- 600–900 words
+- Explore this difficult thought as a self-inquiry tool
+- Include a visualisation: “Day 30 of no contact” — who are you?
+- Offer 5 self-trust statements that rebuild personal direction
+- End with this invitation: “What dream of *yours* deserves attention now?”
 
-  ⚠️ SAFETY:
-  Do not encourage scripting his words. This is about identifying *needs*, not controlling responses.
-  `
+⚠️ SAFETY:
+Do not frame this as detachment or moving on. Honour the scenario while preserving dignity.
+`,
   },
 
   {
-    format: "growth alignment guide",
-    tone: "hopeful, evolving, relational",
-    theme: "parallel growth",
+    format: "emotional metaphor guide",
+    tone: "poetic, grounding, symbol-rich",
+    theme: "emotional processing",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: How to Keep Growing — Without Growing Apart
+### Topic: Grief as a Tide, Not a Tsunami
 
-  ### Requirements:
-  - 600–950 words
-  - Help the reader balance personal growth with the hope of reconnection
-  - Introduce the idea of “parallel healing” instead of “codependent waiting”
-  - Share a story of a woman who grew while keeping emotional space open
-  - End with 3 journal prompts: “What part of me am I growing for *me*?”
+### Requirements:
+- 500–850 words
+- Use the metaphor of emotional tides to normalise recurring waves of grief
+- Include a story of someone who learned to move with, not against, the rhythm
+- Offer a visual grounding exercise: “step into the shoreline”
+- End with a reflection: “I am not drowning. I am in motion.”
 
-  ⚠️ SAFETY:
-  Avoid implying she must stay the same for compatibility. Encourage growth that honours her, not just the relationship.
-  `
+⚠️ SAFETY:
+Avoid framing grief as something to ‘solve.’ This guide is about coexisting with emotion, not conquering it.
+`,
   },
 
   {
-    format: "growth alignment guide",
-    tone: "hopeful, evolving, relational",
-    theme: "parallel growth",
+    format: "emotional inventory",
+    tone: "gentle, clarifying, emotionally intelligent",
+    theme: "unmet needs",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: How to Keep Growing — Without Growing Apart
+### Topic: What Was Missing — And What Still Matters?
 
-  ### Requirements:
-  - 600–950 words
-  - Help the reader balance personal growth with the hope of reconnection
-  - Introduce the idea of “parallel healing” instead of “codependent waiting”
-  - Share a story of a woman who grew while keeping emotional space open
-  - End with 3 journal prompts: “What part of me am I growing for *me*?”
+### Requirements:
+- 600–900 words
+- Guide her to reflect on what needs weren't met in the past relationship
+- Offer a side-by-side list: unmet needs then vs. what she values now
+- Include a short story of a woman who clarified her core emotional needs before reaching out again
+- End with the prompt: “What is non-negotiable for me now?”
 
-  ⚠️ SAFETY:
-  Avoid implying she must stay the same for compatibility. Encourage growth that honours her, not just the relationship.
-  `
+⚠️ SAFETY:
+Do not frame reconnection as ignoring past wounds. Honour her emotional clarity.
+`,
   },
 
   {
-    format: "vision reset",
-    tone: "forward-looking, inspiring, constructive",
-    theme: "future focus",
+    format: "self-trust deepener",
+    tone: "reassuring, empowering, grounded",
+    theme: "inner confidence",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Reconnection Isn’t About Going Back — It’s About Going Forward Together
+### Topic: Trust Yourself Before You Trust Him Again
 
-  ### Requirements:
-  - 600–950 words
-  - Clarify that reconnection should be based on a new foundation, not nostalgia
-  - Offer a visual metaphor (e.g., rebuilding a house on new soil)
-  - Include a 3-part future-visioning exercise for shared values, goals, and habits
-  - End with a quote: “Reconnection is not a rewind — it’s a reweaving.”
+### Requirements:
+- 550–850 words
+- Explore how rebuilding inner trust creates a safer foundation for reconnection
+- Include a short exercise: “Where did I abandon myself last time?”
+- Provide 3 indicators that self-trust is strengthening
+- End with a mantra: “If I can trust me, I won’t lose me.”
 
-  ⚠️ SAFETY:
-  Do not shame past desire. Frame reconnection as a brave, *new* chapter — not a reset to the old one.
-  `
+⚠️ SAFETY:
+Avoid blame or shame. This piece should encourage self-loyalty, not suspicion.
+`,
   },
 
   {
-    format: "vision reset",
-    tone: "forward-looking, inspiring, constructive",
-    theme: "future focus",
+    format: "emotional integration guide",
+    tone: "mature, reflective, emotionally layered",
+    theme: "mixed feelings",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Reconnection Isn’t About Going Back — It’s About Going Forward Together
+### Topic: When You Feel Both Love — and Doubt
 
-  ### Requirements:
-  - 600–950 words
-  - Clarify that reconnection should be based on a new foundation, not nostalgia
-  - Offer a visual metaphor (e.g., rebuilding a house on new soil)
-  - Include a 3-part future-visioning exercise for shared values, goals, and habits
-  - End with a quote: “Reconnection is not a rewind — it’s a reweaving.”
+### Requirements:
+- 600–1000 words
+- Help the reader understand that conflicting emotions are part of healing, not a flaw
+- Use a metaphor (e.g., braided rope, weather patterns, musical chords)
+- Offer a 4-step grounding process for emotional integration
+- End with a reflection: “What parts of my truth are coexisting today?”
 
-  ⚠️ SAFETY:
-  Do not shame past desire. Frame reconnection as a brave, *new* chapter — not a reset to the old one.
-  `
+⚠️ SAFETY:
+Avoid pushing for clarity too soon. Honour her emotional complexity.
+`,
   },
 
   {
-    format: "perspective shift",
-    tone: "open-minded, emotionally intelligent, curious",
-    theme: "mutual growth",
+    format: "boundary calibration tool",
+    tone: "assertive, respectful, empowering",
+    theme: "setting emotional boundaries",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: What If He’s Changed Too?
+### Topic: What You’ll Accept — And What You Won’t Anymore
 
-  ### Requirements:
-  - 550–850 words
-  - Help the reader acknowledge that *both* people may have changed since the breakup
-  - Share a story of a woman who assumed her ex hadn’t grown — and was surprised
-  - Offer 3 prompts to explore what kind of partner *she* is now
-  - End with a journal task: “How would I meet him *now*, as the woman I’ve become?”
+### Requirements:
+- 550–900 words
+- Help her map her emotional and relational boundaries with precision
+- Include 3 journal prompts to identify past boundary breaches
+- Provide a mini checklist: “My new standards for reconnecting”
+- End with a clear self-declaration: “I can hold space for love *and* protect my peace.”
 
-  ⚠️ SAFETY:
-  Avoid idealisation or assuming change = compatibility. Encourage emotional neutrality and genuine curiosity.
-  `
+⚠️ SAFETY:
+Never frame boundaries as tests or ultimatums. Teach them as self-care.
+`,
   },
 
   {
-    format: "empowerment plan",
-    tone: "direct, energising, motivating",
-    theme: "taking back initiative",
+    format: "emotional realism guide",
+    tone: "clear-eyed, steady, respectful",
+    theme: "honest expectations",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Stop Waiting — Start Preparing
+### Topic: What If Reconnection Doesn't Lead to a Relationship?
 
-  ### Requirements:
-  - 550–850 words
-  - Empower the reader to shift from passive waiting to *active preparation* for reconnection
-  - Include a checklist: clarity, readiness, emotional openness, communication
-  - Offer a “no-contact doesn’t mean no-growth” action plan
-  - End with a one-sentence anchor: “The version of you who reaches out should be the version who doesn’t *need* to.”
+### Requirements:
+- 600–950 words
+- Walk the reader through what reconnection might (and might not) look like long-term
+- Offer 3 scenarios: new friendship, temporary peace, or deeper love
+- Include a short reflection: “What am I open to, not just hoping for?”
+- End with the quote: “Clarity brings freedom — even when love stays uncertain.”
 
-  ⚠️ SAFETY:
-  Avoid urgency or timelines. Reconnection is not a race — it’s a readiness.
-  `
+⚠️ SAFETY:
+Avoid pessimism. Balance emotional realism with self-honouring flexibility.
+`,
   },
 
   {
-    format: "empowerment plan",
-    tone: "direct, energising, motivating",
-    theme: "taking back initiative",
+    format: "vulnerability blueprint",
+    tone: "encouraging, mindful, emotionally precise",
+    theme: "reaching out with truth",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: Stop Waiting — Start Preparing
+### Topic: How to Be Honest — Without Oversharing
 
-  ### Requirements:
-  - 550–850 words
-  - Empower the reader to shift from passive waiting to *active preparation* for reconnection
-  - Include a checklist: clarity, readiness, emotional openness, communication
-  - Offer a “no-contact doesn’t mean no-growth” action plan
-  - End with a one-sentence anchor: “The version of you who reaches out should be the version who doesn’t *need* to.”
+### Requirements:
+- 550–850 words
+- Teach the difference between authentic vulnerability and emotional overspill
+- Include 4 journal prompts for preparing a message that reflects truth, not desperation
+- Share a story of someone who reached out clearly and calmly
+- End with a mantra: “My honesty is enough — I don’t need to over-explain it.”
 
-  ⚠️ SAFETY:
-  Avoid urgency or timelines. Reconnection is not a race — it’s a readiness.
-  `
+⚠️ SAFETY:
+Reinforce emotional containment. Never suggest raw pain must be shared to be valid.
+`,
   },
 
   {
-    format: "self-respect coaching guide",
-    tone: "wise, balanced, compassionate",
-    theme: "self-integrity",
+    format: "closure reframe",
+    tone: "gentle, wise, emotionally liberating",
+    theme: "letting go of control",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-  ### Topic: The Art of Reaching Out — Without Losing Yourself
+### Topic: What If You Never Get the Perfect Ending?
 
-  ### Requirements:
-  - 650–1000 words
-  - Teach how to initiate contact in a way that preserves self-worth, dignity, and truth
-  - Provide do's and don'ts of vulnerable communication
-  - Include a mini-workshop: “What’s my intention? What outcome can I live with?”
-  - End with a journaling page titled: “If I never hear back, I’ll still be proud of…”
+### Requirements:
+- 600–950 words
+- Normalize the experience of ambiguous endings and emotional leftovers
+- Offer 3 reframes: closure isn’t a conversation, it’s an internal shift
+- Include a metaphor (e.g., tide retreating, book without last chapter)
+- End with the affirmation: “I don’t need his final words to write my next sentence.”
 
-  ⚠️ SAFETY:
-  This guide should centre the reader’s emotional safety. No chasing, no proving. Just *showing up with truth*.
-  `
+⚠️ SAFETY:
+Avoid implying she should stop caring. Honour her desire while loosening control.
+`,
   },
 
+  {
+    format: "intention alignment map",
+    tone: "focused, sincere, exploratory",
+    theme: "motivations for reconnecting",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+
+### Topic: Why Do You Want to Reconnect — Really?
+
+### Requirements:
+- 550–850 words
+- Guide the reader through an honest inquiry about her true motivations
+- Include a diagram: fear-based vs. hope-based intentions
+- Provide 3 questions to clarify emotional readiness
+- End with this reflection: “What’s my heart hoping for — and what’s my fear avoiding?”
+
+⚠️ SAFETY:
+Do not shame reconnection desire. Encourage transparency and self-alignment.
+`,
+  },
+
+  {
+    format: "communication clarity tool",
+    tone: "practical, calm, emotionally mature",
+    theme: "clear messaging",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+
+### Topic: How to Say What You Mean — Without Sounding Needy
+
+### Requirements:
+- 600–900 words
+- Offer sentence structures and tone tips for clear, non-clingy messaging
+- Share 3 emotional filters: “Is this true?”, “Is it needed?”, “Is it mine?”
+- Provide a fill-in-the-blank script as a grounding example
+- End with a statement: “I can speak with hope *and* self-respect.”
+
+⚠️ SAFETY:
+Avoid robotic language. Focus on authentic, self-honouring expression.
+`,
+  },
+
+  {
+    format: "narrative shift guide",
+    tone: "storytelling, soulful, emotionally honest",
+    theme: "rewriting the breakup story",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
+
+### Topic: Tell the Story Differently — And See What Changes
+
+### Requirements:
+- 600–950 words
+- Help her rewrite the story of their breakup from a place of growth and clarity
+- Use a “past-you vs. now-you” voice journaling technique
+- Share an example of a woman who re-authored her emotional narrative
+- End with a challenge: “What version of the story helps you grow?”
+
+⚠️ SAFETY:
+Avoid encouraging denial or fantasy. Keep the rewrite grounded in truth.
+`,
+  },
 ];

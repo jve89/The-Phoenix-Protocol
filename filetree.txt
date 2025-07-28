@@ -8,19 +8,20 @@
 ├── config
 |  └── config.js
 ├── content
+|  ├── archive
+|  |  ├── female_moveon_old.js
+|  |  ├── female_reconnect_old.js
+|  |  ├── male_moveon_old.js
+|  |  ├── male_reconnect_old.js
+|  |  ├── neutral_moveon_old.js
+|  |  └── neutral_reconnect_old.js
 |  └── prompts
 |     ├── female_moveon.js
-|     ├── female_moveon_v2.js
 |     ├── female_reconnect.js
-|     ├── female_reconnect_v2.js
 |     ├── male_moveon.js
-|     ├── male_moveon_v2.js
 |     ├── male_reconnect.js
-|     ├── male_reconnect_v2.js
 |     ├── neutral_moveon.js
-|     ├── neutral_moveon_v2.js
 |     ├── neutral_reconnect.js
-|     ├── neutral_reconnect_v2.js
 |     └── prompt_template_v2.txt
 ├── filetree.txt
 ├── package-lock.json
@@ -50,7 +51,8 @@
 |  ├── sitemap.xml
 |  ├── stripe-ar21.svg
 |  ├── success.html
-|  └── terms.html
+|  ├── terms.html
+|  └── uploads
 ├── scripts
 |  └── prune_old_logs.sql
 ├── setup.md
@@ -85,7 +87,7 @@
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 516 file: 2569
+directory: 518 file: 2569
 
 ignored: directory (11)
 

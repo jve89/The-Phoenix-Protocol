@@ -34,6 +34,7 @@ const initSQL = [
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
   );`,
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_trial_user BOOLEAN DEFAULT FALSE;`,
   `CREATE TABLE IF NOT EXISTS daily_guides (
     date TEXT PRIMARY KEY,
     guide JSONB NOT NULL

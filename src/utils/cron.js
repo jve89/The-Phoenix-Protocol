@@ -12,6 +12,7 @@ const { sendDailyGuideBackup } = require('./backup');
 const { marked } = require('marked'); // Markdown to HTML converter
 const { validateGuideContent } = require('./validateGuide');
 
+
 // Structured logger
 const logger = {
   info:  msg => logEvent('cron', 'info', msg),
@@ -26,7 +27,13 @@ const VARIANTS = [
 ];
 
 // Prevent overlapping runs
-const jobRunning = { generate: false, deliver: false, retry: false, prune: false };
+const jobRunning = {
+  generate: false,
+  deliver: false,
+  retry: false,
+  prune: false,
+  trialFarewell: false
+};
 
 // Helper: get YYYY-MM-DD in UTC
 const todayUtc = () => new Date().toISOString().slice(0, 10);
@@ -129,8 +136,11 @@ async function runDeliverDailyGuides() {
   try {
     ({ rows: users } = await db.query(
       `SELECT id, email, gender, goal_stage, plan_limit, usage_count
-       FROM users
-       WHERE plan IS NOT NULL AND plan > 0 AND usage_count < plan_limit`
+      FROM users
+      WHERE plan IS NOT NULL
+        AND plan > 0
+        AND usage_count < plan_limit
+        AND (is_trial_user IS NULL OR is_trial_user = FALSE)`
     ));
   } catch (err) {
     console.error('[CRON] User query failed:', err.message);
@@ -188,6 +198,99 @@ async function runDeliverDailyGuides() {
         `INSERT INTO delivery_log (user_id,email,variant,status,error_message) VALUES ($1,$2,$3,'failed',$4)`,
         [user.id, user.email, variant, err.message]
       );
+    }
+  }
+}
+
+async function runDeliverTrialEmails() {
+  console.log('[CRON] 📬 Starting trial email delivery');
+  logger.info('📬 Starting trial email delivery');
+
+  let users = [];
+  try {
+    ({ rows: users } = await db.query(
+      `SELECT id, email, usage_count FROM users
+       WHERE is_trial_user = TRUE AND usage_count < 3`
+    ));
+  } catch (err) {
+    console.error('[CRON] Trial user query failed:', err.message);
+    logger.error(`Trial user query failed: ${err.message}`);
+    return;
+  }
+
+  if (!users.length) {
+    console.log('[CRON] No trial users to send');
+    logger.info('No trial users to send');
+    return;
+  }
+
+  for (const user of users) {
+    const day = user.usage_count + 1;
+    const templatePath = `trial_day${day}.html`;
+    let html;
+
+    try {
+      html = await loadTemplate(templatePath);
+    } catch (err) {
+      console.error(`[CRON] Missing template for Day ${day}:`, err.message);
+      logger.error(`Missing trial template ${templatePath}: ${err.message}`);
+      continue;
+    }
+
+    const subject = `Phoenix Protocol — Day ${day}`;
+    try {
+      await sendRawEmail(user.email, subject, html);
+      console.log(`[CRON] ✅ Trial Day ${day} sent: ${user.email}`);
+      logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
+
+      await db.query(
+        `UPDATE users SET usage_count = usage_count + 1, first_guide_sent_at = COALESCE(first_guide_sent_at, NOW()) WHERE id = $1`,
+        [user.id]
+      );
+    } catch (err) {
+      console.error(`[CRON] ❌ Trial send failed for ${user.email}:`, err.message);
+      logger.error(`Trial send failed: ${err.message}`);
+    }
+  }
+}
+
+async function sendTrialFarewellEmail(user) {
+  const filePath = path.join(__dirname, '..', 'templates', 'trial_farewell.html');
+
+  let html;
+  try {
+    html = await fs.readFile(filePath, 'utf-8');
+  } catch (err) {
+    console.error(`[CRON] ❌ Missing trial_farewell.html:`, err.message);
+    logger.error(`Missing trial farewell template: ${err.message}`);
+    return;
+  }
+
+  const subject = 'Your Trial with The Phoenix Protocol Has Ended';
+
+  try {
+    await sendRawEmail(user.email, subject, html);
+    await db.query('UPDATE users SET farewell_sent = true WHERE id = $1', [user.id]);
+    console.log(`[CRON] ✅ Trial farewell sent: ${user.email}`);
+    logger.info(`✅ Trial farewell sent: ${user.email}`);
+  } catch (err) {
+    console.error(`[CRON] ❌ Trial farewell send failed: ${err.message}`);
+    logger.error(`Trial farewell send failed: ${err.message}`);
+  }
+}
+
+async function runSendTrialFarewells() {
+  const result = await db.query(`
+    SELECT * FROM users
+    WHERE is_trial_user = true AND usage_count >= plan_limit AND farewell_sent = false
+  `);
+
+  for (const user of result.rows) {
+    try {
+      await sendTrialFarewellEmail(user);
+      console.log(`✅ Sent trial farewell to ${user.email}`);
+    } catch (err) {
+      console.error(`❌ Failed to send trial farewell to ${user.email}:`, err.message);
     }
   }
 }
@@ -327,17 +430,36 @@ async function runSendFarewellEmails() {
 function startCron() {
   if (!validateEnv()) return;
 
-  cron.schedule('0 15 * * *', async () => {
+  cron.schedule('0 12 * * *', async () => {
     if (!jobRunning.generate) {
       jobRunning.generate = true;
       try { await runGenerateDailyGuides(); } finally { jobRunning.generate = false; }
     }
   }, { timezone: 'Etc/UTC' });
 
-  cron.schedule('0 16 * * *', async () => {
+  cron.schedule('0 14 * * *', async () => {
     if (!jobRunning.deliver) {
       jobRunning.deliver = true;
       try { await runDeliverDailyGuides(); } finally { jobRunning.deliver = false; }
+    }
+  }, { timezone: 'Etc/UTC' });
+
+  cron.schedule('0 15 * * *', async () => {
+    if (!jobRunning.trial) {
+      jobRunning.trial = true;
+      try { await runDeliverTrialEmails(); } finally { jobRunning.trial = false; }
+    }
+  }, { timezone: 'Etc/UTC' });
+
+  cron.schedule('0 16 * * *', async () => {
+    if (!jobRunning.trialFarewell) {
+      jobRunning.trialFarewell = true;
+      try {
+        console.log('🟣 Running trial farewell delivery...');
+        await runSendTrialFarewells();
+      } finally {
+        jobRunning.trialFarewell = false;
+      }
     }
   }, { timezone: 'Etc/UTC' });
 

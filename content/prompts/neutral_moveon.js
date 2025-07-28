@@ -1,656 +1,642 @@
 module.exports = [
-// 1 - 10
   {
-    format: "emotional release",
-    tone: "gentle, honest, emotionally mature",
-    theme: "grieving with clarity and self-compassion",
+    format: "grief alchemy",
+    tone: "tender, steady, emotionally validating",
+    theme: "transforming loss into growth",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium daily guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Title: Letting Go Is the Bravest Kind of Love
+### Topic: Turning Pain Into Progress
 
-  ### Requirements:
-  - 600–700 words
-  - Reframe letting go as an act of *mutual mercy* — the release of future pain, not rejection of the past
-  - Include a story of someone who created a personal goodbye ceremony that became a turning point
-  - Offer 2 types of goodbye rituals (e.g., “The Letter You Don’t Send” and “The Last Anchor Walk”)
-  - Include a paragraph about why holding on often feels safer than healing
-  - End with: “Letting go is a soft rebellion — against pain, against delay, against the illusion that staying still is the same as staying close. This is the start of you.”
+### Requirements:
+- 600–850 words
+- Frame emotional pain as raw energy — something to be transmuted, not suppressed
+- Introduce a metaphor: “emotional compost” — what feels rotten now can fertilise future selfhood
+- Offer a 3-step transformation ritual: Sit With It, Soften It, Shape It
+- End with: “You don’t have to be okay. You just have to keep becoming.”
 
-  ⚠️ SAFETY:
-  Do not rush detachment. Honour the grip before loosening it.
-  `
+⚠️ SAFETY:
+Do not glamorise growth. Honour the exhaustion of healing while offering hopeful traction.
+`,
   },
 
   {
-    format: "identity rebuild",
-    tone: "empowering, clear, supportive",
-    theme: "self-definition",
+    format: "identity scaffolding",
+    tone: "clear, grounded, empowering",
+    theme: "self-reconstruction",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: Who Are You Without Them?
-
-  ### Requirements:
-  - 600–800 words
-  - Explore identity loss after breakup and how roles dissolve
-  - Introduce a concept called “The Echo Self” — the version of you that only existed around them
-  - Share how someone disentangled from their Echo Self to rediscover personal identity
-  - Provide a framework called “The 3 R’s” — Remember, Reclaim, Reinvent
-  - End with: “You were never lost — just layered.”
-
-  ⚠️ SAFETY:
-  Avoid framing the relationship as a mistake. Honour what was, but redirect the focus to the unfolding self.
-  `
-  },
-
-  {
-    format: "closure without answers",
-    tone: "accepting, emotionally intelligent, resilient",
-    theme: "peace with ambiguity",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You Might Never Know Why — and That’s Okay
-
-  ### Requirements:
-  - 600–800 words
-  - Address the universal urge to find closure through explanation
-  - Introduce a metaphor: “The Locked Door” — sometimes the answers are behind a door we can’t open
-  - Include the story of someone who created peace by shifting the question from “Why did they?” to “What do I need now?”
-  - Offer a journaling prompt titled “Meaning Without Answers”
-  - End with: “Healing begins when you stop knocking.”
-
-  ⚠️ SAFETY:
-  Do not dismiss the reader’s search for clarity. Acknowledge the emotional difficulty of ambiguity and guide them gently toward internal resolution.
-  `
-  },
-
-  {
-    format: "daily routine",
-    tone: "practical, nurturing, grounded",
-    theme: "stability through structure",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: Healing Happens Between Habits
-
-  ### Requirements:
-  - 600–850 words
-  - Explain how routines anchor identity during emotional chaos
-  - Share a sample “emotional recovery day” — from wake-up to wind-down — with rituals for grounding, energy, self-connection, and sleep
-  - Include a printable checklist called “The Daily Reset”
-  - Offer a mindset shift: routines aren’t restrictive — they’re restorative
-  - End with: “Structure isn’t confinement. It’s how you hold yourself together.”
-
-  ⚠️ SAFETY:
-  Avoid glorifying productivity or forcing performance. Honour small wins and emotional pacing.
-  `
-  },
-
-  {
-    format: "social reentry",
-    tone: "warm, encouraging, grounded",
-    theme: "connection after isolation",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You’re Allowed to Be Seen Again
-
-  ### Requirements:
-  - 600–850 words
-  - Explore the emotional weight of being visible again after heartbreak (e.g., shame, comparison, fear of judgement)
-  - Share a short story of someone who gently returned to social spaces at their own pace
-  - Include a “reentry roadmap” with 5 tiers of exposure (digital presence, solo events, group invites, etc.)
-  - Offer 3 affirmations to counter self-consciousness and social fear
-  - End with: “You don’t have to sparkle. You just need to show up.”
-
-  ⚠️ SAFETY:
-  Avoid glamorising distraction or suggesting social approval is the goal. Emphasise authenticity, comfort, and small steps.
-  `
-  },
-
-  {
-    format: "emotional triggers",
-    tone: "clear, calm, compassionate",
-    theme: "handling reminders",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: When Everything Reminds You of Them
-
-  ### Requirements:
-  - 600–850 words
-  - Explain the neuroscience behind emotional triggers (e.g., associative memory, emotional conditioning)
-  - Include a short story of someone reclaiming a space or object that held emotional weight
-  - Offer 3 methods to soften or rewire painful associations (e.g., “reclaim the object,” create new meaning, neutralise with repetition)
-  - Provide a “trigger first-aid kit” with grounding phrases, sensory resets, and boundary suggestions
-  - End with: “It’s a memory — not a mandate.”
-
-  ⚠️ SAFETY:
-  Do not pressure the reader to erase or avoid memories. Emphasise choice, permission, and emotional self-trust.
-  `
-  },
-
-  {
-    format: "self-worth reset",
-    tone: "empowering, direct, uplifting",
-    theme: "personal value",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You Are Not Someone’s Rejection
-
-  ### Requirements:
-  - 600–850 words
-  - Reframe rejection as redirection toward alignment
-  - Introduce the metaphor of a puzzle piece or radio frequency to explain emotional compatibility
-  - Share a story of someone who internalised rejection and then reframed it through growth
-  - Provide a 3-step “inner validation ritual” involving self-affirmation, memory check, and compassionate re-narration
-  - End with: “You were not too much — you were just not aligned.”
-
-  ⚠️ SAFETY:
-  Avoid pathologising attachment. Validate the hurt without reinforcing shame.
-  `
-  },
-
-  {
-    format: "forgiveness",
-    tone: "honest, mature, peaceful",
-    theme: "releasing resentment",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: Forgiveness Is About You — Not Them
-
-  ### Requirements:
-  - 600–850 words
-  - Redefine forgiveness as emotional disentanglement, not condoning or forgetting
-  - Walk through a personal anecdote of someone who let go of resentment without reconciliation
-  - Present a “release ritual” with 3 optional tools: unsent letter, symbolic gesture (e.g., stone in water), and voice note to self
-  - Include a short myth-busting section about forgiveness (“It’s not a shortcut to healing”, “It doesn’t mean they’re right”)
-  - End with: “You free yourself when you stop holding the rope.”
-
-  ⚠️ SAFETY:
-  Do not romanticise premature forgiveness. Honour grief and protect self-trust first.
-  `
-  },
-
-  {
-    format: "dating readiness",
-    tone: "playful, cautious, empowering",
-    theme: "moving on romantically",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: Are You Actually Ready to Date?
-
-  ### Requirements:
-  - 600–850 words
-  - Introduce a playful but revealing self-check quiz (e.g., “Swipe or Wait?” with 6 yes/no questions)
-  - Share a story of someone who jumped into dating too early and paused after realising they were emotionally outsourcing
-  - Provide a “green flags” checklist for genuine readiness (emotional stability, clarity, non-comparative thinking, etc.)
-  - Include a compassionate note on why craving connection doesn’t always mean you’re ready to build one
-  - End with: “Flirting isn’t healing — unless it comes from wholeness.”
-
-  ⚠️ SAFETY:
-  Do not shame attraction, sexuality, or loneliness. Offer dating as a choice, not a benchmark.
-  `
-  },
-
-  {
-    format: "future visioning",
-    tone: "hopeful, inspiring, realistic",
-    theme: "life beyond this",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: The Future Isn’t a Blank Page — It’s a Map You Get to Draw
-
-  ### Requirements:
-  - 600–900 words
-  - Start with a metaphor (e.g., foggy road becoming visible with each step forward)
-  - Validate the fear of uncertainty without romanticising it
-  - Offer a visualisation exercise: “Imagine one ordinary, good day six months from now”
-  - List 5–7 core values (e.g., peace, curiosity, connection) and help the reader design a future aligned with them
-  - Include a short journaling prompt: “What does the *next chapter* of your life feel like, sound like, look like?”
-  - End with: “Let the past be one chapter — not the whole book.”
-
-  ⚠️ SAFETY:
-  Avoid forced optimism. Make hope actionable. Honour emotional setbacks as part of growth.
-  `
-  },
-// 11 - 20
-  {
-    format: "mental pattern disruption",
-    tone: "compassionate, sharp, reflective",
-    theme: "repetitive thinking",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You’re Not Crazy — It’s a Loop
-
-  ### Requirements:
-  - 600–800 words
-  - Explain how breakup rumination hijacks the brain (mention emotional OCD tendencies lightly and accessibly)
-  - Include a loop-breaker technique (e.g., “name–reframe–redirect” method)
-  - Offer a simple 5-minute grounding exercise to stop spiralling thoughts
-  - Reassure the reader that looping is common, not weakness
-  - End with: “You don’t have to solve the past to survive the present.”
-
-  ⚠️ SAFETY:
-  Do not use clinical terms without context. Avoid blame or pressure to “just stop thinking.”
-  `
-  },
-
-  {
-    format: "life re-alignment",
-    tone: "practical, strong, validating",
-    theme: "reclaiming direction",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: When Your Whole Life Was Built Around Them
-
-  ### Requirements:
-  - 550–750 words
-  - Describe the identity collapse that can occur when life goals were shared with a partner
-  - Help the reader untangle borrowed dreams from personal ones
-  - Include a “goal realignment map” with 3 categories: Still Mine, Let Go, To Be Discovered
-  - Invite reflection with: “What’s something small but real you can aim for now?”
-  - End with: “You’re allowed to want again — even if it’s different now.”
-
-  ⚠️ SAFETY:
-  Avoid framing dreams as “wrong” — honour the grief of losing shared goals.
-  `
-  },
-
-  {
-    format: "social strategy",
-    tone: "grounded, self-aware, supportive",
-    theme: "healthy emotional boundaries",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You Don’t Owe Everyone Your Pain
-
-  ### Requirements:
-  - 500–650 words
-  - Talk about how some people process by talking — but not all listening is helpful
-  - Offer a 3-tier support system: Inner Circle (safe), Outer Circle (neutral), Curious Crowd (non-essential)
-  - Include a sample phrase like: “Thanks for asking — I’m focusing on healing quietly for now”
-  - Include a personal boundary template
-  - End with: “You don’t need to be understood by everyone to be supported by the right ones.”
-
-  ⚠️ SAFETY:
-  Do not shame vulnerability. Just offer structure for safer sharing.
-  `
-  },
-
-  {
-    format: "science-backed insight",
-    tone: "curious, gentle, empowering",
-    theme: "neurochemical grief",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: Missing Them Isn’t a Sign — It’s a Chemical Echo
-
-  ### Requirements:
-  - 600–850 words
-  - Explain how oxytocin, dopamine, and habit loops affect longing
-  - Use the metaphor of “phantom limb syndrome” for emotional habits
-  - Reassure reader that missing someone doesn’t mean you should be with them
-  - Offer a grounding affirmation set to soothe the nervous system
-  - End with: “Missing is just a sign you loved — not a command to return.”
-
-  ⚠️ SAFETY:
-  Avoid over-medicalisation. Make science empowering, not dismissive.
-  `
-  },
-
-  {
-    format: "emergency emotional first-aid",
-    tone: "calm, grounded, firm",
-    theme: "emotional safety",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: If You’re Crying on the Bathroom Floor, Read This
-
-  ### Requirements:
-  - 450–650 words
-  - Offer a step-by-step “emotional first-aid” guide (e.g., 1. Touch something cold, 2. Count your breaths, 3. Say one safe truth)
-  - Remind them that this is a moment, not forever
-  - Include a single-sentence mantra: “You are not broken — you are breaking open”
-  - End with: “Even in pain, you are still moving forward.”
-
-  ⚠️ SAFETY:
-  No spiritual bypassing. Ground the reader in *physical* and *emotional* presence.
-  `
-  },
-
-  {
-    format: "reframing regret",
-    tone: "reflective, honest, warm",
-    theme: "rumination and imagined outcomes",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: The “What Ifs” Will Eat You — Unless You Feed Them Something Better
-
-  ### Requirements:
-  - 600–850 words
-  - Discuss common loops: “What if I’d said this?”, “What if I’d stayed?”, etc.
-  - Offer a journaling reframe tool called “The Fork in the Path” — exploring both realities and anchoring back to the present
-  - Include a client story of someone trapped in what-ifs who reclaimed the present
-  - End with: “You deserve peace more than you deserve perfect answers.”
-
-  ⚠️ SAFETY:
-  Don’t shame overthinking — treat it as a grief mechanism, not a flaw.
-  `
-  },
-
-  {
-    format: "digital detox coaching",
-    tone: "clear, respectful, encouraging",
-    theme: "online boundaries",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: No, You Don’t Need to Check Their Profile Again
-
-  ### Requirements:
-  - 500–700 words
-  - Explore the dopamine hit of checking their activity
-  - Include a “delay–distract–delete” protocol for regaining control
-  - Offer a success story of someone who went cold turkey for 30 days
-  - End with: “Freedom sometimes begins with the app you didn’t open.”
-
-  ⚠️ SAFETY:
-  Avoid guilt-tripping. Treat social relapse as a pattern, not a failure.
-  `
-  },
-
-  {
-    format: "self-concept healing",
-    tone: "empowering, kind, direct",
-    theme: "worthiness and self-talk",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You Were Not Too Much — You Were Just With Too Little
-
-  ### Requirements:
-  - 550–750 words
-  - Unpack the idea of feeling “hard to love” after heartbreak
-  - Include a metaphor: “emotional resonance” — some frequencies just don’t match
-  - Include a mirror script for rebuilding self-perception
-  - End with: “Your intensity isn’t a flaw — it’s a filter.”
-
-  ⚠️ SAFETY:
-  Avoid bashing the ex. Focus on personal resonance, not blame.
-  `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: The You Who’s Rising
+
+### Requirements:
+- 550–800 words
+- Introduce the concept of “identity scaffolding” — temporary supports that help rebuild a sense of self
+- Share a case story of someone rediscovering agency through micro-choices and habit shifts
+- Offer a visual identity map with 4 zones: Old Echoes, Present Anchors, Future Pulls, and Core Constants
+- End with: “You’re not rebuilding who you were. You’re discovering who you are when nothing is borrowed.”
+
+⚠️ SAFETY:
+Validate identity confusion. Avoid pressure to “figure it all out.”
+`,
   },
 
   {
     format: "emotional navigation",
-    tone: "grounded, gentle, emotionally intelligent",
-    theme: "mixed feelings and uncertainty",
+    tone: "soothing, intelligent, gently directive",
+    theme: "processing longing",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: Missing Them and Moving On Can Happen at the Same Time
+### Topic: What to Do With Missing Them
 
-  ### Requirements:
-  - 500–700 words
-  - Explain emotional duality (missing + moving forward aren’t opposites)
-  - Include a “Both/And Map” — a journaling tool for emotional contradictions
-  - Share a short example of someone who held both feelings and still healed
-  - End with: “Conflicting emotions don’t mean you’re stuck — they mean you’re human.”
+### Requirements:
+- 600–900 words
+- Validate the emotional realism of missing someone who hurt you or left
+- Differentiate between missing the *person* vs the *feeling, familiarity, or future*
+- Offer a worksheet: “Longing Decoder” with 3 introspective prompts to clarify emotional needs
+- End with: “Missing is a signal — not a command.”
 
-  ⚠️ SAFETY:
-  Don’t pathologise ambivalence. Make it normal, even necessary.
-  `
+⚠️ SAFETY:
+Avoid invalidating the ache. Focus on redirection, not repression.
+`,
   },
 
   {
-    format: "narrative repair",
-    tone: "reflective, structured, calm",
-    theme: "storytelling for closure",
+    format: "ritual and release",
+    tone: "reflective, imaginative, emotionally symbolic",
+    theme: "saying goodbye in your own language",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: Retell the Story — But With You at the Center
+### Topic: Create the Goodbye You Never Had
 
-  ### Requirements:
-  - 600–850 words
-  - Discuss how people become side characters in their own breakup narrative
-  - Offer a 3-part structure: Before, During, After — focused on personal agency
-  - Include a reflective writing prompt for each phase
-  - End with: “This was never just their story — it’s your origin chapter too.”
+### Requirements:
+- 600–850 words
+- Explain how closure is often something we *create*, not something we’re given
+- Offer 4 symbolic goodbye rituals (e.g. voice memo to the universe, burying a note, candle ritual, etc.)
+- Include a story of someone who made peace through symbolic action, not conversation
+- End with: “You don’t need their permission to begin your ending.”
 
-  ⚠️ SAFETY:
-  Avoid toxic rewriting (“everything happens for a reason”). Honour the truth while reclaiming voice.
-  `
-  },
-// 21 - 30
-  {
-    format: "normalising plateaus",
-    tone: "calm, validating, steady",
-    theme: "invisible progress",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: If You Don’t Feel Better Yet, That Doesn’t Mean You’re Broken
-
-  ### Requirements:
-  - 500–750 words
-  - Explain why progress can feel invisible (plateaus, rewiring, emotional cycles)
-  - Include a metaphor: healing as tectonic shifts — slow, deep, powerful
-  - Offer a timeline audit exercise to notice subtle gains
-  - End with: “Stillness is not the same as being stuck.”
-
-  ⚠️ SAFETY:
-  Avoid implying delay is failure. Validate flat emotional states as normal.
-  `
+⚠️ SAFETY:
+No ritual should feel performative or forced. Give full emotional permission to opt in or out.
+`,
   },
 
   {
-    format: "post-breakup identity",
-    tone: "inspiring, empowering, focused",
-    theme: "new standards for a new self",
+    format: "self-reclamation",
+    tone: "bold, affirming, reality-anchored",
+    theme: "pulling back your energy",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: Redefine What “Success” Means for You Now
+### Topic: Call Your Energy Back
 
-  ### Requirements:
-  - 600–800 words
-  - Unpack inherited definitions of success (relationship status, timelines)
-  - Offer a “values clarity” worksheet to set post-breakup intentions
-  - Include a short reflection from someone who shifted their vision
-  - End with: “Healing isn’t about milestones — it’s about alignment.”
+### Requirements:
+- 600–850 words
+- Introduce the idea of “emotional leakage” — how we leave parts of ourselves behind
+- Teach a short daily practice to reclaim mental/emotional space (visual cue + grounding mantra)
+- Include a list of 5 signs your energy is still entangled with someone
+- End with: “Every time you remember who you are, you bring a piece of you home.”
 
-  ⚠️ SAFETY:
-  Do not pit personal growth against traditional desires. Respect all paths.
-  `
+⚠️ SAFETY:
+Avoid spiritual bypass. Keep language grounded, accessible, and empowering.
+`,
   },
 
   {
-    format: "emotional authenticity",
-    tone: "honest, kind, non-judgmental",
-    theme: "performing okayness",
+    format: "emotional detox",
+    tone: "calm, cleansing, emotionally spacious",
+    theme: "releasing residual tension",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: You Don’t Have to Pretend You’re Fine
+### Topic: When You Still Feel Tied to Them
 
-  ### Requirements:
-  - 450–650 words
-  - Talk about the pressure to perform healing on social media or among friends
-  - Include a short self-checklist: “Am I masking pain or expressing healing?”
-  - Suggest micro-practices for authenticity in low-risk spaces
-  - End with: “Let yourself be real — you’re not here to impress anyone.”
+### Requirements:
+- 600–850 words
+- Explain how emotional bonds can linger physically (e.g., tension, dreams, rumination)
+- Share a body-based unwinding ritual (e.g., movement, shaking, cold rinse, or gentle stretch)
+- Introduce a journaling prompt: “Where in my body am I still holding this?”
+- End with: “Grief moves — when you let it.”
 
-  ⚠️ SAFETY:
-  Avoid glorifying emotional exposure. Honour pacing and privacy.
-  `
+⚠️ SAFETY:
+Emphasise body autonomy and comfort. Never prescribe physical practices without permission.
+`,
   },
 
   {
-    format: "impulse awareness",
-    tone: "gentle, clear, non-punitive",
-    theme: "urge to reach out",
+    format: "narrative rewrite",
+    tone: "hopeful, transformative, non-blaming",
+    theme: "changing your breakup story",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: Wanting to Reach Out Doesn’t Mean You Should
+### Topic: Rewrite the Ending
 
-  ### Requirements:
-  - 500–700 words
-  - Explain the psychology of contact cravings (unfinished cycles, nervous system memory)
-  - Offer a “Pause–Process–Plan” tool for emotional impulses
-  - Include a short story of someone who held back and grew stronger
-  - End with: “Silence can be self-respect.”
+### Requirements:
+- 600–800 words
+- Invite the reader to separate fact from interpretation in their breakup story
+- Offer a structured journal sequence: What happened → What I told myself → What I choose now
+- Share a short story of someone who reframed their breakup into a pivotal moment of self-respect
+- End with: “You’re the narrator now — speak your healing into existence.”
 
-  ⚠️ SAFETY:
-  Avoid framing contact as weak. Emphasise agency over impulse.
-  `
+⚠️ SAFETY:
+Do not invalidate the past. Honour both pain and power in equal measure.
+`,
   },
 
   {
-    format: "practical mental health support",
-    tone: "professional, clear, supportive",
-    theme: "external help",
+    format: "social repair",
+    tone: "kind, grounded, realistic",
+    theme: "reconnecting with others",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: Not All Therapy Is the Same — Here’s What Can Help Most
+### Topic: It’s Safe to Let People In Again
 
-  ### Requirements:
-  - 600–900 words
-  - Introduce 3 therapy styles particularly helpful after breakup (e.g., CBT, IFS, somatic)
-  - Share example sessions and what each one targets
-  - Provide tips for finding the right therapist (online or local)
-  - End with: “You don’t have to do this alone — and you shouldn’t.”
+### Requirements:
+- 600–850 words
+- Acknowledge how trust, safety, and energy change after heartbreak
+- Offer 3 layers of reentry: Inner Circle (1–2 people), Outer Ring (familiar faces), Casual Flow (new connections)
+- Include self-check prompts: “What am I afraid will happen if I’m seen?”
+- End with: “Connection doesn’t require perfection — only presence.”
 
-  ⚠️ SAFETY:
-  Do not sell therapy as a fix-all. Validate solo healing too.
-  `
+⚠️ SAFETY:
+Validate caution. Never push social engagement as a cure.
+`,
   },
 
   {
-    format: "physical-symbol reset",
-    tone: "reflective, calm, gently motivating",
-    theme: "clearing space",
+    format: "value alignment",
+    tone: "empowering, honest, introspective",
+    theme: "making the past useful",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: It’s Time to Clear the Drawer
+### Topic: What This Breakup Taught You About You
 
-  ### Requirements:
-  - 500–700 words
-  - Talk about the emotional imprint of physical objects (gifts, notes, clothes)
-  - Provide a 3-step process: reflect, choose, transform (e.g., box, burn, donate)
-  - Include a micro-story of someone who delayed decluttering and how it finally shifted things
-  - End with: “You can honour a memory — without housing it forever.”
+### Requirements:
+- 600–850 words
+- Offer a guided reflection with 5 questions:
+  1. What boundary did I discover I needed?
+  2. What part of me dimmed to keep the peace?
+  3. What will I never negotiate again?
+  4. What made me proud of myself?
+  5. What did I learn about love?
+- End with: “Use your answers as bricks — not bandages.”
 
-  ⚠️ SAFETY:
-  Avoid pressure to purge immediately. Emphasise emotional readiness.
-  `
+⚠️ SAFETY:
+Avoid toxic positivity. Empower learning without demanding silver linings.
+`,
   },
 
   {
-    format: "emotional logic reframe",
-    tone: "warm, insightful, protective",
-    theme: "navigating emotional confusion",
+    format: "emotional redirection",
+    tone: "uplifting, grounded, realistic",
+    theme: "when thoughts loop",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: When You Miss Them, Ask What You’re Actually Missing
+### Topic: When You Can’t Stop Thinking About Them
 
-  ### Requirements:
-  - 500–750 words
-  - Help the reader distinguish between missing the person vs. the feeling of closeness
-  - Provide a “Name the Need” worksheet (e.g., connection, safety, identity)
-  - Include examples of substitute rituals (calls, journaling, walks)
-  - End with: “You’re not wrong to miss love — but you don’t need to chase the past to feel it.”
+### Requirements:
+- 600–850 words
+- Explain cognitive looping and how the brain seeks resolution
+- Share 3 redirection strategies: Scheduled Rumination, Creative Refocus, Social Interruption
+- Include a short story of someone who replaced looping with meaningful momentum
+- End with: “Every time you redirect, you rewire.”
 
-  ⚠️ SAFETY:
-  Do not shame longing. Validate complexity while guarding forward motion.
-  `
+⚠️ SAFETY:
+Do not shame the reader’s mind. Normalise mental returns — and offer gentle escape hatches.
+`,
+  },
+
+  {
+    format: "thought loop disruptor",
+    tone: "compassionate, sharp, validating",
+    theme: "mental rumination",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: You’re Not Broken — It’s a Brain Loop
+
+### Requirements:
+- 600–800 words
+- Explain how emotional breakups mimic obsessive loops (using light “emotional OCD” metaphors)
+- Teach the “Catch–Name–Reframe” method
+- Include a 5-minute breath + grounding reset for spiralling thoughts
+- End with: “You’re not stuck — your thoughts are just on repeat. You get to change the station.”
+
+⚠️ SAFETY:
+Use brain science to normalise experience, not diagnose. No dismissiveness or pressure to “stop thinking.”
+`,
+  },
+
+  {
+    format: "life realignment",
+    tone: "steady, validating, future-focused",
+    theme: "rediscovering personal goals",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: When Your Life Was Built Around Them
+
+### Requirements:
+- 550–750 words
+- Discuss post-breakup identity collapse when shared goals unravel
+- Offer a “Dream Sorting” chart: Mine / Shared / Undiscovered
+- Guide the reader in identifying one daily action aligned with reclaimed purpose
+- End with: “It’s okay to start small. The point is: you’re steering again.”
+
+⚠️ SAFETY:
+Avoid shaming past goals. Honour grief before pivoting toward agency.
+`,
+  },
+
+  {
+    format: "boundary blueprint",
+    tone: "calm, practical, gently assertive",
+    theme: "selective vulnerability",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: Not Everyone Deserves Access to Your Healing
+
+### Requirements:
+- 500–650 words
+- Outline 3-tier support model: Safe People, Neutral Listeners, Curious Observers
+- Include a permission script: “Thanks for checking in — I’m keeping this part quiet right now”
+- Offer a visual guide for choosing who gets what level of detail
+- End with: “Silence isn’t secrecy — it’s protection.”
+
+⚠️ SAFETY:
+Validate both talkers and quiet healers. Avoid prescribing one path.
+`,
+  },
+
+  {
+    format: "science insight",
+    tone: "curious, reassuring, grounded",
+    theme: "chemical withdrawal",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: Missing Them Doesn’t Mean You Should Go Back
+
+### Requirements:
+- 600–850 words
+- Explain how oxytocin/dopamine cycles create emotional withdrawal pangs
+- Use the metaphor: “phantom bond” — your heart still expects contact
+- Provide 3 tools to soothe nervous system (breath, mantra, movement)
+- End with: “Your body’s missing the rhythm — not the reality.”
+
+⚠️ SAFETY:
+Do not over-pathologise. Frame biology as helpful context, not destiny.
+`,
+  },
+
+  {
+    format: "emotional triage",
+    tone: "gentle, directive, stabilising",
+    theme: "emotional overwhelm",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: If You’re on the Bathroom Floor, This Is For You
+
+### Requirements:
+- 450–650 words
+- Offer a 3-step emotional first aid sequence: Cold Touch / Grounded Truth / Safe Action
+- Use body-oriented language to pull the reader into the present
+- Include 1-liner mantra: “You are not collapsing — you are clearing space.”
+- End with: “You will get off the floor. But first, just breathe.”
+
+⚠️ SAFETY:
+Avoid lofty motivation. Prioritise survival and emotional realism.
+`,
+  },
+
+  {
+    format: "regret reframing",
+    tone: "honest, soft, forward-moving",
+    theme: "mental what-ifs",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: The “What Ifs” Are Not Your Compass
+
+### Requirements:
+- 600–850 words
+- Discuss rumination around alternate realities
+- Introduce a two-column journal practice: "What I Imagined / What I Know"
+- Share an anecdote of someone trapped in mental time travel who returned to the now
+- End with: “Peace lives in the version you’re still writing.”
+
+⚠️ SAFETY:
+Frame overthinking as survival logic. Do not shame cognitive wandering.
+`,
   },
 
   {
     format: "digital detox",
-    tone: "clear, firm, compassionate",
-    theme: "social triggers",
+    tone: "direct, kind, empowering",
+    theme: "online self-sabotage",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: Your Feed Is Not a Healing Space
+### Topic: Stop Clicking Their Name
 
-  ### Requirements:
-  - 500–700 words
-  - Explain how social platforms re-trigger memory loops and create comparison traps
-  - Offer a 7-day “scroll pause” challenge with reflection questions
-  - Include one case study of someone who healed faster after disconnecting
-  - End with: “Silence online creates space for clarity inside.”
+### Requirements:
+- 500–700 words
+- Discuss digital self-harm and dopamine reward cycles
+- Offer a tool: Delay–Distract–Delete (3 stages of reclaiming digital agency)
+- Share a story of someone who broke their pattern and felt powerful again
+- End with: “The freedom you want may start with one small click you don’t make.”
 
-  ⚠️ SAFETY:
-  Avoid demonising technology. Focus on mindful use and boundaries.
-  `
+⚠️ SAFETY:
+Avoid scolding. Empower the reader to pause with grace.
+`,
   },
 
   {
-    format: "time reframe",
-    tone: "reassuring, wise, liberating",
-    theme: "meaning and growth",
+    format: "self-worth affirmation",
+    tone: "bold, affirming, truthful",
+    theme: "too muchness",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: That Relationship Wasn’t a Waste — It Was a Chapter
+### Topic: You Weren’t Too Much — You Were Just Misread
+
+### Requirements:
+- 550–750 words
+- Unpack the shame of feeling “too emotional, too intense, too needy”
+- Use soundwave metaphor: “Some people hear static. Others hear music.”
+- Offer an “I Am” mirror script for reclaiming identity
+- End with: “What they couldn’t hold isn’t proof that you were wrong to feel.”
+
+⚠️ SAFETY:
+Avoid framing emotional needs as flaws. Affirm difference, not deficiency.
+`,
+  },
+
+  {
+    format: "emotional contradiction",
+    tone: "gentle, smart, reassuring",
+    theme: "grief duality",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: You Can Miss Them and Still Move Forward
+
+### Requirements:
+- 500–700 words
+- Normalize coexisting emotions after a breakup
+- Introduce “The Both/And Map” — a journal prompt with columns for opposite truths
+- Use an example of a person who moved forward while still longing
+- End with: “Healing doesn’t ask you to erase anything — only to include yourself again.”
+
+⚠️ SAFETY:
+Never shame conflicting emotions. Highlight emotional maturity in duality.
+`,
+  },
+
+  {
+    format: "narrative reclamation",
+    tone: "centered, calm, insightful",
+    theme: "personal agency",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+### Topic: Write the Breakup Story That Sets You Free
+
+### Requirements:
+- 600–850 words
+- Teach a story-framing exercise: Before / During / After — but centred on self
+- Include a question set that helps the reader rediscover agency in each phase
+- Emphasise that this isn’t rewriting truth — it’s reclaiming voice
+- End with: “This isn’t just how it ended. It’s how you began again.”
+
+⚠️ SAFETY:
+Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
+`,
+  },
+
+  {
+    format: "pattern recognition",
+    tone: "analytical, empowering, self-aware",
+    theme: "unlearning attachment cycles",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: You Didn’t Just Lose a Person — You’re Losing a Pattern
+
+  ### Requirements:
+  - 550–800 words
+  - Introduce the concept of attachment patterns masquerading as love
+  - Include a “cycle spotlight” worksheet — highlight triggers, hooks, and collapse points
+  - Compare emotional addiction to muscle memory
+  - End with: “Healing is not just grieving a person — it's rewiring a pattern.”
+
+  ⚠️ SAFETY:
+  Avoid implying relationships were delusions. Frame with compassion, not judgment.
+  `,
+  },
+
+  {
+    format: "identity re-anchoring",
+    tone: "strong, calm, affirming",
+    theme: "losing sense of self",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: You’re Still in There — You Were Never Just Their Other Half
+
+  ### Requirements:
+  - 500–700 words
+  - Explore identity enmeshment in long-term or intense breakups
+  - Use a metaphor: “fogged mirror” — you forgot what you looked like
+  - Include a “self-return checklist” — small things that reconnect to individuality
+  - End with: “You were whole before — and you are whole again.”
+
+  ⚠️ SAFETY:
+  Don’t belittle how deep the bond was. Respect the grief, honour the self.
+  `,
+  },
+
+  {
+    format: "mindset shift",
+    tone: "realistic, motivating, grounded",
+    theme: "moving forward without certainty",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: You Don’t Have to Know Where You’re Going to Walk Away
 
   ### Requirements:
   - 450–650 words
-  - Reframe “lost years” into learned years
-  - Introduce the “Experience Ledger” tool — tracking growth, skills, perspective
-  - Include a reader prompt: “What did you discover about love, life, or yourself?”
-  - End with: “You walked through it for a reason — even if you’re still learning what that reason is.”
+  - Challenge the myth that healing requires a fixed plan
+  - Include a “micro-next” tool — one small action that signals direction
+  - Use a metaphor: “foggy trail” — clarity comes *after* movement begins
+  - End with: “Direction isn’t a feeling — it’s a choice.”
 
   ⚠️ SAFETY:
-  Avoid toxic positivity. Honour disappointment while opening space for insight.
-  `
+  Avoid false urgency or glorifying hustle. Honour slow, unsure steps.
+  `,
   },
 
   {
-    format: "internal reset",
-    tone: "confident, clear, self-protective",
-    theme: "boundaries and silence",
+    format: "emotional detox",
+    tone: "direct, clear, protective",
+    theme: "resisting self-blame",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
-  ### Topic: You Don’t Owe Anyone an Explanation
+  ### Topic: Not Every Thought You Have Right Now Is Yours
+
+  ### Requirements:
+  - 600–850 words
+  - Teach how stress, shame, and old narratives hijack internal voice
+  - Include a “thought scrubbing” exercise to separate self from scripts
+  - Add a sample inner dialogue reframe: “I messed it up” → “I was doing my best in pain”
+  - End with: “Pain speaks in your voice — but it doesn’t always tell the truth.”
+
+  ⚠️ SAFETY:
+  Avoid toxic positivity or instant reframes. Honour distress while creating space.
+  `,
+  },
+
+  {
+    format: "grief normalisation",
+    tone: "gentle, explanatory, emotionally literate",
+    theme: "delayed emotional response",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: Sometimes the Sadness Hits After You Think You’re Over It
+
+  ### Requirements:
+  - 500–750 words
+  - Explain grief stages as non-linear, using metaphor: “emotional weather fronts”
+  - Introduce “grief echo” journal technique for late-stage feelings
+  - Include story of someone blindsided by sadness weeks later
+  - End with: “Grief that returns isn’t failure — it’s unfinished conversation.”
+
+  ⚠️ SAFETY:
+  Reassure reader they aren’t broken. Avoid clinical labels.
+  `,
+  },
+
+  {
+    format: "ritual and closure",
+    tone: "sacred, personal, calm",
+    theme: "emotional release",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: Write the Goodbye Letter You Never Sent
 
   ### Requirements:
   - 500–700 words
-  - Talk about the pressure to explain the breakup to friends, family, or the ex
-  - Offer short scripts for common situations (“Why did it end?” / “You seemed happy!”)
-  - Reframe privacy as emotional sovereignty, not secrecy
-  - End with: “You’re allowed to heal quietly.”
+  - Describe the power of unsent letters as containers for closure
+  - Provide a template with 3 sections: What I Wanted, What I Know Now, What I Let Go
+  - Add sample excerpts for inspiration
+  - End with: “You don’t need their reply — you need your own release.”
 
   ⚠️ SAFETY:
-  Avoid encouraging total isolation. Distinguish healthy privacy from shutdown.
-  `
+  Clarify that this is symbolic. Discourage actual contact.
+  `,
   },
-// 31 - 40
+
+  {
+    format: "behaviour loop mapping",
+    tone: "sharp, validating, instructional",
+    theme: "understanding regressions",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: If You Feel Like You’re Back at Day One — You’re Not
+
+  ### Requirements:
+  - 500–750 words
+  - Introduce “loop illusion” — returning feelings ≠ no progress
+  - Offer a “snapshot map” tool to measure backward vs. deeper healing
+  - Use metaphor: “spiral staircase” — same views, higher ground
+  - End with: “Regression is often repetition with more awareness.”
+
+  ⚠️ SAFETY:
+  Don’t shame relapses. Validate frustration and growth together.
+  `,
+  },
+
+  {
+    format: "boundary repair",
+    tone: "firm, soothing, clear",
+    theme: "protecting peace",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: Peace Doesn’t Always Feel Peaceful at First
+
+  ### Requirements:
+  - 450–650 words
+  - Explain nervous system dysregulation after chaotic relationships
+  - Teach a “calm doesn’t mean numb” body check-in exercise
+  - Compare to addiction withdrawal — peace may feel empty before it feels safe
+  - End with: “Safety can feel boring when you’ve only known storms.”
+
+  ⚠️ SAFETY:
+  Be trauma-aware. Avoid glorifying calm over feeling.
+  `,
+  },
+
+  {
+    format: "future visualization",
+    tone: "hopeful, introspective, anchored",
+    theme: "creating forward vision",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: What If the Best Connection of Your Life Is Still Ahead?
+
+  ### Requirements:
+  - 500–800 words
+  - Use future-anchored reflection: “What would it feel like to be met fully?”
+  - Include a guided writing prompt: “Design your next chapter without old constraints”
+  - End with: “Hope is not naïve — it’s the first act of rebuilding.”
+
+  ⚠️ SAFETY:
+  Don’t rush reader to move on. Leave space for grief while opening forward view.
+  `,
+  },
+
+  {
+    format: "emotional metaphor coaching",
+    tone: "insightful, poetic, quietly powerful",
+    theme: "acceptance and letting go",
+    prompt: (gender, goalStage) => `
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
+
+  ### Topic: You Can’t Heal While Holding the Rope
+
+  ### Requirements:
+  - 600–850 words
+  - Use the metaphor of tug-of-war — the pain lies in holding tight
+  - Walk through “the letting go grip” — physical and mental release technique
+  - Offer story of someone who stopped struggling and found stillness
+  - End with: “Letting go isn’t giving up — it’s ending the war.”
+
+  ⚠️ SAFETY:
+  Avoid implying surrender means no sadness. Allow mourning space.
+  `,
+  },
+
   {
     format: "thought loop reframe",
     tone: "gentle, focused, grounding",
     theme: "mental repetition",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: Stop Rewriting the Ending in Your Mind
 
@@ -663,7 +649,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid harsh confrontation. Focus on clarity, not judgment.
-  `
+  `,
   },
 
   {
@@ -671,7 +657,7 @@ module.exports = [
     tone: "intimate, calm, reassuring",
     theme: "inner voice realignment",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: What Would You Say to a Friend in Your Situation?
 
@@ -684,7 +670,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid clichés. Keep language grounded and emotionally accurate.
-  `
+  `,
   },
 
   {
@@ -692,7 +678,7 @@ module.exports = [
     tone: "insightful, respectful, clarifying",
     theme: "learning from regret",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: Let Regret Point You Forward
 
@@ -705,7 +691,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid over-analysis traps. Ground reflection in purpose, not perfection.
-  `
+  `,
   },
 
   {
@@ -713,7 +699,7 @@ module.exports = [
     tone: "soothing, slow, gentle",
     theme: "nighttime healing",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: Your Nervous System Needs a Soft Landing
 
@@ -726,7 +712,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Don’t pathologise insomnia. Emphasise self-compassion, not fixes.
-  `
+  `,
   },
 
   {
@@ -734,7 +720,7 @@ module.exports = [
     tone: "reassuring, validating, anchored",
     theme: "nonlinear healing",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: Healing Isn’t a Straight Line
 
@@ -747,7 +733,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Do not dismiss pain. Honour emotional spirals without fear.
-  `
+  `,
   },
 
   {
@@ -755,7 +741,7 @@ module.exports = [
     tone: "gentle, therapeutic, mature",
     theme: "what you wish you could say",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: You Don’t Have to Say It to Let It Go
 
@@ -768,7 +754,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Don’t encourage actual contact. Keep it internal, symbolic, and safe.
-  `
+  `,
   },
 
   {
@@ -776,7 +762,7 @@ module.exports = [
     tone: "practical, uplifting, symbolic",
     theme: "physical surroundings and memory",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: Make Your Space Yours Again
 
@@ -789,7 +775,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid implying the reader must purge everything. Focus on subtle empowerment.
-  `
+  `,
   },
 
   {
@@ -797,7 +783,7 @@ module.exports = [
     tone: "firm, understanding, actionable",
     theme: "resisting contact impulses",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: The Text You’re About to Send
 
@@ -810,7 +796,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid judgment. Honour emotional cravings while teaching redirection.
-  `
+  `,
   },
 
   {
@@ -818,7 +804,7 @@ module.exports = [
     tone: "clear-eyed, kind, steady",
     theme: "truthful reflection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: Name What It Was — and What It Wasn’t
 
@@ -831,7 +817,7 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid retroactive blame. Encourage compassionate clarity.
-  `
+  `,
   },
 
   {
@@ -839,7 +825,7 @@ module.exports = [
     tone: "compassionate, strengthening, self-trusting",
     theme: "outsider misunderstanding",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+  You are a breakup recovery coach writing a **premium guide for a neutral-gender user who wants to move on from their ex**.
 
   ### Topic: You Don’t Owe Anyone an Explanation
 
@@ -852,216 +838,215 @@ module.exports = [
 
   ⚠️ SAFETY:
   Avoid isolating the reader. Encourage connection with emotionally safe people.
-  `
-  },
-// 41 - 50
-  {
-    format: "reframing",
-    tone: "gentle, wise, uplifting",
-    theme: "understanding incompatibility",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
-
-  ### Topic: You’re Not Broken — You Were Just the Wrong Puzzle Piece
-
-  ### Requirements:
-  - 450–600 words
-  - Use the puzzle metaphor to reframe mismatch (not failure, just misfit)
-  - Share an anecdote of someone who stopped trying to "shrink themselves to fit"
-  - Include a visual reflection tool: “Where do you truly fit?”
-  - End with: “Compatibility isn’t earned. It’s recognised.”
-
-  ⚠️ SAFETY:
-  Avoid blaming either person. Focus on peaceful understanding.
-  `
+  `,
   },
 
   {
-    format: "emotional phase guide",
-    tone: "honest, validating, stabilising",
-    theme: "navigating anger",
+    format: "inner anchor",
+    tone: "gentle, meditative, stabilising",
+    theme: "rebuilding self-trust",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: When Anger Hits — And What to Do with It
+### Topic: Come Back to Your Centre
 
-  ### Requirements:
-  - 500–650 words
-  - Explain anger as a phase of grief, not a character flaw
-  - Offer safe outlets (rage walks, voice memos, creative expression)
-  - Include an “anger translation” worksheet: What is this emotion trying to protect?
-  - End with: “Anger isn’t toxic. Suppression is.”
+### Requirements:
+- 450–600 words
+- Describe the disorientation that follows emotional dependence
+- Offer a centring breath-based anchor ritual (“Place hand on heart…”)
+- Share a visualisation: self as a lighthouse, grounded in their own truth
+- End with: “You’re not starting over — you’re returning home to yourself.”
 
-  ⚠️ SAFETY:
-  Encourage expression — not harm. Avoid promoting venting at others.
-  `
+⚠️ SAFETY:
+Avoid implying full clarity is required. Embrace the fog gently.
+`,
   },
 
   {
-    format: "micro-routine",
-    tone: "quiet, grounding, restorative",
-    theme: "early day emotion",
+    format: "cultural reflection",
+    tone: "intelligent, validating, critical-yet-compassionate",
+    theme: "unlearning breakup shame",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: The Morning After — and the Next One
+### Topic: What If You Were Never Meant to 'Get Over It'?
 
-  ### Requirements:
-  - 450–600 words
-  - Focus on the specific pain of waking up alone or remembering loss
-  - Offer a morning ritual: breathwork, tea-making, sun-stepping, journaling
-  - Include a mantra or intention-setting line: “Today I’ll meet myself kindly.”
-  - End with: “Healing begins before the world wakes.”
+### Requirements:
+- 500–700 words
+- Examine societal pressure to “bounce back” quickly
+- Offer counter-narratives from non-Western or ancestral views of grief
+- Include journaling prompt: “What does healing look like for *me*?”
+- End with: “You’re not broken. You’re resisting a shallow timeline.”
 
-  ⚠️ SAFETY:
-  Avoid productivity framing. Honour emotional weight of mornings.
-  `
+⚠️ SAFETY:
+Avoid universalising cultural perspectives. Keep reader-centred.
+`,
   },
 
   {
-    format: "cognitive distortion check",
-    tone: "calm, structured, empowering",
-    theme: "mind traps",
+    format: "metaphorical visualisation",
+    tone: "poetic, calm, emotionally rich",
+    theme: "self-renewal",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Your Brain After a Breakup — What to Question
+### Topic: The Season Is Changing — So Are You
 
-  ### Requirements:
-  - 500–700 words
-  - Explain common cognitive distortions (e.g. catastrophising, “always/never” thinking)
-  - Provide a “thought audit” worksheet to challenge recurring beliefs
-  - Include a reframe exercise using more balanced inner language
-  - End with: “Your thoughts are loud — but not always right.”
+### Requirements:
+- 450–600 words
+- Use seasonal metaphors (e.g. winter into spring) to frame emotional evolution
+- Guide reader in a sensory reflection of their own “internal season”
+- Offer gentle self-celebration checklist: “New shoots” in thought or habit
+- End with: “Healing isn’t loud. Sometimes it just quietly blooms.”
 
-  ⚠️ SAFETY:
-  Avoid gaslighting real emotions. Clarify difference between feelings and facts.
-  `
+⚠️ SAFETY:
+Avoid productivity metaphors. Focus on natural pacing.
+`,
   },
 
   {
-    format: "lost future processing",
-    tone: "emotional, poetic, clear",
-    theme: "expectation grief",
+    format: "boundary affirmation",
+    tone: "steady, empowering, unapologetic",
+    theme: "post-breakup communication",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Saying Goodbye to the Life You Imagined
+### Topic: You Don’t Have to Answer That Message
 
-  ### Requirements:
-  - 500–750 words
-  - Validate grief over imagined futures (weddings, homes, traditions)
-  - Share a story of someone who honoured that grief (e.g. burning unused wedding invites)
-  - Include a guided writing exercise: “The goodbye I never got to give”
-  - End with: “Dreams don’t have to come true to have mattered.”
+### Requirements:
+- 500–650 words
+- Validate the stress of receiving texts or DMs from an ex
+- Offer a self-check flow: “Is this helpful / healing / necessary?”
+- Provide message templates: decline, delay, block, or ignore
+- End with: “Not responding *is* a response. And it’s valid.”
 
-  ⚠️ SAFETY:
-  Avoid diminishing fantasy loss. Honour symbolic grief.
-  `
+⚠️ SAFETY:
+Avoid framing blocking as immature. Empower boundary decisions.
+`,
   },
 
   {
-    format: "emotional honesty",
-    tone: "gentle, validating, emotionally literate",
-    theme: "missing without meaning regression",
+    format: "grief reframe",
+    tone: "raw, brave, healing",
+    theme: "reclaiming tears",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Missing Them Doesn’t Mean You Should Go Back
+### Topic: Crying Isn’t Weak — It’s Movement
 
-  ### Requirements:
-  - 450–600 words
-  - Normalise missing someone while still choosing separation
-  - Include a metaphor (e.g., a song you still love but don’t need on repeat)
-  - Offer a journaling prompt: “What exactly do I miss — and is it still true?”
-  - End with: “Missing isn’t a mistake. It’s memory passing through.”
+### Requirements:
+- 450–600 words
+- Explore emotional release as a physical detox (tears, breath, trembling)
+- Introduce “grief flow” space: music, dim lights, no interruptions
+- End with a gentle affirmation: “This isn’t falling apart. This is letting go.”
 
-  ⚠️ SAFETY:
-  Do not imply feelings mean failure. Honour complexity of emotions.
-  `
+⚠️ SAFETY:
+Don’t romanticise pain. Normalise regulated emotional expression.
+`,
   },
 
   {
-    format: "decluttering ritual",
-    tone: "calm, clear, action-oriented",
-    theme: "physical and symbolic release",
+    format: "emotional pacing",
+    tone: "structured, realistic, gentle",
+    theme: "slowing the recovery race",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Make Space — In Your Room, and in You
+### Topic: One Step a Day Is Enough
 
-  ### Requirements:
-  - 450–600 words
-  - Offer a gentle step-by-step guide to decluttering breakup objects (texts, photos, gifts)
-  - Include a decision aid: “Keep, store, or release?” flowchart
-  - End with a ritual: repurposing or releasing one object
-  - Final line: “Space invites renewal.”
+### Requirements:
+- 500–700 words
+- Counter pressure to “feel better faster” or “date again soon”
+- Offer micro-goals system: connection, comfort, clarity
+- Include a reflection tracker: “Today I noticed / I supported / I softened”
+- End with: “Sustainable healing isn’t rushed. It’s repeated.”
 
-  ⚠️ SAFETY:
-  Avoid pushing purging. Offer slow, intentional emotional pacing.
-  `
+⚠️ SAFETY:
+Avoid over-planning or rigid systems. Honour natural setbacks.
+`,
   },
 
   {
-    format: "night-time emotional care",
-    tone: "nurturing, soothing, grounded",
-    theme: "evening pain points",
+    format: "memory detox",
+    tone: "clear, respectful, forward-looking",
+    theme: "managing sentimental triggers",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Nights Are the Hardest — Here’s What Helps
+### Topic: The Song, The Café, The Jacket — What Now?
 
-  ### Requirements:
-  - 500–650 words
-  - Validate nighttime loneliness, memories, and overthinking
-  - Provide a comfort protocol (e.g., no-phone wind-down, weighted blanket, soft media)
-  - Include a grounding bedtime mantra
-  - End with: “You made it through another night — that counts.”
+### Requirements:
+- 450–650 words
+- Help the reader navigate real-world emotional landmines
+- Share three strategies: reframe, replace, or release
+- Include journaling line: “When I see this, I want to feel…”
+- End with: “You don’t have to erase the past. Just reclaim the present.”
 
-  ⚠️ SAFETY:
-  Avoid implying sleep fixes pain. Honour emotional safety needs.
-  `
+⚠️ SAFETY:
+Avoid forcing confrontation. Allow slow symbolic transitions.
+`,
   },
 
   {
-    format: "direction setting",
-    tone: "empowering, thoughtful, focused",
-    theme: "what comes next",
+    format: "future-self connection",
+    tone: "hopeful, visionary, rooted",
+    theme: "long-term recovery",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Finding North Again — Your Post-Breakup Compass
+### Topic: Write a Letter from Your Future Self
 
-  ### Requirements:
-  - 500–700 words
-  - Explain “compass values” — personal drivers (e.g., growth, peace, creativity)
-  - Include a short values ranking exercise
-  - Guide the reader to set one “compass-aligned” goal for the next month
-  - End with: “You’re not lost. You’re just between destinations.”
+### Requirements:
+- 500–750 words
+- Guide the user to imagine their life one year ahead — healed, grounded
+- Include scripted letter format: “Here’s what we’ve learned…”
+- Provide anchoring line: “I promise, we’re okay now”
+- End with: “The you who’s waiting is proud already.”
 
-  ⚠️ SAFETY:
-  Avoid urgency. Honour internal motivation over pressure.
-  `
+⚠️ SAFETY:
+Avoid perfection imagery. Ground future vision in realism.
+`,
   },
 
   {
-    format: "relapse normalisation",
-    tone: "compassionate, steadying, non-judgemental",
-    theme: "nonlinear recovery",
+    format: "somatic awareness",
+    tone: "curious, sensory, embodied",
+    theme: "tension and release",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
 
-  ### Topic: Healing Isn’t Linear — You’re Still Progressing
+### Topic: Where Does the Hurt Live in Your Body?
 
-  ### Requirements:
-  - 500–700 words
-  - Share a story of someone who reached out to their ex and learned from it
-  - Reframe setbacks as moments of insight, not failure
-  - Include a “Setback Response Plan” worksheet
-  - End with: “You didn’t go backward. You just paused. Keep walking.”
+### Requirements:
+- 450–600 words
+- Explore physical sensations tied to heartbreak (jaw, chest, stomach)
+- Share somatic scan script and release gestures (shaking, stretching)
+- Include body affirmation: “You’re allowed to soften”
+- End with: “You don’t just think grief — you carry it. Let’s lighten the weight.”
 
-  ⚠️ SAFETY:
-  Avoid punishment framing. Encourage reflection without shame.
-  `
-  }
+⚠️ SAFETY:
+Avoid medical advice. Emphasise agency and neutrality.
+`,
+  },
+
+  {
+    format: "emotional forecast",
+    tone: "reflective, steady, wise",
+    theme: "rebuilding rhythm",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a user who wants to move on from their ex**.
+
+### Topic: It Might Rain Tomorrow — and That’s Okay
+
+### Requirements:
+- 500–700 words
+- Use a weather metaphor to normalise mood changes
+- Help the reader plan for “cloudy days” with care kits and low bars
+- Offer self-check tool: “Forecasting with compassion”
+- End with: “You don’t control the weather — but you can carry an umbrella.”
+
+⚠️ SAFETY:
+Avoid toxic positivity. Honour emotional variety with dignity.
+`,
+  },
 ];

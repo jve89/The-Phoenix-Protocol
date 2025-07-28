@@ -1,1091 +1,1062 @@
 module.exports = [
-// 1 - 10
   {
-    format: "introspective analysis",
-    tone: "honest, calm, hopeful",
-    theme: "breakup clarity",
+    format: "narrative reflection",
+    tone: "honest, vulnerable, mature",
+    theme: "what it cost you",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a male user who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a male user who wants to reconnect with his ex**.
 
-  ### Topic: What Went Wrong? Understanding the Breakup
+### Topic: What It Cost You — And Why That Matters
 
-  ### Requirements:
-  - 650–800 words
-  - Guide the reader through an emotionally honest but non-blaming analysis of the breakup
-  - Introduce 2 frameworks (e.g., **Imago Dynamics**, **Attachment Conflicts**)
-  - Include a personal story of a man who came to painful clarity *after* the breakup
-  - Offer a “cause map” reflection tool for mapping reactions vs root triggers
-  - End with: “The truth doesn’t punish you. It prepares you.”
+### Requirements:
+- 600–850 words
+- Share a story of a man who realised too late how much he emotionally neglected the relationship
+- Include a cost audit: *Connection / Intimacy / Trust / Respect*
+- Reframe: “Knowing the cost doesn’t mean self-punishment — it means you’re ready to invest better.”
+- End with a prompt: “What emotional bill came due after she left?”
 
-  ⚠️ SAFETY:
-  Avoid demonising either partner. Clarity is not the same as blame. Invite ownership without shame.
-  `
+⚠️ SAFETY:
+Avoid glorifying regret. Focus on redemptive clarity, not wallowing.
+`,
   },
 
   {
-    format: "healing story",
-    tone: "vulnerable, real, redemptive",
-    theme: "emotional responsibility",
+    format: "reconnection prep",
+    tone: "strategic, grounded, clear",
+    theme: "what to say when you're ready",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a male user who wants to reconnect with his ex**.
-
-  ### Topic: Owning Your Part Without Shame
-
-  ### Requirements:
-  - 500–600 words in **first-person story format**, as if told by a real man
-  - Describe how he spotted his own defensive patterns (e.g. shutdown, control)
-  - Show how self-responsibility created inner peace — not just external change
-  - Include a journaling tool called “Where I showed up small”
-  - End with: “Accountability isn’t a burden. It’s the start of real strength.”
-
-  ⚠️ SAFETY:
-  Avoid macho language. The tone should feel human, raw, and hopeful — not performative.
-  `
-  },
-
-  {
-    format: "step-by-step reflection",
-    tone: "supportive, non-judgmental, precise",
-    theme: "communication breakdown",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a male user who wants to reconnect with his ex**.
-
-  ### Topic: The Conversations That Broke You
-
-  ### Requirements:
-  - 450–550 words
-  - Break down 3 types of damaging interactions (e.g., sarcasm, emotional stonewalling, passive-aggression)
-  - For each, explain what emotional wound it covered and how to do it differently next time
-  - Include a guided reflection: “What did I protect — and what did it cost me?”
-  - End with a downloadable or printable worksheet for analysing past arguments
-
-  ⚠️ SAFETY:
-  No finger-pointing. Keep it constructive. Focus on emotional fluency, not “debate skills.”
-  `
-  },
-
-  {
-    format: "mental shift",
-    tone: "honest, challenging, transformative",
-    theme: "ego and control",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach helping a man who wants to reconnect with his ex.
-
-  ### Topic: Wanting Her vs. Needing Her
-
-  ### Requirements:
-  - 600–900 words
-  - Explore the difference between desire and dependence using real-world metaphors (e.g., fire vs oxygen)
-  - Include a thought experiment: “If she never came back, what life would you still be proud of?”
-  - Offer a “mirror drill” to name what parts of his self-image depended on the relationship
-  - End with a reframe: “Needing someone to feel whole is the first way to lose yourself.”
-
-  ⚠️ SAFETY:
-  Avoid anti-vulnerability bias. This is about reclaiming power — not performing stoicism.
-  `
-  },
-
-  {
-    format: "letter-based",
-    tone: "raw, heartfelt, unresolved",
-    theme: "unfinished grief",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach guiding a man who wants to reconnect with his ex.
-
-  ### Topic: The Letter You’ll Never Send
-
-  ### Requirements:
-  - 500–700 words
-  - Help the reader write a letter with 3 chapters: *What I Miss*, *What I’ve Learned*, *What I Wish For You*
-  - Clarify that this is a **self-expression** tool, not a manipulative act
-  - Include writing prompts to unlock difficult emotions (“What I never said was…”)
-  - End with: “Letting the words out doesn’t mean letting her go. It means setting your truth free.”
-
-  ⚠️ SAFETY:
-  Do not encourage actual message delivery. This is private, reflective writing for healing.
-  `
-  },
-
-  {
-    format: "internal inventory",
-    tone: "calm, grounded, introspective",
-    theme: "self-evolution",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach helping a man trying to reconnect with his ex.
-
-  ### Topic: Who Were You in the Relationship?
-
-  ### Requirements:
-  - 600–800 words
-  - Invite the reader to audit himself through 3 lenses: *how he handled conflict*, *how he gave (or withheld) affection*, and *how he showed up under pressure*
-  - Provide a 3-column table: *What I was*, *What I feared*, *What I want to be now*
-  - Share a story of a man who finally saw how he’d emotionally disappeared in the relationship
-  - End with: “Start becoming the man who would never need to prove himself again.”
-
-  ⚠️ SAFETY:
-  Avoid identity shaming. This is a growth audit, not a guilt trip.
-  `
-  },
-
-  {
-    format: "reframe exercise",
-    tone: "psychological, structured, motivational",
-    theme: "redefining rejection",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach helping a man who wants to reconnect with his ex but feels rejected.
-
-  ### Topic: What If This Isn’t Rejection?
-
-  ### Requirements:
-  - 450–600 words
-  - Offer 4 reasons why silence doesn’t always mean “no”: space, overwhelm, grief, uncertainty
-  - Share 2 stories of men who misunderstood “no contact” and later learned its real meaning
-  - Include a reframe tool: *Reaction vs Reality*
-  - End with a new mantra: “Not hearing back doesn’t mean you’ve failed. It means you’re being asked to pause.”
-
-  ⚠️ SAFETY:
-  Avoid false hope. The goal is emotional detachment from outcomes — not denial.
-  `
-  },
-
-  {
-    format: "future-focus",
-    tone: "hopeful, focused, self-assured",
-    theme: "earned second chances",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach helping a man prepare to reconnect with his ex — if the time is right.
-
-  ### Topic: If You Got One More Chance, Are You Ready?
-
-  ### Requirements:
-  - 500–750 words
-  - Help the reader **visualise** a second chance moment — what it would require, emotionally and practically
-  - Include 3 reflection questions:
-    1. What has truly changed in me?
-    2. What patterns would I not repeat?
-    3. What new version of this relationship would I want?
-  - End with a checklist called “Prepared — Or Pressuring?”
-
-  ⚠️ SAFETY:
-  Do not sell the fantasy of second chances. Focus on inner preparation over external permission.
-  `
-  },
-
-  {
-    format: "emotional patterning",
-    tone: "psychological, methodical, empowering",
-    theme: "trigger awareness",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach helping a man rebuild emotional maturity before reconnecting with his ex.
-
-  ### Topic: Know Your Triggers Before You Reconnect
-
-  ### Requirements:
-  - 550–700 words
-  - Introduce the concept of emotional triggers using a metaphor like “emotional landmines”
-  - Teach a simple 3-step process: *Spot It*, *Name It*, *Neutralise It*
-  - Include a case of a man who sabotaged reconnection because of unresolved triggers
-  - End with a breathing + journaling micro-routine for de-escalation
-
-  ⚠️ SAFETY:
-  Avoid pathologising emotions. Teach awareness, not avoidance.
-  `
-  },
-
-  {
-    format: "guided forgiveness",
-    tone: "gentle, deep, spiritual but grounded",
-    theme: "past healing",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach helping a man reconnect — not just with his ex, but with his **integrity**.
-
-  ### Topic: Forgiveness Isn’t About Her
-
-  ### Requirements:
-  - 600–900 words
-  - Guide the reader through **self-forgiveness** — especially for things he regrets but cannot undo
-  - Introduce a 3-part framework: *Acknowledge honestly*, *Accept reality*, *Act differently now*
-  - Offer a quiet reflection ritual (e.g., night journaling, voice memo, symbolic act)
-  - End with: “You don’t need her forgiveness to forgive yourself. You need your own courage.”
-
-  ⚠️ SAFETY:
-  Do not encourage public confessions or performative apologies. Keep it inward and real.
-  `
-  },
-// 11 - 20
-  {
-    format: "visualisation exercise",
-    tone: "calm, strategic, reality-based",
-    theme: "goal clarity",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: What Would Winning Her Back Actually Look Like?
-
-  ### Requirements:
-  - 500–800 words
-  - Help the reader get clear on what “reconnection” really means — practically and emotionally
-  - Explore three scenarios: romantic reset, slow rebuild, or emotional closure
-  - Include a mini guided visualisation (1 paragraph) where the man imagines the first honest conversation post-reunion
-  - End with 4 clarity questions about readiness, intention, and vision
-
-  ⚠️ SAFETY:
-  Avoid fairytale framing. Emphasise maturity and realism.
-  `
-  },
-
-  {
-    format: "masculine reframing",
-    tone: "direct, motivational, sharp",
-    theme: "personal transformation",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Attraction Isn’t Fixing — It’s Evolving
-
-  ### Requirements:
-  - 600–900 words
-  - Challenge the idea that self-improvement is a project to “win her back”
-  - Redefine attractiveness as a by-product of internal stability, purpose, and leadership
-  - Use masculine psychology principles like “mission before approval”
-  - Include a checklist: *Evolving Man vs. Approval-Seeking Boy*
-  - End with: “She’s not coming back for a version of you that exists only to please her.”
-
-  ⚠️ SAFETY:
-  Avoid toxic masculinity tropes. Inspire growth without posturing.
-  `
-  },
-
-  {
-    format: "strategic awareness",
-    tone: "honest, instructive, clear",
-    theme: "trust rebuilding",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: The 3 Things She Needs to See Before She'll Trust You Again
-
-  ### Requirements:
-  - 500–700 words
-  - List and explain 3 key shifts she needs to *see*, not just hear:
-    1. Emotional stability (no desperation or mood swings)
-    2. Honest ownership of past behaviour (no sugarcoating)
-    3. Clear future intention (not “let’s see what happens”)
-  - Include 3 “Before / After” examples from fictional men
-  - End with a one-line reminder: “You don’t earn trust back by asking — you show it, steadily.”
-
-  ⚠️ SAFETY:
-  Avoid manipulation. The focus is on integrity, not tactics.
-  `
-  },
-
-  {
-    format: "timing guidance",
-    tone: "measured, grounded, logical",
-    theme: "reconnection timing",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: How Long Should You Wait Before Reaching Out?
-
-  ### Requirements:
-  - 600–850 words
-  - Dispel myths like “30-day no contact”
-  - Introduce three readiness criteria:
-    - You can handle any response
-    - You’re not using contact to soothe your own anxiety
-    - You have clarity on *why* you’re reaching out
-  - Share a short story of a man who waited too little, and one who waited just enough
-  - End with a “Readiness Litmus Test”
-
-  ⚠️ SAFETY:
-  Avoid giving rigid timeframes. Focus on internal cues, not calendar dates.
-  `
-  },
-
-  {
-    format: "emotional reality check",
-    tone: "gentle, courageous, accepting",
-    theme: "emotional resilience",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: What If She's Moved On?
-
-  ### Requirements:
-  - 700–950 words
-  - Acknowledge the reader’s hope while preparing him emotionally for reality
-  - Teach how to distinguish between rejection and redirection
-  - Include a 3-phase reflection model: *Hurt*, *Hope*, *Honour*
-  - Share a short case of a man who reconnected with peace, not partnership
-  - End with: “You can want her back — and still become the man who walks forward with grace.”
-
-  ⚠️ SAFETY:
-  Don’t crush hope — but do prepare the reader to respect her new life if she’s not coming back.
-  `
-  },
-
-  {
-    format: "identity reset",
-    tone: "existential, reflective, grounding",
-    theme: "post-breakup identity",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Who Are You Without This Relationship?
-
-  ### Requirements:
-  - 600–850 words
-  - Guide the reader to rediscover who he is beyond the role of “her partner”
-  - Explore identity anchors: purpose, values, personal rhythm
-  - Include a self-identity audit worksheet (3 columns: *Before*, *During*, *Becoming*)
-  - End with: “You can offer her a man — not a shadow of who you were with her.”
-
-  ⚠️ SAFETY:
-  Do not suggest he must erase his past. Focus on integration, not reinvention.
-  `
-  },
-
-  {
-    format: "empathy challenge",
-    tone: "firm, eye-opening, practical",
-    theme: "emotional insight",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Stop Guessing What She Feels — Start Understanding What You Missed
-
-  ### Requirements:
-  - 450–750 words
-  - Shift focus from “what is she thinking?” to “what did I not fully see before?”
-  - Introduce 3 blind spots men often have: emotional subtext, timing signals, quiet disappointment
-  - Include a journaling exercise: *What might she have needed that I dismissed?*
-  - End with a one-sentence reminder: “Empathy is attention — not imagination.”
-
-  ⚠️ SAFETY:
-  No assumptions about her emotions. Guide the reader inward.
-  `
-  },
-
-  {
-    format: "apology breakdown",
-    tone: "clear, strategic, mature",
-    theme: "repair vs perform",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Should You Apologise — or Show You've Changed?
-
-  ### Requirements:
-  - 500–800 words
-  - Dissect when an apology is healing and when it’s performative
-  - Teach the *ARC* model:
-    - **Acknowledge** the impact
-    - **Reframe** the intent
-    - **Commit** visibly to change
-  - Offer 3 apology “dos and don’ts”
-  - End with a self-check: “Would I believe this if someone said it to me?”
-
-  ⚠️ SAFETY:
-  No grovelling. Emphasise dignity and clarity.
-  `
-  },
-
-  {
-    format: "stoic mastery",
-    tone: "strong, centered, introspective",
-    theme: "emotional control",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: The Power of Stillness: Why Not Reacting Is Sometimes the Most Powerful Move
-
-  ### Requirements:
-  - 600–900 words
-  - Explore how masculine composure creates space for reconnection
-  - Include 3 case sketches: texting too soon, emotional overreaction, pushing a call
-  - Teach the concept of *Stillness as Strength* (presence without pressure)
-  - End with a practical 48-hour self-hold technique before any outreach
-
-  ⚠️ SAFETY:
-  Avoid emotion suppression. Distinguish composure from avoidance.
-  `
-  },
-
-  {
-    format: "de-romanticisation",
-    tone: "respectful, grounded, humanising",
-    theme: "letting go of control",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: She’s Not a Puzzle — She’s a Person
-
-  ### Requirements:
-  - 500–750 words
-  - Dismantle the fantasy mindset of “figuring her out”
-  - Encourage emotional maturity: curiosity over control
-  - Include a visual metaphor (e.g. chessboard vs open field)
-  - End with 3 questions to ask *yourself*, not her
-
-  ⚠️ SAFETY:
-  Challenge objectification or mental games. Bring the reader back to real connection.
-  `
-  },
-// 21 - 30
-  {
-    format: "behavioural reframe",
-    tone: "pragmatic, confident, motivating",
-    theme: "attraction revival",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Rebuilding Attraction Without Begging
-
-  ### Requirements:
-  - 500–800 words
-  - Teach how authentic confidence and purpose-driven change can reignite attraction
-  - Explain the danger of over-contact, emotional neediness, and subtle manipulation
-  - Offer 4 ways to become attractive again without chasing
-  - Include a “magnetic identity audit”: 3 traits she was once drawn to vs what changed
-
-  ⚠️ SAFETY:
-  No tricks or pickup tactics. Focus on emotional integrity and grounded masculinity.
-  `
-  },
-
-  {
-    format: "resilience coaching",
-    tone: "realistic, grounded, strong",
-    theme: "emotional setbacks",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: What If She’s Already With Someone Else?
-
-  ### Requirements:
-  - 600–900 words
-  - Guide the reader through the emotional punch of seeing her move on
-  - Distinguish between rebound vs real connection
-  - Share a story of someone who reconnected even after she dated someone new — but only after emotional growth
-  - End with a stoic journal prompt: “If this isn’t the ending I wanted, what’s the lesson I’m meant to own?”
-
-  ⚠️ SAFETY:
-  Avoid false hope. Prioritise self-respect in all scenarios.
-  `
-  },
-
-  {
-    format: "challenge guide",
-    tone: "strategic, clear, masculine",
-    theme: "self-reinvention",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: The 30-Day Challenge: Become Someone She’d Respect Again
-
-  ### Requirements:
-  - 700–1000 words
-  - Provide a structured 30-day challenge:
-    - Week 1: Self-awareness reset
-    - Week 2: Physical & emotional discipline
-    - Week 3: Legacy and long-term vision
-    - Week 4: Reflection + reconnection readiness
-  - Include 3 “no-contact” traps to avoid during this phase
-
-  ⚠️ SAFETY:
-  This is not about manipulation. Reinforce self-led growth.
-  `
-  },
-
-  {
-    format: "emotional containment",
-    tone: "direct, confronting, supportive",
-    theme: "emotional boundaries",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: She’s Not Your Therapist — Stop Bleeding on Her
-
-  ### Requirements:
-  - 500–700 words
-  - Teach the reader to stop using his ex for emotional regulation
-  - Explain the *Bleed & Burn* cycle: oversharing → discomfort → distance
-  - Offer alternative outlets: brotherhood, journaling, breath work
-  - End with a ritual: *Write her a message, don’t send it, then reflect on what part of you needed that moment*
-
-  ⚠️ SAFETY:
-  Do not shame vulnerability. Empower emotional ownership.
-  `
-  },
-
-  {
-    format: "transformation log",
-    tone: "structured, inspiring, practical",
-    theme: "earned reconnection",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Don’t Just Say “I’ve Changed” — Show How You Did It
-
-  ### Requirements:
-  - 600–850 words
-  - Teach the difference between performative change vs embodied growth
-  - Introduce the *CHANGE* framework:
-    - **C**hoice
-    - **H**abit
-    - **A**ction
-    - **N**ew results
-    - **G**rit
-    - **E**vidence
-  - Share a real-world micro-case where visible change reopened the door
-  - End with a visual metaphor: “You don’t mail her a résumé. You *live* your proof.”
-
-  ⚠️ SAFETY:
-  Never position change as a manipulation strategy. It must serve the man first.
-  `
-  },
-
-  {
-    format: "mindset reset",
-    tone: "stoic, reassuring, strategic",
-    theme: "no contact",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: Silence Isn’t Weakness — It’s Recovery
-
-  ### Requirements:
-  - 600–800 words
-  - Reframe “no contact” as a phase of rebuilding, not passivity
-  - Explore how time away builds perspective, value, and emotional control
-  - Include a mental model: **Silence = Strategic Recovery**
-  - Offer 4 mindset shifts to embrace distance without spiralling
-  - End with: “Silence isn’t doing nothing — it’s preparing for everything.”
-
-  ⚠️ SAFETY:
-  Avoid game-playing language. Promote genuine emotional reset.
-  `
-  },
-
-  {
-    format: "emotional blueprint",
-    tone: "deep, confronting, insightful",
-    theme: "emotional suppression",
-    prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: The Masculine Trap: Solving Her Instead of Feeling You
-
-  ### Requirements:
-  - 550–850 words
-  - Reveal how men often try to fix, diagnose, or analyse their ex — while avoiding their own emotions
-  - Include a 2-column table: *Fixing Her* vs *Facing Self*
-  - Offer a guided process: 1. Pause the fix. 2. Feel the ache. 3. Honour your part.
-  - End with a quote: “A man who feels fully — leads powerfully.”
-
-  ⚠️ SAFETY:
-  Do not shame stoicism. Offer emotional depth as strength.
-  `
+You are a breakup recovery coach helping a man who might soon reconnect with his ex.
+
+### Topic: What Do You Actually Want to Say?
+
+### Requirements:
+- 500–700 words
+- Help the reader build a 3-part message (not to send yet): *Acknowledgement / Insight / Invitation*
+- Include 4 “Do Not”s (e.g., Don’t ask to start over. Don’t talk about missing her.)
+- End with: “Connection doesn’t start with the past — it starts with who you are now.”
+
+⚠️ SAFETY:
+Avoid manipulation, emotional appeals, or pressure. This is internal prep — not delivery.
+`,
   },
 
   {
     format: "identity reframe",
-    tone: "bold, redemptive, masculine",
-    theme: "self-worth renewal",
+    tone: "powerful, introspective, masculine",
+    theme: "proving you've changed",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing for a man who wants to reconnect and prove personal growth.
 
-  ### Topic: You’re Not Her Past Mistake — Unless You Stay That Way
+### Topic: Change That Doesn’t Need to Be Announced
 
-  ### Requirements:
-  - 500–700 words
-  - Help the reader step out of shame, regret, or past labels
-  - Introduce the idea of a “second impression” through sustained action
-  - Include a case study: a man who was remembered for how he returned, not how he left
-  - End with a mantra: “Let who you are today speak louder than who you were then.”
+### Requirements:
+- 550–800 words
+- Contrast performative change vs embodied transformation
+- Include a self-check tool: *Am I changing to grow — or to be seen?*
+- Offer 3 quiet actions that speak louder than “Look at me now”
+- End with: “You don’t need to be noticed. You need to be different.”
 
-  ⚠️ SAFETY:
-  Avoid the saviour narrative. Frame growth as internal first.
-  `
+⚠️ SAFETY:
+Avoid pleasing scripts or approval-chasing. Ground in internal truth, not optics.
+`,
   },
 
   {
-    format: "field guide",
-    tone: "precise, level-headed, masculine",
-    theme: "contact strategy",
+    format: "scenario walkthrough",
+    tone: "calm, intelligent, emotionally steady",
+    theme: "if she responds",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach helping a man prepare emotionally if his ex reaches out.
 
-  ### Topic: The Moment You Reach Out: Dos and Don’ts
+### Topic: If She Texts You Back — Then What?
 
-  ### Requirements:
-  - 600–900 words
-  - Provide a checklist of dos and don’ts before hitting send
-  - Include 2 types of messages to avoid — and why they backfire
-  - Offer a structured contact example that is grounded, respectful, and non-pressuring
-  - End with: “Clarity over cleverness. Respect over reaction.”
+### Requirements:
+- 500–750 words
+- Explore 3 common pitfalls: *flooding her with emotion*, *over-apologising*, *rushing the moment*
+- Share an example of a man who navigated the first convo with calm curiosity
+- Offer a visual: *Treat it like a second first date — not a reunion*
+- End with: “Your first answer isn’t about her. It’s about your readiness.”
 
-  ⚠️ SAFETY:
-  Do not promise success after messaging. Emphasise self-regulation.
-  `
+⚠️ SAFETY:
+Avoid emotional overexposure. Emphasise pacing, presence, and maturity.
+`,
   },
 
   {
-    format: "insight decoding",
-    tone: "intuitive, observational, grounded",
-    theme: "relationship awareness",
+    format: "guided visualisation",
+    tone: "quiet, confident, emotionally anchored",
+    theme: "reconnecting with self first",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach guiding a man toward emotional wholeness before reconnection.
 
-  ### Topic: What She’ll Look For (Even If She Doesn’t Say It)
+### Topic: See the Man You’re Becoming — Before She Does
 
-  ### Requirements:
-  - 650–850 words
-  - Decode subtle signals your ex might assess: consistency, emotional tone, life direction
-  - Explain why women test for emotional safety and self-respect — not perfection
-  - Include a visual metaphor: “You’re not being quizzed — you’re being felt.”
-  - Offer a short readiness audit: 5 yes/no questions before re-approach
+### Requirements:
+- 600–900 words
+- Guide the reader through a deep visualisation of future him — post-repair, independent, whole
+- Include prompts like: *What does your space look like? How do you move through a day?*
+- Share a story of someone who reconnected only after becoming his own anchor
+- End with: “You’re not waiting for her to recognise you. You’re becoming someone impossible to miss.”
 
-  ⚠️ SAFETY:
-  Avoid the “alpha male” lens. Honour subtle emotional intelligence.
-  `
-  },
-// 31 - 40
-  {
-    format: "realistic recovery",
-    tone: "steady, composed, strategic",
-    theme: "handling rejection",
-    prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
-
-  ### Topic: From Ghosted to Grounded: What to Do When She Stops Replying
-
-  ### Requirements:
-  - 500–800 words
-  - Teach men how to respond with dignity when communication suddenly stops
-  - Explore common emotional traps: anxiety spirals, over-texting, rumination
-  - Offer a grounded 3-step plan:
-    1. Stabilise emotionally
-    2. Reframe the silence
-    3. Rechannel your focus
-  - End with a journaling prompt: “What would staying grounded look like right now?”
-
-  ⚠️ SAFETY:
-  No blame. No “win her back” manipulation. Support emotional regulation first.
-  `
+⚠️ SAFETY:
+Avoid fantasy or ego-feeding. This is about quiet embodiment, not image management.
+`,
   },
 
   {
-    format: "motivation audit",
-    tone: "deep, thoughtful, reality-based",
-    theme: "desire vs memory",
+    format: "emotional education",
+    tone: "supportive, honest, psychologically clear",
+    theme: "emotional literacy",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach helping a man reconnect — and express better next time.
 
-  ### Topic: Do You Know What You Want *Now* — or What You Missed *Then*?
+### Topic: What She Probably Needed You to Say
 
-  ### Requirements:
-  - 600–850 words
-  - Help the reader separate genuine present desire from nostalgic distortion
-  - Include a 2-part inventory:
-    - *What I miss about her*
-    - *What I miss about who I was with her*
-  - Offer a reflective writing exercise to distinguish real longing from ego injury
-  - End with: “Don’t chase the memory — meet the moment.”
+### Requirements:
+- 500–700 words
+- Break down 4 things men often fail to articulate: *hurt*, *confusion*, *appreciation*, *regret*
+- For each, offer one powerful phrase and what it signals emotionally
+- Include a journaling tool: “What I felt but never said”
+- End with: “You can’t rewrite the past, but you can learn its language.”
 
-  ⚠️ SAFETY:
-  No idealising the ex. Build awareness before re-approach.
-  `
+⚠️ SAFETY:
+Avoid scripts. Encourage authentic inner dialogue, not emotional performance.
+`,
   },
 
   {
-    format: "masculine mastery",
-    tone: "grounded, empowering, modern",
+    format: "timing audit",
+    tone: "firm, introspective, non-sentimental",
+    theme: "are you too early?",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing for a man itching to reconnect — but possibly too soon.
+
+### Topic: Why You Might Not Be Ready Yet
+
+### Requirements:
+- 550–750 words
+- List 5 signs that reconnection is still ego-driven or premature
+- Include a tool: *Emotional Bandwidth Gauge*
+- Offer 3 things to build before initiating contact: *emotional buffer, independence rituals, peace with no reply*
+- End with: “When you’re truly ready, silence won’t feel like a threat.”
+
+⚠️ SAFETY:
+Avoid discouragement. This is about mature pacing, not rejection.
+`,
+  },
+
+  {
+    format: "mirror tool",
+    tone: "deep, redemptive, emotionally intelligent",
+    theme: "seeing yourself clearly",
+    prompt: (gender, goalStage) => `
+You are a breakup coach writing for a man who still doesn’t fully understand his emotional reactions.
+
+### Topic: Who Were You — When It Got Hard?
+
+### Requirements:
+- 600–850 words
+- Introduce a guided mirror exercise to reflect on your worst relational moments
+- Include a structure: *What I did / What I feared / What I now understand*
+- Share a story of a man who had to confront how he showed up under pressure
+- End with: “If you can see yourself fully, she might be able to again too.”
+
+⚠️ SAFETY:
+Avoid guilt spirals. Focus on ownership as liberation, not punishment.
+`,
+  },
+
+  {
+    format: "story-based insight",
+    tone: "relatable, grounded, uplifting",
+    theme: "non-linear healing",
+    prompt: (gender, goalStage) => `
+You are a breakup coach writing for a man who feels like he’s backsliding in his healing.
+
+### Topic: It’s Not a Setback — It’s a Sign
+
+### Requirements:
+- 500–750 words
+- Tell a relatable story of a man who thought he was over her — until one photo shattered him
+- Reframe emotional regressions as proof that *something mattered*
+- Include the metaphor: “Healing isn’t a staircase. It’s a tide.”
+- End with: “You don’t need to start over. You just need to stay present.”
+
+⚠️ SAFETY:
+Avoid linear narratives. Honour setbacks without framing them as failure.
+`,
+  },
+
+  {
+    format: "boundary blueprint",
+    tone: "wise, neutral, emotionally mature",
+    theme: "staying grounded when reconnecting",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach guiding a man who hopes to reconnect — but stay self-respecting.
+
+### Topic: How to Reconnect Without Losing Yourself
+
+### Requirements:
+- 600–850 words
+- Map 4 boundary zones: *Contact, Expectation, Intimacy, Autonomy*
+- Share a story of someone who over-accommodated and felt regret
+- Introduce the tool: *The Boundary Ladder*
+- End with: “If she meets you again — let her meet the man who finally knows where he ends and begins.”
+
+⚠️ SAFETY:
+Avoid emotional overflexing. This is about honest boundaries, not walls or rules.
+`,
+  },
+
+  {
+    format: "guided journaling",
+    tone: "honest, thoughtful, emotionally mature",
+    theme: "emotional accountability",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: What Did I Bring — and What Did I Break?
+
+### Requirements:
+- 600–900 words
+- Guide the reader to assess both his *positive contributions* and *emotional blind spots*
+- Include a 2-part journaling exercise:
+  1. “Moments I’m proud of”
+  2. “Moments I handled poorly — and why”
+- Offer 3 reflection prompts to uncover repeating relationship patterns
+- End with: “You don’t need to be flawless. You just need to be real — and ready.”
+
+⚠️ SAFETY:
+Avoid shame language. Emphasise growth and transparency, not guilt.
+    `,
+  },
+
+  {
+    format: "real-case scenario",
+    tone: "grounded, rational, de-romanticised",
+    theme: "emotional pattern recognition",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Are You Repeating the Same Story?
+
+### Requirements:
+- 500–750 words
+- Introduce the concept of emotional loops: conflict–repair–hope–collapse
+- Tell a short story of a man who mistook nostalgia for progress
+- Offer a “Pattern Disruption Checklist” — 4 signs you’re looping vs. leading
+- End with: “If you don’t change the script, the ending won’t either.”
+
+⚠️ SAFETY:
+Avoid blaming the ex. Emphasise ownership and conscious pattern breaking.
+    `,
+  },
+
+  {
+    format: "mental rehearsal",
+    tone: "realistic, self-aware, assertive",
+    theme: "healthy communication",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: What If She Actually Replies?
+
+### Requirements:
+- 500–800 words
+- Prepare the reader emotionally for the moment she replies
+- Walk through a 3-step mental simulation:
+  1. Staying grounded in your mission
+  2. Reading tone — not just words
+  3. Choosing calm over urgency
+- End with a 4-line “Response Readiness Pledge”
+
+⚠️ SAFETY:
+Avoid performance pressure. Frame communication as clarity, not a test.
+    `,
+  },
+
+  {
+    format: "thought experiment",
+    tone: "curious, challenging, reflective",
+    theme: "outcome neutrality",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: If You Never Get Her Back — Would It Still Be Worth It?
+
+### Requirements:
+- 650–900 words
+- Explore the idea of **becoming the man she *would* choose** — even if she never does
+- Introduce the mindset of *process over prize*
+- Include a personal contract: “I evolve for myself, not for her return.”
+- End with: “Love doesn’t always give you back what you give — but it changes who you are.”
+
+⚠️ SAFETY:
+Avoid spiritual bypassing. Keep emotional growth grounded in real-world integrity.
+    `,
+  },
+
+  {
+    format: "listicle tool",
+    tone: "clear, encouraging, solution-focused",
+    theme: "clarity through action",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: 5 Tiny Actions That Rebuild Her Perception of You — Without Saying a Word
+
+### Requirements:
+- 450–700 words
+- List 5 subtle but powerful behaviour shifts that reflect emotional growth
+  - E.g. consistent boundaries, verbal precision, social steadiness
+- Each point includes a real-world example: “Then” vs. “Now”
+- End with: “The loudest change is often the quietest choice.”
+
+⚠️ SAFETY:
+Do not present this as a manipulation strategy. Focus on aligned behaviour.
+    `,
+  },
+
+  {
+    format: "reverse storytelling",
+    tone: "emotional, authentic, surprising",
+    theme: "unexpected reconnection",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: The Day She Reached Out — And Why I Didn’t Say Yes
+
+### Requirements:
+- 750–1000 words
+- Narrate a fictional first-person story where the man does reconnect — but chooses not to resume the relationship
+- Show how clarity, self-respect, and timing shifted the outcome
+- End with: “Sometimes, the win is knowing when not to restart.”
+
+⚠️ SAFETY:
+Reframe walking away as power — not loss.
+    `,
+  },
+
+  {
+    format: "mindset audit",
+    tone: "pragmatic, sharp, reality-based",
+    theme: "internal preparation",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Are You Ready — or Just Lonely?
+
+### Requirements:
+- 500–750 words
+- Dissect the emotional difference between readiness and avoidance of pain
+- Include a 5-question “Reconnection Audit”
+- Offer reframes for loneliness triggers (“missing her” vs. “missing meaning”)
+- End with: “Connection is a gift — not a distraction.”
+
+⚠️ SAFETY:
+Do not pathologise loneliness. Guide with strength and kindness.
+    `,
+  },
+
+  {
+    format: "self-leadership reflection",
+    tone: "inspiring, decisive, elevated",
+    theme: "emotional independence",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: What Would a King Do?
+
+### Requirements:
+- 600–850 words
+- Frame the reader’s choices through the metaphor of sovereign leadership
+- Explore 3 kingly traits: stability, boundaries, and benevolence without submission
+- Include a short visualisation: *You walk into the room. She’s there. You speak...*
+- End with: “Don’t chase. Don’t wait. Rule yourself first.”
+
+⚠️ SAFETY:
+Avoid arrogance framing. This is about *inner rule*, not domination.
+    `,
+  },
+
+  {
+    format: "misconception debunk",
+    tone: "sharp, wise, educational",
+    theme: "intentional behaviour",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Silence Isn’t a Strategy — It’s a Mirror
+
+### Requirements:
+- 500–700 words
+- Explain why “no contact” doesn’t *cause* reconnection — it *reveals* clarity
+- Highlight 3 truths silence surfaces:
+  - Your emotional baseline
+  - Her voluntary interest
+  - The absence of performance
+- End with: “When you’re no longer performing, you can see who’s really in the room.”
+
+⚠️ SAFETY:
+Dispel manipulation myths. Focus on depth, not tactics.
+    `,
+  },
+
+  {
+    format: "emotional conditioning tool",
+    tone: "disciplined, empowering, structured",
+    theme: "internal emotional regulation",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Train Your Heart Like a Muscle
+
+### Requirements:
+- 600–850 words
+- Teach emotional resilience as a form of internal conditioning
+- Use gym metaphor: *Volume, Rest, Recovery, Form*
+- Include a weekly “Emotional Training Plan” (Mon–Sun)
+- End with: “She might notice — but you’ll feel it first.”
+
+⚠️ SAFETY:
+Avoid emotional suppression. Frame emotional growth as fitness, not armour.
+    `,
+  },
+
+  {
+    format: "emotional self-interview",
+    tone: "honest, masculine, self-revealing",
+    theme: "accountability through clarity",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Would You Date You Right Now?
+
+### Requirements:
+- 500–800 words
+- Walk the reader through a confronting but empowering self-interview
+- Include 6 reflection questions split into two sections: external (how others see you) and internal (how you feel about yourself)
+- Offer a reframe: “She’s not a prize — she’s a mirror”
+- End with: “This isn’t about becoming perfect. It’s about becoming proud.”
+
+⚠️ SAFETY:
+Avoid shame language. Guide with honest self-respect, not self-punishment.
+    `,
+  },
+
+  {
+    format: "ritual design",
+    tone: "serious, sacred, empowering",
+    theme: "emotional re-centering",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Build a Ritual That Grounds You Before Reaching Out
+
+### Requirements:
+- 500–750 words
+- Help the reader create a personal 5-minute ritual to calm, clarify, and re-anchor before initiating contact
+- Include three sensory anchors: breath, posture, voice tone
+- Offer a visualisation: “She picks up — you speak with power, not panic”
+- End with: “The message isn’t just what you say. It’s who you are when you say it.”
+
+⚠️ SAFETY:
+Avoid performance language. Prioritise grounded self-connection.
+    `,
+  },
+
+  {
+    format: "real-world metaphor",
+    tone: "structured, logical, masculine",
+    theme: "self-respect vs. pursuit",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Don’t Sell — Build Demand
+
+### Requirements:
+- 600–850 words
+- Use a product-market metaphor to reframe the mindset: *You are the offer, not the pitch*
+- Explain 4 traits that naturally increase “demand” in the emotional market: clarity, consistency, confidence, calm
+- Offer a short daily discipline plan for being seen as high-integrity, not high-need
+- End with: “She doesn’t need convincing. She needs to feel it’s real.”
+
+⚠️ SAFETY:
+Avoid framing this as salesmanship. Focus on embodied value.
+    `,
+  },
+
+  {
+    format: "guided visualisation",
+    tone: "gentle, cinematic, emotionally immersive",
     theme: "emotional control",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Calm Is the New Power
+### Topic: She Walks Into the Room — Now What?
 
-  ### Requirements:
-  - 500–750 words
-  - Teach men how composure and presence are more magnetic than intensity
-  - Include a story of a man who got his ex’s attention again by becoming emotionally steady
-  - Offer a 4-step “calm cultivation routine” (morning to night)
-  - End with: “She may remember your words — but she’ll feel your calm.”
+### Requirements:
+- 700–1000 words
+- Guide the reader through a vivid inner visualisation of a spontaneous, unplanned reunion
+- Teach him how to regulate his emotions in real time (breath, thought control, presence)
+- Include a mantra: “I lead with presence, not pressure”
+- End with: “Your reaction is her message.”
 
-  ⚠️ SAFETY:
-  Avoid hyper-masculine bravado. Ground the reader in inner work.
-  `
+⚠️ SAFETY:
+Avoid idealised fantasies. Focus on self-regulation, not outcome control.
+    `,
   },
 
   {
-    format: "readiness checklist",
-    tone: "straightforward, wise, non-judgmental",
-    theme: "emotional maturity",
+    format: "emotional reframe",
+    tone: "direct, no-nonsense, emotionally clear",
+    theme: "respect after rejection",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: The 7 Signals You’re Not Ready to Reconnect (Yet)
+### Topic: If She Says No — Don’t Lose Your Crown
 
-  ### Requirements:
-  - 600–900 words
-  - Offer 7 emotional or behavioural signs that show a man isn’t emotionally equipped yet
-  - For each: describe what it looks like and why it matters
-  - Include gentle reframes: “This isn’t a failure — it’s a signal.”
-  - End with an actionable prompt: “Which of these 7 is your priority to work on?”
+### Requirements:
+- 500–700 words
+- Prepare the reader to respond with dignity to a firm “no”
+- Include a reframe: rejection doesn’t shrink you — reaction does
+- Offer 3 steps for preserving composure and self-worth after emotional impact
+- End with a single line: “A man’s character is loudest when he’s told no.”
 
-  ⚠️ SAFETY:
-  Avoid toxic shame. Present unreadiness as an opportunity to grow.
-  `
+⚠️ SAFETY:
+Do not encourage holding onto false hope. Prioritise emotional leadership.
+    `,
   },
 
   {
-    format: "emotional depth",
-    tone: "philosophical, grounded, freeing",
-    theme: "letting go of guarantees",
+    format: "growth audit",
+    tone: "inspiring, masculine, structured",
+    theme: "demonstrating change",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: You Don’t Need Closure to Be Complete
+### Topic: Growth She Can Feel — Without You Having to Say a Word
 
-  ### Requirements:
-  - 550–800 words
-  - Challenge the reader’s need for a final conversation, explanation, or validation
-  - Explore the myth of “perfect closure” in male psychology
-  - Share a story of someone who never got the talk — but found peace
-  - End with a sentence stem: “What I now understand, without her saying it, is…”
+### Requirements:
+- 600–850 words
+- Show how true transformation is communicated through presence and pattern — not words
+- Offer a checklist: “Silent Signals of Growth” (consistency, emotional detachment, calm confidence, kindness without agenda)
+- End with: “Proof isn’t what you say. It’s what she senses.”
 
-  ⚠️ SAFETY:
-  Avoid bypassing pain. Honour grief while offering emotional autonomy.
-  `
+⚠️ SAFETY:
+Do not frame change as performance. Emphasise internal alignment first.
+    `,
   },
 
   {
-    format: "inner work call-out",
-    tone: "direct, introspective, grounding",
-    theme: "emotional avoidance",
+    format: "case deconstruction",
+    tone: "analytical, structured, emotionally insightful",
+    theme: "second chances",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Are You Rebuilding... or Just Distracting Yourself?
+### Topic: How One Man Got Her Back — But Didn’t Keep Her
 
-  ### Requirements:
-  - 600–900 words
-  - Explore how men often confuse self-improvement with avoidance (e.g. gym, work, women)
-  - Offer 3 clear signs of true inner work vs escapism
-  - Include a personal growth audit
-  - End with the mantra: “Build with your pain — not around it.”
+### Requirements:
+- 700–1000 words
+- Deconstruct a fictional case study where a man reconnected… then reverted to old habits and lost her again
+- Break down the 3 emotional mistakes he made post-reunion
+- Include a reframe: “Reconnection is a beginning, not a trophy”
+- End with: “Don’t repeat history — write it differently.”
 
-  ⚠️ SAFETY:
-  Encourage honest self-checking without shaming productivity or coping tools.
-  `
+⚠️ SAFETY:
+Avoid harsh judgment. Focus on foresight and sustainable growth.
+    `,
   },
 
   {
-    format: "communication myth-busting",
-    tone: "realistic, calm, slightly humorous",
-    theme: "contact anxiety",
+    format: "emotional regulation guide",
+    tone: "calm, introspective, masculine",
+    theme: "urgency detox",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: The Myth of the Perfect Text
+### Topic: Urgency Is the Enemy of Clarity
 
-  ### Requirements:
-  - 500–750 words
-  - Challenge the obsessive hunt for “the right message”
-  - Explain why no single sentence will undo emotional damage
-  - Offer a 3-part model for real communication:
-    1. **Emotional alignment**
-    2. **Respectful tone**
-    3. **Low-pressure content**
-  - Include examples of healthy first contacts
-  - End with: “The words matter less than the energy behind them.”
+### Requirements:
+- 500–750 words
+- Help the reader identify and neutralise panic-driven behaviours
+- Introduce a 4-step protocol: Pause, Breathe, Delay, Decide
+- Include a short breathing ritual: “4 for stillness, 4 for strength”
+- End with: “If it’s real — it will still be real tomorrow.”
 
-  ⚠️ SAFETY:
-  Avoid scripts. This isn’t game-playing. Encourage authenticity.
-  `
+⚠️ SAFETY:
+Do not shame urgency. Help the reader slow down safely.
+    `,
   },
 
   {
-    format: "identity evolution",
-    tone: "transformative, self-validating, slightly bold",
-    theme: "authentic change",
+    format: "emotional contrast story",
+    tone: "bold, cinematic, masculine",
+    theme: "personal contrast",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Would She Even Recognise You Now?
+### Topic: You Versus You — The Man She Left vs. The Man She Sees Now
 
-  ### Requirements:
-  - 600–850 words
-  - Challenge the reader to reflect on how much he’s really changed — internally
-  - Offer a self-audit with 5 checkpoints: identity, behaviour, triggers, mission, mindset
-  - Include a metaphor (e.g. “You’re not returning — you’re reintroducing.”)
-  - End with: “Don’t rehearse your pitch — embody your evolution.”
+### Requirements:
+- 600–850 words
+- Compare two versions of the man: *Then* and *Now*
+- Show the visible differences in how he shows up: energy, words, calmness, drive
+- Include a fictional but grounded scene: a mutual friend sees him and is visibly surprised
+- End with: “She’ll feel it — even before she sees you.”
 
-  ⚠️ SAFETY:
-  Change must be real. No fake growth for strategic gain.
-  `
+⚠️ SAFETY:
+Avoid arrogance. Present growth as natural consequence of emotional clarity.
+    `,
   },
 
   {
-    format: "craving interruptor",
-    tone: "calm, stabilising, hands-on",
-    theme: "impulse control",
+    format: "mini workbook",
+    tone: "interactive, sharp, masculine",
+    theme: "self-reconnection",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: When You Feel the Urge to Reach Out… Do This First
+### Topic: Reconnect With Yourself — Before You Reach for Her
 
-  ### Requirements:
-  - 500–800 words
-  - Break down the neurochemical loop of craving connection
-  - Teach a 4-step urge intervention:
-    1. Pause and breathe
-    2. Write but don’t send
-    3. Move your body
-    4. Re-anchor your plan
-  - End with a cold-clarity checklist to help assess timing and motive
+### Requirements:
+- 700–900 words
+- Include 3 interactive exercises:
+  1. “The Mirror Test”: What do you admire in yourself now?
+  2. “The Gap Check”: What still feels unstable?
+  3. “The Quiet Room”: What are you avoiding feeling?
+- Reframe reconnection as the byproduct of internal clarity
+- End with a single sentence: “Become someone even *you* would return to.”
 
-  ⚠️ SAFETY:
-  Support emotional control, not suppression.
-  `
+⚠️ SAFETY:
+Keep all exercises emotionally safe and grounded — avoid forced confessions.
+    `,
   },
 
   {
-    format: "perspective shift",
-    tone: "empathetic, masculine, relational",
-    theme: "emotional intelligence",
+    format: "emotional stabiliser",
+    tone: "grounded, masculine, clear-headed",
+    theme: "handling ghosting",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Don’t Try to Impress Her — Try to *Understand* Her
+### Topic: When She Disappears — What to Do in the First 72 Hours
 
-  ### Requirements:
-  - 600–950 words
-  - Teach men how empathy is more magnetic than status or posturing
-  - Include a 3-part breakdown of:
-    1. What she might’ve felt during the breakup
-    2. What emotional safety looks like to her
-    3. What makes her feel seen and heard
-  - End with: “Women remember how you made them feel — not what you posted.”
+### Requirements:
+- 500–750 words
+- Frame silence as a trigger, not a verdict
+- Offer a 3-phase protocol:
+  1. Freeze reactive texting
+  2. Clarify your assumptions
+  3. Choose emotional dignity over story-making
+- End with a question: “What would it look like to respond from strength, not panic?”
 
-  ⚠️ SAFETY:
-  Do not reduce women to puzzles or reward systems. Prioritise empathy over strategy.
-  `
+⚠️ SAFETY:
+No blame, no scripts. Protect his emotional centre while acknowledging confusion.
+    `,
   },
-// 41 - 50
+
+  {
+    format: "identity extraction",
+    tone: "deep, introspective, slow-burn",
+    theme: "desire vs memory",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Do You Want Her — or Who You Were With Her?
+
+### Requirements:
+- 600–850 words
+- Separate relationship nostalgia from personal identity regression
+- Include a worksheet split into 3 sections:
+  - *Who I was*
+  - *What I believed*
+  - *What I miss most*
+- Conclude with this journal line: “I thought I missed her — but really, I miss…”
+
+⚠️ SAFETY:
+Avoid over-analysis. Keep the reflection grounded in self-growth.
+    `,
+  },
+
+  {
+    format: "energy audit",
+    tone: "modern, confident, calm",
+    theme: "composure as magnetism",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: The Energy That Makes Her Reconsider
+
+### Requirements:
+- 500–750 words
+- Reframe power from pressure → presence
+- Offer a daily energy alignment checklist:
+  - Breath before texts
+  - Posture before persuasion
+  - Focus before dialogue
+- End with: “You don’t win her back by saying the right thing — but by being the right energy.”
+
+⚠️ SAFETY:
+Don’t promote ‘energy tricks.’ Focus on internal clarity, not manipulation.
+    `,
+  },
+
+  {
+    format: "truth radar",
+    tone: "blunt, wise, non-judgmental",
+    theme: "readiness check",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: 5 Signs You’re Not Ready (and That’s Okay)
+
+### Requirements:
+- 600–850 words
+- Outline 5 common patterns of unreadiness (e.g., outcome obsession, ego-led action)
+- Reframe each as a growth signal, not a failure
+- Include a readiness tracker quiz
+- End with: “You don’t need to act fast — you need to act real.”
+
+⚠️ SAFETY:
+Avoid shame. Invite reflection with respect.
+    `,
+  },
+
+  {
+    format: "narrative reset",
+    tone: "slow, liberating, reflective",
+    theme: "closure independence",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: You Don’t Need a Final Conversation
+
+### Requirements:
+- 550–800 words
+- Challenge the myth of closure through external dialogue
+- Share a fictional story of a man who waited for words that never came — and still healed
+- Offer a visual metaphor: “Some doors never close — they just grow smaller as you move forward”
+- End with: “What clarity can you claim — even without her permission?”
+
+⚠️ SAFETY:
+Do not downplay pain. Honour the process without requiring mutual dialogue.
+    `,
+  },
+
+  {
+    format: "coping reveal",
+    tone: "masculine, introspective, revealing",
+    theme: "rebound vs rebuild",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Are You Evolving — or Just Escaping?
+
+### Requirements:
+- 600–900 words
+- Break down three types of false recovery paths (e.g., success obsession, serial dating, gym-only identity)
+- Include a contrast grid: *True Healing* vs *Avoidance Hustle*
+- End with: “Who are you becoming — when no one’s watching?”
+
+⚠️ SAFETY:
+Avoid anti-productivity rhetoric. Respect all coping — while encouraging depth.
+    `,
+  },
+
+  {
+    format: "messaging reframe",
+    tone: "light, masculine, relieving",
+    theme: "contact mindset",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Stop Writing the Perfect Text — Start Being the Real You
+
+### Requirements:
+- 500–750 words
+- Break the illusion that one message can fix months of disconnection
+- Teach the “Energy over Elegance” rule
+- Include two rewritten message examples: before vs after emotional calibration
+- End with: “The power isn’t in the sentence — it’s in the sender.”
+
+⚠️ SAFETY:
+No message templates. Encourage authentic, emotionally grounded outreach.
+    `,
+  },
+
+  {
+    format: "self-reinvention tracker",
+    tone: "transformational, clean, sharp",
+    theme: "personal evolution",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: You’re Not Repeating — You’re Reintroducing
+
+### Requirements:
+- 600–850 words
+- Help the reader frame his next contact as a fresh presence, not a re-run
+- Offer a personal audit:
+  1. Behavioural evolution
+  2. Emotional self-regulation
+  3. Mission clarity
+- Include a final line: “This isn’t a second chance. It’s a different man.”
+
+⚠️ SAFETY:
+Avoid identity faking. Root all change in real internal work.
+    `,
+  },
+
+  {
+    format: "urge interrupter",
+    tone: "steady, supportive, masculine",
+    theme: "emotional impulse control",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Feel the Urge? Use the 4-Minute Rule First
+
+### Requirements:
+- 500–750 words
+- Introduce the “4-Minute Reset” before reaching out
+  1. Pause
+  2. Breathe deeply
+  3. Ask: *What’s my true motive?*
+  4. Reaffirm your bigger plan
+- Include a daily practice tile: *Reset Before Reach*
+- End with: “Not every urge is wrong. But every urge deserves inspection.”
+
+⚠️ SAFETY:
+Don’t demonise contact. Teach timing through inner clarity.
+    `,
+  },
+
+  {
+    format: "empathy accelerator",
+    tone: "real, heartfelt, masculine",
+    theme: "understanding her",
+    prompt: (gender, goalStage) => `
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+
+### Topic: Try Seeing It Through Her Eyes
+
+### Requirements:
+- 600–950 words
+- Guide the reader through an empathy immersion: how she may have experienced the relationship
+- Include prompts:
+  - “What did she feel unsafe to express?”
+  - “What patterns did she keep forgiving?”
+  - “What did she want you to notice without her saying it?”
+- End with a reflection: “You want to be chosen again? Start by understanding the woman who once did.”
+
+⚠️ SAFETY:
+Do not turn empathy into manipulation. Keep it reflective, not strategic.
+    `,
+  },
+
   {
     format: "reverse lens",
     tone: "revealing, honest, emotionally intelligent",
     theme: "empathy and hindsight",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Why She Pulled Away — And What You Missed
+### Topic: Why She Pulled Away — And What You Missed
 
-  ### Requirements:
-  - 600–900 words
-  - Walk through 4 common silent signals women give before emotionally detaching
-  - Explain how male avoidance, distraction, or indifference often masks her warning signs
-  - Include a case study where the reader recognises his blind spot
-  - End with a journaling exercise titled: “What was she trying to tell me without words?”
+### Requirements:
+- 600–900 words
+- Walk through 4 common silent signals women give before emotionally detaching
+- Explain how male avoidance, distraction, or indifference often masks her warning signs
+- Include a case study where the reader recognises his blind spot
+- End with a journaling exercise titled: “What was she trying to tell me without words?”
 
-  ⚠️ SAFETY:
-  Do not foster guilt. Foster deeper emotional listening and responsibility.
-  `
+⚠️ SAFETY:
+Do not foster guilt. Foster deeper emotional listening and responsibility.
+`,
   },
-
   {
     format: "masculine recalibration",
     tone: "grounded, motivating, no-nonsense",
     theme: "entitlement detox",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Reconnection Is *Earned* — Not Asked For
+### Topic: Reconnection Is *Earned* — Not Asked For
 
-  ### Requirements:
-  - 500–800 words
-  - Confront the idea that “saying the right thing” leads to getting her back
-  - Emphasise behavioural evidence, not persuasive tactics
-  - Offer a table of “Actions That Speak” — e.g. consistent behaviour, emotional regulation, honouring boundaries
-  - End with: “She needs to feel safer with you than she did before. That’s not a sentence — that’s a standard.”
+### Requirements:
+- 500–800 words
+- Confront the idea that “saying the right thing” leads to getting her back
+- Emphasise behavioural evidence, not persuasive tactics
+- Offer a table of “Actions That Speak” — e.g. consistent behaviour, emotional regulation, honouring boundaries
+- End with: “She needs to feel safer with you than she did before. That’s not a sentence — that’s a standard.”
 
-  ⚠️ SAFETY:
-  No manipulation. No tactics. Focus on inner alignment.
-  `
+⚠️ SAFETY:
+No manipulation. No tactics. Focus on inner alignment.
+`,
   },
-
   {
     format: "psychological reframing",
     tone: "direct, respectful, clarity-inducing",
     theme: "emotional leadership",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: The Real Reason Begging Never Works
+### Topic: The Real Reason Begging Never Works
 
-  ### Requirements:
-  - 500–750 words
-  - Explain how emotional pressure violates safety and triggers resistance
-  - Use a metaphor (e.g. “emotional gravity vs emotional push”)
-  - Include an emotional posture reframe:
-    1. From need → clarity  
-    2. From pleading → presence  
-    3. From desperation → direction
-  - End with: “You don’t chase peace. You become it.”
+### Requirements:
+- 500–750 words
+- Explain how emotional pressure violates safety and triggers resistance
+- Use a metaphor (e.g. “emotional gravity vs emotional push”)
+- Include an emotional posture reframe:
+  1. From need → clarity  
+  2. From pleading → presence  
+  3. From desperation → direction
+- End with: “You don’t chase peace. You become it.”
 
-  ⚠️ SAFETY:
-  Do not shame the reader for past mistakes — reframe them into insight.
-  `
+⚠️ SAFETY:
+Do not shame the reader for past mistakes — reframe them into insight.
+`,
   },
-
   {
     format: "reconnection audit",
     tone: "mature, practical, emotionally intelligent",
     theme: "perceived pressure",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Are You Making Her Feel Safe — or Cornered?
+### Topic: Are You Making Her Feel Safe — or Cornered?
 
-  ### Requirements:
-  - 650–950 words
-  - Explain the nervous system’s response to emotional pressure (fight/flight/freeze)
-  - Teach men how subtle tone, timing, and frequency can overwhelm even kind intentions
-  - Include 3 high-safety reconnection behaviours and 3 low-safety ones
-  - End with a recalibration checklist to review before each contact attempt
+### Requirements:
+- 650–950 words
+- Explain the nervous system’s response to emotional pressure (fight/flight/freeze)
+- Teach men how subtle tone, timing, and frequency can overwhelm even kind intentions
+- Include 3 high-safety reconnection behaviours and 3 low-safety ones
+- End with a recalibration checklist to review before each contact attempt
 
-  ⚠️ SAFETY:
-  Focus on her emotional autonomy. Emphasise calm pacing, not pushiness.
-  `
+⚠️ SAFETY:
+Focus on her emotional autonomy. Emphasise calm pacing, not pushiness.
+`,
   },
-
   {
     format: "emotional detox",
     tone: "candid, cathartic, steadying",
     theme: "hidden resentment",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: You Can’t Reconnect While Resenting Her
+### Topic: You Can’t Reconnect While Resenting Her
 
-  ### Requirements:
-  - 600–850 words
-  - Explore subtle forms of resentment men may carry (e.g. blame, feeling abandoned, “after all I did”)
-  - Include a resentment detox writing ritual
-  - Share a short case study where a man ruined reconnection by holding hidden anger
-  - End with: “You can either resent her — or reconnect. Not both.”
+### Requirements:
+- 600–850 words
+- Explore subtle forms of resentment men may carry (e.g. blame, feeling abandoned, “after all I did”)
+- Include a resentment detox writing ritual
+- Share a short case study where a man ruined reconnection by holding hidden anger
+- End with: “You can either resent her — or reconnect. Not both.”
 
-  ⚠️ SAFETY:
-  Encourage emotional ownership without suppressing legitimate hurt.
-  `
+⚠️ SAFETY:
+Encourage emotional ownership without suppressing legitimate hurt.
+`,
   },
-
   {
     format: "masculine identity",
     tone: "grounded, empowering, self-respecting",
     theme: "internal leadership",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Stop Guessing What She Wants — Start Becoming What You Respect
+### Topic: Stop Guessing What She Wants — Start Becoming What You Respect
 
-  ### Requirements:
-  - 500–800 words
-  - Shift focus from decoding her feelings to building his own centre
-  - Include a role-model audit: “What type of man do *you* admire, even if she doesn’t come back?”
-  - Include a short morning ritual for identity anchoring
-  - End with: “You’re not trying to impress her. You’re remembering who you are.”
+### Requirements:
+- 500–800 words
+- Shift focus from decoding her feelings to building his own centre
+- Include a role-model audit: “What type of man do *you* admire, even if she doesn’t come back?”
+- Include a short morning ritual for identity anchoring
+- End with: “You’re not trying to impress her. You’re remembering who you are.”
 
-  ⚠️ SAFETY:
-  Don’t promote performative masculinity — focus on self-honouring action.
-  `
+⚠️ SAFETY:
+Don’t promote performative masculinity — focus on self-honouring action.
+`,
   },
-
   {
     format: "apology reconstruction",
     tone: "respectful, clear, vulnerable",
     theme: "repair and regret",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: The Apology She’ll Actually Hear
+### Topic: The Apology She’ll Actually Hear
 
-  ### Requirements:
-  - 600–900 words
-  - Teach the anatomy of a real apology (acknowledge impact, name behaviour, no justification)
-  - Include a “Checklist of Death” — what makes apologies backfire
-  - Share a case study of a man who owned his past with dignity, not desperation
-  - End with a structured template the reader can adapt privately
+### Requirements:
+- 600–900 words
+- Teach the anatomy of a real apology (acknowledge impact, name behaviour, no justification)
+- Include a “Checklist of Death” — what makes apologies backfire
+- Share a case study of a man who owned his past with dignity, not desperation
+- End with a structured template the reader can adapt privately
 
-  ⚠️ SAFETY:
-  Never suggest using apologies to manipulate. The goal is emotional repair, not outcome control.
-  `
+⚠️ SAFETY:
+Never suggest using apologies to manipulate. The goal is emotional repair, not outcome control.
+`,
   },
-
   {
     format: "trust inventory",
     tone: "challenging, introspective, honest",
     theme: "emotional maturity",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: Do You Actually *Trust* Her — Or Just Want Her?
+### Topic: Do You Actually *Trust* Her — Or Just Want Her?
 
-  ### Requirements:
-  - 550–850 words
-  - Examine the difference between attraction, desire, and emotional trust
-  - Offer a Trust Audit with 5 questions about past patterns, consistency, and respect
-  - Share a story of someone who realised desire masked a deep mistrust
-  - End with: “Wanting her is easy. Trusting her is rare. Start with the truth.”
+### Requirements:
+- 550–850 words
+- Examine the difference between attraction, desire, and emotional trust
+- Offer a Trust Audit with 5 questions about past patterns, consistency, and respect
+- Share a story of someone who realised desire masked a deep mistrust
+- End with: “Wanting her is easy. Trusting her is rare. Start with the truth.”
 
-  ⚠️ SAFETY:
-  Do not frame women as deceptive. Focus on the reader’s own clarity and standards.
-  `
+⚠️ SAFETY:
+Do not frame women as deceptive. Focus on the reader’s own clarity and standards.
+`,
   },
-
   {
     format: "inner child work",
     tone: "compassionate, steady, affirming",
     theme: "emotional reparenting",
     prompt: (gender, goalStage) => `
-  You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: How to Reconnect Without Feeling Like a Little Boy Again
+### Topic: How to Reconnect Without Feeling Like a Little Boy Again
 
-  ### Requirements:
-  - 600–1000 words
-  - Explore how unhealed emotional wounds make men regress in conflict or rejection
-  - Teach the difference between showing emotion vs collapsing into emotional need
-  - Include a 3-part “Strong Core” self-talk strategy
-  - End with a grounding practice to restore adult presence in emotional moments
+### Requirements:
+- 600–1000 words
+- Explore how unhealed emotional wounds make men regress in conflict or rejection
+- Teach the difference between showing emotion vs collapsing into emotional need
+- Include a 3-part “Strong Core” self-talk strategy
+- End with a grounding practice to restore adult presence in emotional moments
 
-  ⚠️ SAFETY:
-  Use compassion, not shame. Normalise vulnerability while supporting masculine strength.
-  `
+⚠️ SAFETY:
+Use compassion, not shame. Normalise vulnerability while supporting masculine strength.
+`,
   },
-
   {
     format: "strategic roadmap",
     tone: "clear, sober, grounded",
     theme: "real-world reconnection",
     prompt: (gender, goalStage) => `
-  You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
+You are a breakup recovery coach writing a **premium guide for a man who wants to reconnect with his ex**.
 
-  ### Topic: The Reconnection Plan — Built for Reality, Not Fantasy
+### Topic: The Reconnection Plan — Built for Reality, Not Fantasy
 
-  ### Requirements:
-  - 650–950 words
-  - Lay out a 3-phase reconnection path: *Inner Grounding → Casual Recontact → Emotional Depth*
-  - For each, define clear signals of readiness — both in himself and in her
-  - Include sample boundary-respecting messages for first contact
-  - End with: “This isn’t a trick to get her back. It’s a path to walk — with or without her.”
+### Requirements:
+- 650–950 words
+- Lay out a 3-phase reconnection path: *Inner Grounding → Casual Recontact → Emotional Depth*
+- For each, define clear signals of readiness — both in himself and in her
+- Include sample boundary-respecting messages for first contact
+- End with: “This isn’t a trick to get her back. It’s a path to walk — with or without her.”
 
-  ⚠️ SAFETY:
-  No game-playing. No text templates that bypass emotional honesty. All steps must feel grounded.
-  `
-  }
+⚠️ SAFETY:
+No game-playing. No text templates that bypass emotional honesty. All steps must feel grounded.
+`,
+  },
 ];
