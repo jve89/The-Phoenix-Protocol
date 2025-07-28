@@ -170,12 +170,15 @@
         });
 
         const data = await response.json();
-        if (data.url) {
-          console.log('✅ Payload accepted, Stripe URL:', data.url);
-          window.location.href = data.url;
-        } else {
-          alert('Error creating checkout session. Please try again.');
-        }
+       if (data.url) {
+        console.log('✅ Stripe session created:', data.url);
+        window.location.href = data.url;
+      } else if (plan === '3') {
+        alert('🎉 Trial signup complete! You’ll receive your welcome email shortly.');
+        window.location.href = '/thankyou.html'; // Optional: redirect to a thank-you page
+      } else {
+        alert('❌ Unexpected error. Please try again later.');
+      }
       } catch (err) {
         console.error(err);
         alert('Server error. Please try again.');
