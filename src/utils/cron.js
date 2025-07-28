@@ -209,11 +209,10 @@ async function runDeliverTrialEmails() {
   let users = [];
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, usage_count, trial_started_at
+      `SELECT id, email, usage_count
       FROM users
       WHERE is_trial_user = TRUE
-        AND usage_count < 3
-        AND trial_started_at IS NOT NULL`
+        AND usage_count < 3`
     ));
   } catch (err) {
     console.error('[CRON] Trial user query failed:', err.message);
@@ -228,17 +227,7 @@ async function runDeliverTrialEmails() {
   }
 
   for (const user of users) {
-    const now = new Date();
-    const elapsedHours = (now - new Date(user.trial_started_at)) / (1000 * 60 * 60);
-    let day = null;
-    if (elapsedHours >= 0 && elapsedHours < 24 && user.usage_count === 0) day = 1;
-    if (elapsedHours >= 24 && elapsedHours < 48 && user.usage_count === 1) day = 2;
-    if (elapsedHours >= 48 && elapsedHours < 72 && user.usage_count === 2) day = 3;
-
-    if (!day) {
-      console.log(`[CRON] ⏳ Not ready to send next trial email to ${user.email}`);
-      continue;
-    }
+    const day = user.usage_count + 1;
     const templatePath = `trial_day${day}.html`;
     let html;
 
