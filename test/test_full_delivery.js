@@ -1,16 +1,16 @@
 // test/test_full_delivery.js
 require('dotenv').config();
+const path = require('path');
 const db = require('../src/db/db');
 const { sendRawEmail, sendMarkdownEmail } = require('../src/utils/email');
-const { loadTemplate } = require('../src/utils/template');
-const { generateTodaysGuide } = require('../src/utils/guide');
-const path = require('path');
+const { loadTemplate } = require('../src/utils/loadTemplate');
+const { loadTodayGuide } = require('../src/utils/content');
 
 async function testAllDeliveries() {
   const { rows: users } = await db.query(`SELECT * FROM users`);
   console.log(`🚀 Starting test for ${users.length} users...`);
 
-  const todayGuide = await generateTodaysGuide(); // Paid users use this
+  const todayGuide = await loadTodayGuide(); // Paid users use this
 
   for (const user of users) {
     const { email, gender, goal_stage, is_trial_user, is_subscriber, usage_count, plan_limit } = user;
@@ -20,14 +20,8 @@ async function testAllDeliveries() {
 
     // 1. Send Welcome
     if (usage_count === 0) {
-      const welcomePath = path.join(
-        __dirname,
-        '..',
-        'templates',
-        is_trial_user ? 'welcome_trial.html' : 'welcome_email.html'
-      );
       try {
-        const html = await loadTemplate(welcomePath);
+        const html = await loadTemplate('welcome.html');
         await sendRawEmail(email, '🔥 Welcome to The Phoenix Protocol', html);
         console.log(`✅ Welcome email sent`);
       } catch (err) {
@@ -45,7 +39,7 @@ async function testAllDeliveries() {
         await sendRawEmail(email, subject, html);
         console.log(`✅ Trial Day ${day} sent`);
       } catch (err) {
-        console.warn(`⚠️ Trial template missing: ${trialPath}`);
+        console.warn(`⚠️ Trial template missing or failed to send: ${trialPath} — ${err.message}`);
       }
     }
 
@@ -65,19 +59,14 @@ async function testAllDeliveries() {
 
     // 4. Send Farewell if limit reached
     if (newCount >= plan_limit) {
-      const farewellPath = path.join(
-        __dirname,
-        '..',
-        'templates',
-        is_trial_user ? 'trial_farewell.html' : 'farewell_email.html'
-      );
+      const farewellPath = is_trial_user ? 'trial_farewell.html' : 'farewell_email.html';
       try {
         const html = await loadTemplate(farewellPath);
         const subject = 'Your Trial Has Ended';
         await sendRawEmail(email, subject, html);
         console.log(`👋 Farewell email sent`);
       } catch (err) {
-        console.warn(`⚠️ Farewell template missing: ${err.message}`);
+        console.warn(`⚠️ Farewell template missing or failed to send: ${farewellPath} — ${err.message}`);
       }
     }
   }

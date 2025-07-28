@@ -79,15 +79,37 @@
 |  ├── email.html
 |  ├── farewell_email.html
 |  ├── premium_guide_email.html
+|  ├── trial
+|  |  ├── female_moveon_day1.html
+|  |  ├── female_moveon_day2.html
+|  |  ├── female_moveon_day3.html
+|  |  ├── female_reconnect_day1.html
+|  |  ├── female_reconnect_day2.html
+|  |  ├── female_reconnect_day3.html
+|  |  ├── male_moveon_day1.html
+|  |  ├── male_moveon_day2.html
+|  |  ├── male_moveon_day3.html
+|  |  ├── male_reconnect_day1.html
+|  |  ├── male_reconnect_day2.html
+|  |  ├── male_reconnect_day3.html
+|  |  ├── neutral_moveon_day1.html
+|  |  ├── neutral_moveon_day2.html
+|  |  ├── neutral_moveon_day3.html
+|  |  ├── neutral_reconnect_day1.html
+|  |  ├── neutral_reconnect_day2.html
+|  |  └── neutral_reconnect_day3.html
+|  ├── trial_day1.html
+|  ├── trial_farewell.html
 |  └── welcome.html
 └── test
    ├── health_check.js
    ├── openai_test.js
    ├── resend_guide_email.js
+   ├── test_full_delivery.js
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 518 file: 2569
+directory: 519 file: 2590
 
 ignored: directory (11)
 
