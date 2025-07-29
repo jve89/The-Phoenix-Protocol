@@ -11,6 +11,7 @@ const os = require('os');
 // App-specific modules
 const { sendRawEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
+const { renderEmailMarkdown } = require('./email_renderer');
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent, logDelivery } = require('./db_logger');
 const { sendDailyGuideBackup } = require('./backup');
@@ -193,7 +194,8 @@ async function runGenerateDailyGuidesSlot({
         warningBlockMd = warnings.map(w => `> ⚠️ ${w}`).join('\n') + '\n\n---\n';
       }
 
-      const adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml;
+      const emailPreviewHtml = renderEmailMarkdown(guide);
+      const adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml + emailPreviewHtml;
       const mdPath = path.join(os.tmpdir(), `daily_guide_${date}.md`);
       const jsonPath = path.join(os.tmpdir(), `daily_guide_${date}.json`);
 
