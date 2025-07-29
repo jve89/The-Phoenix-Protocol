@@ -12,7 +12,7 @@ const templateCache = new Map();
  */
 async function loadTemplate(filename) {
   // Validate filename
-  if (typeof filename !== 'string' || !filename.endsWith('.html') || path.basename(filename) !== filename) {
+  if (typeof filename !== 'string' || !filename.endsWith('.html')){
     logEvent('loadTemplate', 'error', `Invalid template filename: ${filename}`);
     return '';
   }
