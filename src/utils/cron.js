@@ -274,9 +274,9 @@ async function runDeliverTrialEmailsSlot({
         `SELECT id, email, usage_count, gender, goal_stage
         FROM users
         WHERE is_trial_user = TRUE
-        AND usage_count < 3
-        AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)
-      `
+          AND unsubscribed = FALSE
+          AND usage_count < 3
+          AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)`
       ));
     } catch (err) {
       console.error('[CRON] Trial user query failed:', err.message);

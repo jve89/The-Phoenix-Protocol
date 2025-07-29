@@ -60,14 +60,14 @@ async function sendWithRetry(msg, retries = 2) {
  * Sends a fully rendered HTML email with optional attachment
  */
 async function sendRawEmail(to, subject, html, attachmentPath = null) {
-    if (!to || !subject || typeof html !== 'string' || html.trim().length === 0) {
-      logger.error('Invalid parameters for sendRawEmail', {
-        to,
-        subject,
-        htmlLength: html ? html.length : 'undefined'
-      });
-      throw new Error('Invalid raw email parameters');
-    }
+  if (!to || !subject || typeof html !== 'string' || html.trim().length === 0) {
+    logger.error('Invalid parameters for sendRawEmail', {
+      to,
+      subject,
+      htmlLength: html ? html.length : 'undefined'
+    });
+    throw new Error('Invalid raw email parameters');
+  }
 
   // Truncate long subjects
   let finalSubject = subject;
@@ -76,7 +76,7 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     finalSubject = finalSubject.slice(0, 137) + '...';
   }
 
-  // Replace unsubscribe token
+  // Replace unsubscribe token placeholder
   let finalHtml = html;
   if (html.includes('{{unsubscribe_token}}')) {
     try {
@@ -85,6 +85,23 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     } catch (err) {
       logger.error(`Failed to generate unsubscribe token for ${to}: ${err.message}`);
     }
+  }
+
+  // Inject unsubscribe footer if user is active (not unsubscribed)
+  try {
+    const { rows } = await db.query('SELECT unsubscribed FROM users WHERE email = $1', [to]);
+    if (rows.length && rows[0].unsubscribed === false) {
+      const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      const unsubscribeUrl = `https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`;
+      const footer = `
+        <div style="margin-top: 40px; font-size: 12px; color: #888; text-align: center;">
+          <p>If you no longer want to receive these emails, <a href="${unsubscribeUrl}" style="color:#7c3aed;">click here to unsubscribe</a>.</p>
+        </div>
+      `;
+      finalHtml += footer;
+    }
+  } catch (err) {
+    logger.warn(`[sendRawEmail] Failed to inject unsubscribe footer for ${to}: ${err.message}`);
   }
 
   const text = convert(finalHtml, {
