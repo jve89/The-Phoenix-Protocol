@@ -28,3 +28,7 @@ WHERE created_at < NOW() - INTERVAL '90 days' AND status != 'published';
 -- Delete old used prompt tracking (optional, if table grows large)
 DELETE FROM used_prompts
 WHERE date < NOW() - INTERVAL '90 days';
+
+-- Delete old cron failure entries
+DELETE FROM cron_failures
+WHERE last_failed < NOW() - INTERVAL '90 days';
