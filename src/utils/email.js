@@ -112,6 +112,9 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     }
   }
 
+  logger.info(`[sendRawEmail] Sending to ${to} — ${finalSubject}`);
+  console.log(`[DEBUG] Sending email to ${to} — ${finalSubject}`);
+
   await sendWithRetry(msg);
 }
 

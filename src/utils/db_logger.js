@@ -33,4 +33,27 @@ function logEvent(source, level = 'info', message) {
   });
 }
 
-module.exports = { logEvent };
+/**
+ * Log a delivery status to delivery_log table.
+ * @param {number} userId 
+ * @param {string} email 
+ * @param {string} variant 
+ * @param {string} status - 'success' or 'failed'
+ * @param {string|null} errorMessage 
+ */
+async function logDelivery(userId, email, variant, status, errorMessage = null) {
+  try {
+    await db.query(
+      `INSERT INTO delivery_log (user_id, email, variant, status, error_message)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [userId, email, variant, status, errorMessage]
+    );
+  } catch (err) {
+    console.error('[db_logger] Failed to log delivery:', err.message);
+  }
+}
+
+module.exports = {
+  logEvent,
+  logDelivery
+};

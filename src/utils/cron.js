@@ -12,7 +12,7 @@ const os = require('os');
 const { sendRawEmail } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
-const { logEvent } = require('./db_logger');
+const { logEvent, logDelivery } = require('./db_logger');
 const { sendDailyGuideBackup } = require('./backup');
 const { marked } = require('marked');
 const { validateGuideContent } = require('./validateGuide');
@@ -57,6 +57,23 @@ const validateEnv = () => {
   }
   return true;
 };
+
+// CLI entry point to manually trigger individual cron jobs (e.g. deliverTrial)
+async function main() {
+  const job = process.argv[2];
+
+  switch (job) {
+    case 'deliverTrial':
+      await runDeliverTrialEmailsSlot();
+      break;
+    case 'deliverPaid':
+      await runDeliverDailyGuidesSlot();
+      break;
+    default:
+      console.error(`Unknown job: ${job}`);
+      process.exit(1);
+  }
+}
 
 // Job 1: Generate & cache, then send admin backup
 /**
@@ -237,10 +254,16 @@ async function runDeliverTrialEmailsSlot({
       }
 
       const subject = `Phoenix Protocol — Day ${day}`;
+      const variantMatch = templatePath.match(/trial\/([a-z_]+)_day\d+\.html$/);
+      const variant = variantMatch ? variantMatch[1] : 'unknown';
+
       try {
         await sendRawEmail(user.email, subject, html);
         console.log(`[CRON] ✅ Trial Day ${day} sent: ${user.email}`);
         logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
+
+        await logDelivery(user.id, user.email, variant, 'success');
+
         await db.query(
           `UPDATE users SET usage_count = usage_count + 1, first_guide_sent_at = COALESCE(first_guide_sent_at, NOW()) WHERE id = $1`,
           [user.id]
@@ -249,6 +272,7 @@ async function runDeliverTrialEmailsSlot({
         allSucceeded = false;
         console.error(`[CRON] ❌ Trial send failed for ${user.email}:`, err.message);
         logger.error(`Trial send failed: ${err.message}`);
+        await logDelivery(user.id, user.email, variant, 'failed', err.message);
       }
     }
 
@@ -260,7 +284,7 @@ async function runDeliverTrialEmailsSlot({
     attempt++;
   }
 
-  // After slot, farewell handling (unchanged)
+  // After slot, farewell handling
   try {
     const { rows: farewellUsers } = await db.query(
       `SELECT id, email FROM users
@@ -268,13 +292,17 @@ async function runDeliverTrialEmailsSlot({
          AND usage_count >= 3
          AND farewell_sent = FALSE`
     );
+
     for (const user of farewellUsers) {
       try {
-        const html = await loadTemplate('trial/trial_farewell.html');
+        const html = await loadTemplate('trial_farewell.html');
+        if (!html) throw new Error('Farewell template is empty or not loaded');
+
         const subject = 'Your Phoenix Trial Has Ended';
         await sendRawEmail(user.email, subject, html);
         logger.info(`🟣 Farewell trial email sent to ${user.email}`);
         console.log(`[CRON] 🟣 Farewell sent: ${user.email}`);
+
         await db.query(
           `UPDATE users SET farewell_sent = TRUE WHERE id = $1`,
           [user.id]
@@ -360,7 +388,14 @@ async function runDeliverDailyGuidesSlot({
         continue;
       }
 
-      const contentHtml = marked.parse(section.content);
+      let contentHtml;
+      try {
+        contentHtml = marked.parse(section.content);
+      } catch (err) {
+        logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
+        continue;
+      }
+
       const html = template
         .replace('{{title}}', section.title)
         .replace('{{content}}', contentHtml);
@@ -826,3 +861,7 @@ function startCron() {
 }
 
 module.exports = { startCron };
+
+if (require.main === module) {
+  main();
+}
