@@ -119,7 +119,14 @@ router.post('/signup', asyncHandler(async (req, res) => {
       }
       logger.info(`Renewing plan for ${email}`);
       await db.query(
-        `UPDATE users SET plan = $1, goal_stage = $2, plan_limit = $3, usage_count = 0, first_guide_sent_at = NULL, farewell_sent = FALSE
+        `UPDATE users SET
+          plan = $1,
+          goal_stage = $2,
+          plan_limit = $3,
+          usage_count = 0,
+          first_guide_sent_at = NULL,
+          farewell_sent = FALSE,
+          unsubscribed = FALSE
         WHERE email = $4`,
         [plan, goal_stage, parseInt(plan,10), email]
       );

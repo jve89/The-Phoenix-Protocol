@@ -73,7 +73,12 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
     logger.info(`Processing unsubscribe for ${email}`);
 
     const result = await db.query(
-      `UPDATE users SET plan = 0, usage_count = plan_limit WHERE email = $1 RETURNING email`,
+      `UPDATE users
+      SET plan = 0,
+          usage_count = plan_limit,
+          unsubscribed = TRUE
+      WHERE email = $1
+      RETURNING email`,
       [email]
     );
 

@@ -398,7 +398,8 @@ async function runDeliverDailyGuidesSlot({
          WHERE plan IS NOT NULL
            AND plan > 0
            AND usage_count < plan_limit
-           AND (is_trial_user IS NULL OR is_trial_user = FALSE)`
+           AND (is_trial_user IS NULL OR is_trial_user = FALSE)
+           AND unsubscribed = FALSE`
       ));
     } catch (err) {
       console.error('[CRON] User query failed:', err.message);
@@ -746,7 +747,9 @@ async function runRetryFailedDeliveriesSlot() {
     let trialDay = null;
     try {
       const { rows: users } = await db.query(
-        `SELECT is_trial_user, usage_count, gender, goal_stage FROM users WHERE id = $1`, [user_id]
+        `SELECT is_trial_user, usage_count, gender, goal_stage
+        FROM users
+        WHERE id = $1 AND unsubscribed = FALSE`, [user_id]
       );
       if (users.length && users[0].is_trial_user) {
         trialUser = true;
