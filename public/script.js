@@ -62,11 +62,13 @@
 
       const { url } = await res.json();
       if (!url) {
-        throw new Error('Checkout URL not returned.');
+        // Trial users won't get a payment URL—show a message or redirect
+        window.location.href = '/success.html';
+        return;
       }
-
-      // Redirect to Stripe
+      // Paid: Redirect to Stripe checkout
       window.location.href = url;
+
     } catch (err) {
       console.error('[Signup Error]', err);
       alert(err.message || 'Something went wrong. Please try again.');
