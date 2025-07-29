@@ -69,6 +69,24 @@ async function main() {
     case 'deliverPaid':
       await runDeliverDailyGuidesSlot();
       break;
+    case 'generateGuides':
+      await runGenerateDailyGuidesSlot();
+      break;
+    case 'sendTrialFarewells':
+      await runSendTrialFarewellsSlot();
+      break;
+    case 'sendFarewells':
+      await runSendFarewellEmailsSlot();
+      break;
+    case 'retryGeneration':
+      await runRetryFailedGenerationSlot();
+      break;
+    case 'retryFailedEmails':
+      await runRetryFailedDeliveriesSlot();
+      break;
+    case 'pruneLogs':
+      await runPruneOldLogsSlot();
+      break;
     default:
       console.error(`Unknown job: ${job}`);
       process.exit(1);
@@ -95,11 +113,28 @@ async function runGenerateDailyGuidesSlot({
   let attempt = 1;
 
   while (attempt <= maxRetries) {
-    // Step 1: Idempotency — skip if already exists
+    // Step 1: Idempotency — skip if ALL variants already exist
     const existing = await loadGuideByDate(date);
-    if (existing && existing['male_moveon'] && existing['male_moveon'].content) {
+    const allVariantsPresent = VARIANTS.every(
+      variant => existing?.[variant]?.content?.trim()?.length > 100
+    );
+
+    if (allVariantsPresent) {
       console.log(`[CRON] Guide for ${date} already exists. Slot complete.`);
       logger.info(`Guide for ${date} already exists. Slot complete.`);
+
+      const backupLog = await db.query(
+        `SELECT 1 FROM guide_generation_logs
+        WHERE DATE(timestamp) = $1 AND message ILIKE '%Admin guide + backup sent%'
+        LIMIT 1`,
+        [date]
+      );
+
+    if (backupLog.rowCount > 0) {
+      console.log(`[CRON] Admin backup already sent for ${date}. Skipping.`);
+      logger.info(`Admin backup already sent for ${date}. Skipping.`);
+      return;
+    }
       break;
     }
 
@@ -120,25 +155,26 @@ async function runGenerateDailyGuidesSlot({
       if (attempt === maxRetries) {
         console.error(`[CRON] ❌ All attempts exhausted. Guide not generated for ${date}.`);
         logger.error(`❌ All attempts exhausted. Guide not generated for ${date}.`);
-        return; // Give up for today after final attempt
+        return;
       }
-      // Wait before next retry
       await sleep(retryInterval * 60 * 1000);
     }
     attempt++;
   }
 
-  // Step 3: Send admin backup if guide now exists (after all attempts)
+  // Step 3: Send admin backup if guide now exists
   try {
     const guide = await loadGuideByDate(date);
-    if (!guide || !guide['male_moveon'] || !guide['male_moveon'].content) {
-      console.warn(`[CRON] ⚠️ No guide found for ${date} after slot completion. Skipping admin backup.`);
-      logger.warn(`⚠️ No guide found for ${date} after slot completion. Skipping admin backup.`);
+    const allVariantsPresent = VARIANTS.every(
+      variant => guide?.[variant]?.content?.trim()?.length > 100
+    );
+    if (!allVariantsPresent) {
+      console.warn(`[CRON] ⚠️ No complete guide found for ${date} after slot. Skipping backup.`);
+      logger.warn(`⚠️ No complete guide found for ${date} after slot. Skipping backup.`);
       return;
     }
 
     if (process.env.ADMIN_EMAIL) {
-      // (Re-)Validate guide and build warning blocks
       const { isValid, warnings } = validateGuideContent(guide, VARIANTS);
 
       let warningBlockHtml = '';
@@ -157,22 +193,11 @@ async function runGenerateDailyGuidesSlot({
         warningBlockMd = warnings.map(w => `> ⚠️ ${w}`).join('\n') + '\n\n---\n';
       }
 
-      // Build admin HTML and Markdown
-      let adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml;
-      for (const variant of VARIANTS) {
-        const section = guide[variant];
-        if (!section?.content) {
-          logger.warn(`[CRON] Missing content for variant ${variant} on ${date}`);
-          continue;
-        }
-        adminHtml += `<h2>${section.title}</h2>` + marked.parse(section.content) + '<hr/>';
-      }
-
-      // Write JSON + Markdown temp files for attachment
-      const jsonPath = path.join(os.tmpdir(), `daily_guide_${date}.json`);
+      const adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml;
       const mdPath = path.join(os.tmpdir(), `daily_guide_${date}.md`);
-      await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
+      const jsonPath = path.join(os.tmpdir(), `daily_guide_${date}.json`);
 
+      // Build Markdown
       let md = `# Daily Guide Summary - ${date}\n\n` + warningBlockMd;
       for (const variant of VARIANTS) {
         const section = guide[variant];
@@ -180,22 +205,46 @@ async function runGenerateDailyGuidesSlot({
           md += `## ${section.title}\n\n${section.content.trim()}\n\n---\n`;
         }
       }
-      await fs.writeFile(mdPath, md);
 
-      // Send email using backup util, attach both
+      // Write temp files (fail early if error)
+      try {
+        await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
+        await fs.writeFile(mdPath, md);
+      } catch (err) {
+        console.error('[CRON] ❌ Failed to write backup files:', err.message);
+        logger.error(`❌ Failed to write backup files: ${err.message}`);
+        return;
+      }
+
+      // Send email
       await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
       console.log('[CRON] ✅ Admin guide + backup sent');
       logger.info('✅ Admin guide + backup sent');
+
+      // Cleanup
       try {
-        await fs.unlink(jsonPath);
-        await fs.unlink(mdPath);
-        console.log('[CRON] 🧹 Temp backup files cleaned up');
-        logger.info('🧹 Temp backup files cleaned up');
+        if (await fs.stat(jsonPath).catch(() => null)) {
+          await fs.unlink(jsonPath);
+          console.log(`[CRON] 🧹 Deleted temp file: ${jsonPath}`);
+          logger.info(`🧹 Deleted temp file: ${jsonPath}`);
+        } else {
+          logger.debug(`[CRON] Temp file already deleted (probably handled earlier): ${jsonPath}`);
+          logger.info(`ℹ️ Temp file not found: ${jsonPath}`);
+        }
+
+        if (await fs.stat(mdPath).catch(() => null)) {
+          await fs.unlink(mdPath);
+          console.log(`[CRON] 🧹 Deleted temp file: ${mdPath}`);
+          logger.info(`🧹 Deleted temp file: ${mdPath}`);
+        } else {
+          console.log(`[CRON] ℹ️ Temp file not found (maybe already deleted): ${mdPath}`);
+          logger.info(`ℹ️ Temp file not found: ${mdPath}`);
+        }
       } catch (err) {
-        console.warn('[CRON] ⚠️ Failed to clean temp backup files:', err.message);
-        logger.warn(`⚠️ Failed to clean temp backup files: ${err.message}`);
-      }
-    }
+        console.warn('[CRON] ⚠️ Failed during temp file cleanup:', err.message);
+        logger.warn(`⚠️ Failed during temp file cleanup: ${err.message}`);
+       }
+    } // closes: if (process.env.ADMIN_EMAIL)
   } catch (err) {
     console.error('[CRON] Backup email failed:', err.message);
     logger.error(`Backup email failed: ${err.message}`);
