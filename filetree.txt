@@ -106,10 +106,11 @@
    ├── openai_test.js
    ├── resend_guide_email.js
    ├── test_full_delivery.js
+   ├── test_send_trial.js
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 519 file: 2590
+directory: 519 file: 2591
 
 ignored: directory (11)
 

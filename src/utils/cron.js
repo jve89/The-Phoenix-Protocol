@@ -9,9 +9,8 @@ const path = require('path');
 const os = require('os');
 
 // App-specific modules
-const { sendRawEmail } = require('./email');
+const { sendRawEmail, renderEmailMarkdown } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
-const { renderEmailMarkdown } = require('./email_renderer');
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent, logDelivery } = require('./db_logger');
 const { sendDailyGuideBackup } = require('./backup');
@@ -273,8 +272,11 @@ async function runDeliverTrialEmailsSlot({
     try {
       ({ rows: users } = await db.query(
         `SELECT id, email, usage_count, gender, goal_stage
-         FROM users
-         WHERE is_trial_user = TRUE AND usage_count < 3`
+        FROM users
+        WHERE is_trial_user = TRUE
+        AND usage_count < 3
+        AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)
+      `
       ));
     } catch (err) {
       console.error('[CRON] Trial user query failed:', err.message);
@@ -316,7 +318,11 @@ async function runDeliverTrialEmailsSlot({
         await logDelivery(user.id, user.email, variant, 'success');
 
         await db.query(
-          `UPDATE users SET usage_count = usage_count + 1, first_guide_sent_at = COALESCE(first_guide_sent_at, NOW()) WHERE id = $1`,
+          `UPDATE users
+          SET usage_count = usage_count + 1,
+              last_trial_sent_at = NOW(),
+              first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
+          WHERE id = $1`,
           [user.id]
         );
       } catch (err) {
@@ -438,7 +444,10 @@ async function runDeliverDailyGuidesSlot({
         logger.warn(`No content for ${variant}: ${user.email}`);
         continue;
       }
-
+      if (user.is_trial_user === true) {
+        logger.warn(`Skipping trial user during paid guide run: ${user.email}`);
+        continue;
+      }
       let contentHtml;
       try {
         contentHtml = marked.parse(section.content);

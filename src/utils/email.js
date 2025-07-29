@@ -142,4 +142,34 @@ async function sendMarkdownEmail(to, subject, markdown) {
   await sendRawEmail(to, subject, html);
 }
 
-module.exports = { sendRawEmail, sendMarkdownEmail, fromEmail };
+/**
+ * Renders a guide object into HTML using a given template
+ */
+function renderEmailMarkdown(guide, template = defaultTemplate()) {
+  const contentHtml = marked.parse(guide?.content || '');
+  return template
+    .replace('{{title}}', guide?.title || '')
+    .replace('{{content}}', contentHtml);
+}
+
+/**
+ * Provides a minimal default email template if none is supplied
+ */
+function defaultTemplate() {
+  return `
+  <!DOCTYPE html>
+  <html>
+    <head><meta charset="UTF-8"><title>{{title}}</title></head>
+    <body style="font-family:sans-serif;line-height:1.6;padding:1rem;">
+      <h1>{{title}}</h1>
+      <div>{{content}}</div>
+    </body>
+  </html>`;
+}
+
+module.exports = {
+  sendRawEmail,
+  sendMarkdownEmail,
+  renderEmailMarkdown,
+  fromEmail
+};
