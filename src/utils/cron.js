@@ -808,32 +808,32 @@ async function runPruneOldLogsSlot({
     logger.info(`(${attempt}/${maxRetries}) 🧹 Attempting log pruning`);
     let allOk = true;
 
-    const tables = [
-      'guide_generation_logs',
-      'delivery_log',
-      'daily_guides',
-      'email_retry_queue',
-      'fallback_logs'
+    const logs = [
+      { table: 'guide_generation_logs', col: 'created_at' },
+      { table: 'delivery_log', col: 'sent_at' },
+      { table: 'daily_guides', col: 'date' },
+      { table: 'email_retry_queue', col: 'created_at' },
+      { table: 'fallback_logs', col: 'timestamp' }
     ];
-    for (const table of tables) {
-      const col = table === 'fallback_logs' ? 'timestamp' : 'created_at';
+
+    for (const { table, col } of logs) {
       try {
         const res = await db.query(
           `DELETE FROM ${table} WHERE ${col} < NOW() - INTERVAL '90 days'`
         );
         console.log(`[CRON] 🧹 Pruned ${res.rowCount} from ${table}`);
-        logger.info(`Pruned ${res.rowCount} from ${table}`);
+        logger.info(`🧹 Pruned ${res.rowCount} from ${table}`);
       } catch (err) {
         allOk = false;
         console.error(`[CRON] ❌ Prune failed for ${table}:`, err.message);
-        logger.error(`Prune failed for ${table}: ${err.message}`);
+        logger.error(`❌ Prune failed for ${table}: ${err.message}`);
       }
     }
 
     if (allOk) {
       console.log(`[CRON] 🧹 Log pruning complete for slot`);
       logger.info(`🧹 Log pruning complete for slot`);
-      break; // All tables pruned successfully, done for today
+      break;
     }
 
     if (attempt === maxRetries) {
@@ -841,7 +841,7 @@ async function runPruneOldLogsSlot({
       logger.error(`❌ All attempts exhausted. Pruning not fully completed this slot.`);
       return;
     }
-    // Wait before next retry
+
     await sleep(retryInterval * 60 * 1000);
     attempt++;
   }
