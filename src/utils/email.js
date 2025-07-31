@@ -163,6 +163,26 @@ async function sendMarkdownEmail(to, subject, markdown) {
  * Renders a guide object into HTML using a given template
  */
 function renderEmailMarkdown(guide, template = defaultTemplate()) {
+  // Case A: It's a full daily guide with multiple variants
+  const isFullGuide = typeof guide === 'object' &&
+    Object.values(guide).every(
+      v => typeof v === 'object' && ('content' in v || 'title' in v)
+    );
+
+  if (isFullGuide) {
+    let fullHtml = '';
+    for (const [key, { title, content }] of Object.entries(guide)) {
+      const safeTitle = title || key;
+      const safeContent = marked.parse(content || '');
+      fullHtml += `<h2>${safeTitle}</h2>\n<div>${safeContent}</div><hr style="margin:2rem 0;">`;
+    }
+
+    return template
+      .replace('{{title}}', 'Daily Guide Summary')
+      .replace('{{content}}', fullHtml);
+  }
+
+  // Case B: Just a single guide object
   const contentHtml = marked.parse(guide?.content || '');
   return template
     .replace('{{title}}', guide?.title || '')

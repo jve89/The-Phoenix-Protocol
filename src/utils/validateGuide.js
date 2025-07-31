@@ -1,6 +1,13 @@
 // src/utils/validateGuide.js
 
-function validateGuideContent(guide, variants = []) {
+/**
+ * Validate the content object for all variants.
+ * @param {Object} guide - The guide object containing all variants.
+ * @param {string[]} variants - Array of variant keys to check.
+ * @param {number} minLength - Optional minimum content length.
+ * @returns {{ isValid: boolean, warnings: string[] }}
+ */
+function validateGuideContent(guide, variants = [], minLength = 150) {
   const warnings = [];
 
   for (const variant of variants) {
@@ -12,16 +19,18 @@ function validateGuideContent(guide, variants = []) {
 
     const { title, content } = section;
 
-    if (!content || !content.trim()) {
-      warnings.push(`🟥 Empty content for variant: ${variant}`);
+    if (!content || typeof content !== 'string' || !content.trim()) {
+      warnings.push(`🟥 Empty or invalid content for variant: ${variant}`);
       continue;
     }
 
-    if (title?.trim().toLowerCase() === variant.toLowerCase()) {
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      warnings.push(`🟥 Missing or invalid title for variant: ${variant}`);
+    } else if (title.trim().toLowerCase() === variant.toLowerCase()) {
       warnings.push(`⚠️ Title equals variant key for ${variant}: "${title}"`);
     }
 
-    if (content.trim().length < 150) {
+    if (content.trim().length < minLength) {
       warnings.push(`⚠️ Content for ${variant} looks too short (${content.trim().length} chars)`);
     }
   }

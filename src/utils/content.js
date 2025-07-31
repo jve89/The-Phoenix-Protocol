@@ -2,6 +2,7 @@ const path = require('path');
 const { subDays } = require('date-fns');
 const db = require('../db/db');
 const { logEvent } = require('./db_logger');
+const { validateGuideContent } = require('../../src/utils/validateGuide');
 const OpenAI = require('openai');
 const MODELS = ['gpt-4o', 'gpt-4', 'gpt-3.5-turbo'];
 const openai = new OpenAI({
@@ -22,17 +23,50 @@ const VARIANTS = [
   'neutral_moveon', 'neutral_reconnect'
 ];
 const promptCache = {};
+const promptWarnings = {};
+
 for (const variant of VARIANTS) {
   const promptPath = path.resolve(__dirname, `../../content/prompts/${variant}.js`);
   try {
     const promptList = require(promptPath);
     if (!Array.isArray(promptList) || promptList.length === 0) {
-      throw new Error(`Prompt list invalid or empty for ${variant}`);
+      throw new Error(`Prompt list invalid or empty`);
     }
-    promptCache[variant] = promptList;
+
+    const cleaned = [];
+    const warnings = [];
+
+    promptList.forEach((p, i) => {
+      if (!p || typeof p !== 'object' || typeof p.prompt !== 'function') {
+        warnings.push(`❌ Invalid prompt at index ${i}`);
+        return;
+      }
+
+      try {
+        const testOutput = p.prompt(...variant.split('_'));
+        if (typeof testOutput !== 'string' || testOutput.trim().length < 100) {
+          warnings.push(`⚠️ Weak output at index ${i} (${testOutput.length} chars)`);
+        } else {
+          cleaned.push(p);
+        }
+      } catch (e) {
+        warnings.push(`❌ Error at index ${i}: ${e.message}`);
+      }
+    });
+
+    promptCache[variant] = cleaned;
+    if (warnings.length) {
+      promptWarnings[variant] = warnings;
+      logEvent('content', 'warn', `Prompt validation for ${variant}: ${warnings.length} issues`);
+    }
+
   } catch (err) {
     logEvent('content', 'error', `Failed to load prompts for ${variant}: ${err.message}`);
-    throw err;
+    if (process.env.NODE_ENV === 'production') {
+      continue;
+    } else {
+      throw err;
+    }
   }
 }
 
@@ -89,6 +123,8 @@ async function generateTip(gender, goalStage) {
   }
 
   // Model fallback logic
+  let lastError = null;
+
   for (let i = 0; i < MODELS.length; i++) {
     try {
       const completion = await openai.chat.completions.create({
@@ -97,20 +133,78 @@ async function generateTip(gender, goalStage) {
         temperature: 1.0,
         max_tokens: 1100
       });
-      // Log this prompt as used for this variant and day
+
+      const output = completion.choices[0].message.content.trim();
+
+      // Attempt to extract a title from the AI content (first line as H1 or sentence)
+      const lines = output.split('\n').map(l => l.trim()).filter(Boolean);
+      let title = '';
+      if (lines[0].startsWith('#')) {
+        title = lines[0].replace(/^#+\s*/, '');
+      } else {
+        title = lines[0];
+      }
+
+      // Validate title quality
+      if (
+        !title ||
+        title.length < 5 ||
+        title.toLowerCase() === variant.toLowerCase() ||
+        /^[a-z_]+$/.test(title.toLowerCase())
+      ) {
+        logEvent('content', 'warn', `Rejected weak or default-like title for ${variant}: "${title}"`);
+        throw new Error('Weak title');
+      }
+
+      const tempGuide = { [variant]: { title, content: output } };
+      const { isValid, warnings } = validateGuideContent(tempGuide, [variant]);
+
+      if (!isValid) {
+        logEvent('content', 'warn', `Rejected weak AI output for ${variant}: ${warnings.join(' | ')}`);
+        throw new Error('Weak AI output');
+      }
+
+
       await db.query(
         `INSERT INTO used_prompts (date, variant, prompt_idx)
-         VALUES ($1, $2, $3)
-         ON CONFLICT DO NOTHING`,
+        VALUES ($1, $2, $3)
+        ON CONFLICT DO NOTHING`,
         [todayUtc(), variant, idx]
       );
-      return completion.choices[0].message.content.trim();
+
+      // Check for duplicate content
+      const hash = require('crypto').createHash('sha256').update(output).digest('hex');
+      try {
+        const { rows } = await db.query(
+          `SELECT COUNT(*) FROM generated_guides WHERE variant = $1 AND content_hash = $2`,
+          [variant, hash]
+        );
+        if (parseInt(rows[0].count) > 0) {
+          logEvent('content', 'warn', `Duplicate content detected for ${variant} — hash ${hash}`);
+          throw new Error('Duplicate content');
+        }
+
+        // Save hash for future checks
+        await db.query(
+          `INSERT INTO generated_guides (date, variant, prompt_idx, content_hash)
+          VALUES ($1, $2, $3, $4)
+          ON CONFLICT DO NOTHING`,
+          [todayUtc(), variant, idx, hash]
+        );
+      } catch (err) {
+        logEvent('content', 'warn', `Failed to check/store duplicate content hash for ${variant}: ${err.message}`);
+      }
+      
+      return output;
+
     } catch (err) {
+      lastError = err;
       logEvent('content', 'warn', `OpenAI model ${MODELS[i]} failed for ${variant}: ${err.message}`);
-      console.error(`[GuideGen] Model ${MODELS[i]} failed for ${variant}:`, err);
+
     }
   }
-  logEvent('content', 'error', `All OpenAI models failed for ${variant}`);
+
+  logEvent('content', 'error', `All OpenAI models failed or returned weak content for ${variant}: ${lastError?.message}`);
   return 'Temporary AI failure. Please try again later.';
 }
 
