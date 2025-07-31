@@ -1,0 +1,167 @@
+# 📦 PostgreSQL Database Schema — The Phoenix Protocol
+> Last updated: 2025-07-31  
+> This document outlines all tables in the `public` schema of the production PostgreSQL database. Each entry includes its purpose, key fields, and usage in the codebase.  
+
+---
+
+## Table: `users`
+**Purpose:** Stores user registration details.  
+**Used in:** `routes.js`, `db.js`, `cron.js`, `email.js`
+
+| Column      | Type     | Description               |
+|-------------|----------|---------------------------|
+| id          | integer  | Primary key               |
+| email       | text     | User email address        |
+| name        | text     | User display name         |
+| gender      | text     | male/female/neutral       |
+| goal_stage  | text     | moveon/reconnect          |
+| is_trial_user | boolean | Whether on free trial    |
+| plan        | integer  | 0=free trial, 1=paid      |
+| created_at  | timestamp | Signup time              |
+| trial_start | date     | Start of trial window     |
+| farewell_sent | boolean | Whether farewell sent    |
+
+---
+
+## Table: `daily_guides`
+**Purpose:** Stores generated guide objects per day.  
+**Used in:** `loadGuideByDate()`, `cron.js`, `email.js`
+
+| Column   | Type   | Description             |
+|----------|--------|-------------------------|
+| date     | date   | Primary key             |
+| guide    | jsonb  | Full structured guide   |
+
+---
+
+## Table: `used_prompts`
+**Purpose:** Tracks which prompt index was used per variant per day. Prevents repeats.  
+**Used in:** `generateTip()` in `cron.js`
+
+| Column     | Type     | Description             |
+|------------|----------|-------------------------|
+| date       | date     | Guide date              |
+| variant    | text     | e.g. male_moveon        |
+| prompt_idx | integer  | Index used in prompt[]  |
+
+---
+
+## Table: `generated_guides`
+**Purpose:** Prevents AI duplicate content by storing content hashes.  
+**Used in:** `generateTip()` in `cron.js`
+
+| Column      | Type    | Description                   |
+|-------------|---------|-------------------------------|
+| date        | date    | Guide creation date           |
+| variant     | text    | Variant key (e.g. female_reconnect) |
+| prompt_idx  | integer | Which prompt index was used   |
+| content_hash| text    | SHA256 of full content string |
+
+---
+
+## Table: `guide_generation_logs`
+**Purpose:** Records logs from cron job attempts to generate content.  
+**Used in:** `cron.js`, admin backups, retry logic
+
+| Column   | Type     | Description               |
+|----------|----------|---------------------------|
+| id       | serial   | Primary key               |
+| timestamp| timestamptz | Log time             |
+| source   | text     | e.g. 'cron' or 'manual'   |
+| level    | text     | info, warn, error         |
+| message  | text     | Log message               |
+| created_at| timestamp | Record creation time    |
+
+---
+
+## Table: `delivery_log`
+**Purpose:** Tracks all sent emails (both trial and paid).  
+**Used in:** `email.js`, `cron.js`
+
+| Column   | Type     | Description              |
+|----------|----------|--------------------------|
+| id       | serial   | Primary key              |
+| email    | text     | Recipient email          |
+| subject  | text     | Email subject            |
+| variant  | text     | Variant sent (if guide)  |
+| plan     | integer  | Trial (0) or Paid (1)    |
+| success  | boolean  | Delivery status          |
+| created_at | timestamp | Send time             |
+
+---
+
+## Table: `email_retry_queue`
+**Purpose:** Stores failed email deliveries for retry.  
+**Used in:** `retryFailedEmails()` job
+
+| Column     | Type     | Description            |
+|------------|----------|------------------------|
+| id         | serial   | Primary key            |
+| email      | text     | Email to retry         |
+| subject    | text     | Email subject          |
+| payload    | jsonb    | Full SendGrid body     |
+| retries    | integer  | Number of attempts     |
+| max_retries | integer | Max allowed attempts   |
+| last_attempt | timestamp | Last try time       |
+
+---
+
+## Table: `cron_failures`
+**Purpose:** Logs general cron execution errors.  
+**Used in:** `cron.js`, especially `generateDailyGuidesSlot`
+
+| Column     | Type     | Description             |
+|------------|----------|-------------------------|
+| id         | serial   | Primary key             |
+| job        | text     | Job name (e.g. deliverTrial) |
+| error      | text     | Error message           |
+| timestamp  | timestamp | Time of failure        |
+
+---
+
+## Table: `fallback_logs`
+**Purpose:** Optional — may have been used for GPT fallback validation layer.  
+**Used in:** (Unknown — possibly deprecated or optional)
+
+| Column   | Type     | Description           |
+|----------|----------|-----------------------|
+| id       | serial   |                       |
+| variant  | text     |                       |
+| input    | text     |                       |
+| output   | text     |                       |
+| valid    | boolean  |                       |
+
+---
+
+## Table: `testimonials`
+**Purpose:** Stores user testimonials for use in landing page or sales copy.  
+**Used in:** (Possibly not yet integrated)
+
+| Column   | Type     | Description             |
+|----------|----------|-------------------------|
+| id       | serial   | Primary key             |
+| name     | text     | Person's name           |
+| quote    | text     | Testimonial             |
+| variant  | text     | Gender/goal segment     |
+| created_at | timestamp | When submitted       |
+
+---
+
+## ✅ Audit Summary
+
+| Table Name         | Type        | Usage Status |
+|--------------------|-------------|--------------|
+| `users`            | core        | ✅ active     |
+| `daily_guides`     | core        | ✅ active     |
+| `used_prompts`     | core        | ✅ active     |
+| `generated_guides` | core        | ✅ active     |
+| `guide_generation_logs` | core   | ✅ active     |
+| `delivery_log`     | core        | ✅ active     |
+| `email_retry_queue`| support     | ✅ active     |
+| `cron_failures`    | support     | ✅ active     |
+| `fallback_logs`    | legacy(?)   | ⚠️ unclear    |
+| `testimonials`     | optional    | ⚠️ optional   |
+
+---
+
+Let me know if you’d like this saved as `docs/DB_SCHEMA.md`.

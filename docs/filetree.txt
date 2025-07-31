@@ -4,7 +4,6 @@
 ├── LICENSE
 ├── Procfile
 ├── README.md
-├── README_LOCK.md
 ├── config
 |  └── config.js
 ├── content
@@ -23,7 +22,11 @@
 |     ├── neutral_moveon.js
 |     ├── neutral_reconnect.js
 |     └── prompt_template_v2.txt
-├── filetree.txt
+├── docs
+|  ├── DB_SCHEMA.md
+|  ├── README_LOCK.md
+|  ├── filetree.txt
+|  └── setup.md
 ├── package-lock.json
 ├── package.json
 ├── public
@@ -55,7 +58,6 @@
 |  └── uploads
 ├── scripts
 |  └── prune_old_logs.sql
-├── setup.md
 ├── src
 |  ├── db
 |  |  └── db.js
@@ -110,7 +112,7 @@
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 519 file: 2591
+directory: 520 file: 2592
 
 ignored: directory (11)
 
