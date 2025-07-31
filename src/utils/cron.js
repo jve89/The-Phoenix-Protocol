@@ -59,6 +59,7 @@ const validateEnv = () => {
 };
 
 // CLI entry point to manually trigger individual cron jobs (e.g. deliverTrial)
+// CLI entry point to manually trigger individual cron jobs
 async function main() {
   const job = process.argv[2];
 
@@ -71,12 +72,6 @@ async function main() {
       break;
     case 'generateGuides':
       await runGenerateDailyGuidesSlot();
-      break;
-    case 'sendTrialFarewells':
-      await runSendTrialFarewellsSlot();
-      break;
-    case 'sendFarewells':
-      await runSendFarewellEmailsSlot();
       break;
     case 'retryGeneration':
       await runRetryFailedGenerationSlot();
@@ -252,12 +247,12 @@ async function runGenerateDailyGuidesSlot({
   }
 }
 
-// Job 2: Deliver trial emails
+// Job 2: Deliver trial emails and farewell
 /**
- * Attempts trial email delivery, retrying within a slot.
- * - Only sends each trial email once per user per day.
+ * Sends trial emails (Day 1–3) and farewells users who completed the trial.
  * - Retries every retryInterval (minutes) within maxMinutes slot.
- * - After all, attempts trial farewells.
+ * - Ensures each user receives only one trial email per day.
+ * - Sends trial_farewell.html when usage_count >= 3 and farewell not yet sent.
  */
 async function runDeliverTrialEmailsSlot({
   maxMinutes = 30,
@@ -272,11 +267,11 @@ async function runDeliverTrialEmailsSlot({
     try {
       ({ rows: users } = await db.query(
         `SELECT id, email, usage_count, gender, goal_stage
-        FROM users
-        WHERE is_trial_user = TRUE
-          AND unsubscribed = FALSE
-          AND usage_count < 3
-          AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)`
+         FROM users
+         WHERE is_trial_user = TRUE
+           AND unsubscribed = FALSE
+           AND usage_count < 3
+           AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)`
       ));
     } catch (err) {
       console.error('[CRON] Trial user query failed:', err.message);
@@ -319,10 +314,10 @@ async function runDeliverTrialEmailsSlot({
 
         await db.query(
           `UPDATE users
-          SET usage_count = usage_count + 1,
-              last_trial_sent_at = NOW(),
-              first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
-          WHERE id = $1`,
+           SET usage_count = usage_count + 1,
+               last_trial_sent_at = NOW(),
+               first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
+           WHERE id = $1`,
           [user.id]
         );
       } catch (err) {
@@ -333,40 +328,43 @@ async function runDeliverTrialEmailsSlot({
       }
     }
 
-    if (allSucceeded) {
-      break; // If no users left, stop slot
-    } else {
-      await sleep(retryInterval * 60 * 1000); // Wait and retry failed users
-    }
+    if (allSucceeded) break;
+    else await sleep(retryInterval * 60 * 1000);
     attempt++;
   }
 
-  // After slot, farewell handling
+  // 🔁 Farewell: users who reached trial limit but never received farewell
   try {
     const { rows: farewellUsers } = await db.query(
-      `SELECT id, email FROM users
+      `SELECT id, email
+       FROM users
        WHERE is_trial_user = TRUE
          AND usage_count >= 3
          AND farewell_sent = FALSE`
     );
 
+    if (!farewellUsers.length) {
+      console.log('[CRON] No pending trial farewells.');
+      logger.info('No pending trial farewells.');
+      return;
+    }
+
+    const html = await loadTemplate('trial_farewell.html');
+    if (!html) throw new Error('Missing or empty trial_farewell.html');
+
     for (const user of farewellUsers) {
       try {
-        const html = await loadTemplate('trial_farewell.html');
-        if (!html) throw new Error('Farewell template is empty or not loaded');
-
-        const subject = 'Your Phoenix Trial Has Ended';
+        const subject = 'Your Trial with The Phoenix Protocol Has Ended';
         await sendRawEmail(user.email, subject, html);
-        logger.info(`🟣 Farewell trial email sent to ${user.email}`);
-        console.log(`[CRON] 🟣 Farewell sent: ${user.email}`);
-
         await db.query(
-          `UPDATE users SET farewell_sent = TRUE WHERE id = $1`,
+          `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
           [user.id]
         );
+        console.log(`[CRON] 🟣 Trial farewell sent: ${user.email}`);
+        logger.info(`🟣 Trial farewell sent: ${user.email}`);
       } catch (err) {
-        logger.error(`Farewell trial email failed for ${user.email}: ${err.message}`);
         console.error(`[CRON] ❌ Farewell send failed: ${user.email}`, err.message);
+        logger.error(`Farewell trial email failed for ${user.email}: ${err.message}`);
       }
     }
   } catch (err) {
@@ -375,11 +373,10 @@ async function runDeliverTrialEmailsSlot({
   }
 }
 
-// Job 3: Deliver to users, rendering markdown
+// Job 3: Deliver paid guides and farewell
 /**
- * Attempts paid guide delivery within a slot window.
- * - Retries every retryInterval for up to maxMinutes.
- * - Never double-sends to any user (usage_count logic).
+ * Sends today's AI guide to all eligible paid users.
+ * Also farewells any users who hit plan_limit and haven’t received a goodbye yet.
  */
 async function runDeliverDailyGuidesSlot({
   maxMinutes = 30,
@@ -397,7 +394,6 @@ async function runDeliverDailyGuidesSlot({
          FROM users
          WHERE plan IS NOT NULL
            AND plan > 0
-           AND usage_count < plan_limit
            AND (is_trial_user IS NULL OR is_trial_user = FALSE)
            AND unsubscribed = FALSE`
       ));
@@ -413,22 +409,25 @@ async function runDeliverDailyGuidesSlot({
       break;
     }
 
-    let template, guide;
+    let template, guide, farewellHtml;
     try {
-      [template, guide] = await Promise.all([
+      [template, guide, farewellHtml] = await Promise.all([
         loadTemplate('premium_guide_email.html'),
-        loadTodayGuide()
+        loadTodayGuide(),
+        loadTemplate('farewell_email.html')
       ]);
     } catch (err) {
       template = null;
       guide = null;
+      farewellHtml = null;
       console.error('[CRON] Missing template or guide:', err.message);
       logger.error('Missing template or guide:', err.message);
     }
-    if (!template || !guide) {
+
+    if (!template || !guide || !farewellHtml) {
       if (attempt === maxRetries) {
-        console.error('[CRON] Aborting: Could not load template/guide for slot.');
-        logger.error('Aborting: Could not load template/guide for slot.');
+        console.error('[CRON] Aborting: Could not load template/guide/farewell.');
+        logger.error('Aborting: Could not load template/guide/farewell.');
         break;
       }
       await sleep(retryInterval * 60 * 1000);
@@ -439,16 +438,34 @@ async function runDeliverDailyGuidesSlot({
     let allSucceeded = true;
     for (const user of users) {
       const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
+
+      // 🧼 Skip if user already completed plan
+      if (user.usage_count >= user.plan_limit) {
+        if (!user.farewell_sent) {
+          try {
+            await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
+            await db.query(
+              `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
+              [user.id]
+            );
+            console.log(`[CRON] 🟣 Farewell sent: ${user.email}`);
+            logger.info(`Farewell sent to user: ${user.email}`);
+          } catch (err) {
+            console.error(`[CRON] ❌ Farewell send failed for ${user.email}:`, err.message);
+            logger.error(`Farewell send failed for ${user.email}: ${err.message}`);
+            allSucceeded = false;
+          }
+        }
+        continue;
+      }
+
       const section = guide[variant];
       if (!section?.content) {
         console.warn(`[CRON] No content for ${variant}, skipping ${user.email}`);
         logger.warn(`No content for ${variant}: ${user.email}`);
         continue;
       }
-      if (user.is_trial_user === true) {
-        logger.warn(`Skipping trial user during paid guide run: ${user.email}`);
-        continue;
-      }
+
       let contentHtml;
       try {
         contentHtml = marked.parse(section.content);
@@ -466,7 +483,6 @@ async function runDeliverDailyGuidesSlot({
         console.log(`[CRON] ✅ Sent to ${user.email}`);
         logger.info(`✅ Guide sent: ${user.email}`);
 
-        // Log and update usage
         await db.query(
           `INSERT INTO delivery_log (user_id,email,variant,status) VALUES ($1,$2,$3,'success')`,
           [user.id, user.email, variant]
@@ -486,172 +502,13 @@ async function runDeliverDailyGuidesSlot({
       }
     }
 
-    if (allSucceeded) {
-      break; // All done, exit slot
-    } else {
-      await sleep(retryInterval * 60 * 1000);
-    }
+    if (allSucceeded) break;
+    else await sleep(retryInterval * 60 * 1000);
     attempt++;
   }
 }
 
-// Job 4: Send farewell email to trial users
-/**
- * Attempts to send all missing trial farewells within the slot.
- * Retries every retryInterval (default: 5m) for up to maxMinutes (default: 30m).
- * Skips users already marked as farewell_sent = true.
- */
-async function runSendTrialFarewellsSlot({
-  maxMinutes = 30,
-  retryInterval = 5,
-  sleep = ms => new Promise(res => setTimeout(res, ms))
-} = {}) {
-  const maxRetries = Math.ceil(maxMinutes / retryInterval);
-  let attempt = 1;
-
-  while (attempt <= maxRetries) {
-    let users = [];
-    try {
-      const result = await db.query(`
-        SELECT * FROM users
-        WHERE is_trial_user = true AND usage_count >= plan_limit AND farewell_sent = false
-      `);
-      users = result.rows;
-    } catch (err) {
-      console.error('[CRON] Trial farewell user query failed:', err.message);
-      logger.error(`Trial farewell user query failed: ${err.message}`);
-      break;
-    }
-
-    if (!users.length) {
-      console.log('[CRON] No pending trial farewells, slot complete.');
-      logger.info('No pending trial farewells, slot complete.');
-      break;
-    }
-
-    let allSucceeded = true;
-    for (const user of users) {
-      try {
-        await sendTrialFarewellEmail(user);
-        console.log(`[CRON] ✅ Sent trial farewell to ${user.email}`);
-        logger.info(`✅ Sent trial farewell to ${user.email}`);
-      } catch (err) {
-        allSucceeded = false;
-        console.error(`[CRON] ❌ Failed to send trial farewell to ${user.email}:`, err.message);
-        logger.error(`❌ Failed to send trial farewell to ${user.email}: ${err.message}`);
-      }
-    }
-
-    if (allSucceeded) {
-      break; // All farewells sent, exit slot
-    } else {
-      await sleep(retryInterval * 60 * 1000);
-    }
-    attempt++;
-  }
-}
-
-async function sendTrialFarewellEmail(user) {
-  const filePath = path.join(__dirname, '..', 'templates', 'trial_farewell.html');
-
-  let html;
-  try {
-    html = await fs.readFile(filePath, 'utf-8');
-  } catch (err) {
-    console.error(`[CRON] ❌ Missing trial_farewell.html:`, err.message);
-    logger.error(`Missing trial farewell template: ${err.message}`);
-    return;
-  }
-
-  const subject = 'Your Trial with The Phoenix Protocol Has Ended';
-
-  try {
-    await sendRawEmail(user.email, subject, html);
-    await db.query('UPDATE users SET farewell_sent = true WHERE id = $1', [user.id]);
-    console.log(`[CRON] ✅ Trial farewell sent: ${user.email}`);
-    logger.info(`✅ Trial farewell sent: ${user.email}`);
-  } catch (err) {
-    console.error(`[CRON] ❌ Trial farewell send failed: ${err.message}`);
-    logger.error(`Trial farewell send failed: ${err.message}`);
-  }
-}
-
-// Job 5: Send farewell email to users who maxed out their plan and haven’t received farewell yet
-/**
- * Attempts to send all missing *paid* user farewells within the slot.
- * Retries every retryInterval (default: 5m) for up to maxMinutes (default: 30m).
- * Skips users already marked as farewell_sent = true.
- */
-async function runSendFarewellEmailsSlot({
-  maxMinutes = 30,
-  retryInterval = 5,
-  sleep = ms => new Promise(res => setTimeout(res, ms))
-} = {}) {
-  const maxRetries = Math.ceil(maxMinutes / retryInterval);
-  let attempt = 1;
-  let farewellHtml = null;
-
-  while (attempt <= maxRetries) {
-    // Query users still needing a farewell
-    let users = [];
-    try {
-      ({ rows: users } = await db.query(
-        `SELECT id, email FROM users
-         WHERE plan_limit > 0 AND usage_count >= plan_limit
-         AND NOT farewell_sent`
-      ));
-    } catch (err) {
-      console.error('[CRON] Farewell user query failed:', err.message);
-      logger.error(`Farewell user query failed: ${err.message}`);
-      break;
-    }
-
-    if (!users.length) {
-      console.log('[CRON] No pending farewells, slot complete.');
-      logger.info('No pending farewells, slot complete.');
-      break;
-    }
-
-    // Load template ONCE (only if at least one user to send)
-    if (!farewellHtml) {
-      try {
-        farewellHtml = await loadTemplate('farewell_email.html');
-      } catch (err) {
-        console.error('[CRON] Could not load farewell email template:', err.message);
-        logger.error(`Could not load farewell email template: ${err.message}`);
-        return;
-      }
-    }
-
-    let allSucceeded = true;
-    for (const user of users) {
-      try {
-        await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
-        console.log(`[CRON] 🎉 Farewell sent: ${user.email}`);
-        logger.info(`🎉 Farewell sent: ${user.email}`);
-        const { rows: updated } = await db.query(
-          `UPDATE users SET farewell_sent = TRUE WHERE id = $1 RETURNING email`, [user.id]
-        );
-        if (updated.length) {
-          console.log(`[CRON] DB: Marked farewell_sent for ${updated[0].email}`);
-        }
-      } catch (err) {
-        allSucceeded = false;
-        console.error(`[CRON] ❌ Farewell send failed for ${user.email}:`, err.message);
-        logger.error(`Farewell send failed for ${user.email}: ${err.message}`);
-      }
-    }
-
-    if (allSucceeded) {
-      break; // All farewells sent, exit slot
-    } else {
-      await sleep(retryInterval * 60 * 1000);
-    }
-    attempt++;
-  }
-}
-
-// Job 6: Retry generation
+// Job 4: Retry generation
 /**
  * Retry daily guide generation (catch-up) slot for catastrophic earlier failure.
  * - Only runs if today’s guide is still missing at 18:00 UTC.
@@ -699,7 +556,7 @@ async function runRetryFailedGenerationSlot({
   }
 }
 
-// Job 7: Retry delivery
+// Job 5: Retry delivery
 /**
  * Final catch-all retry for failed email deliveries (premium & trial).
  * - Paid users: retry sending today’s guide.
@@ -803,7 +660,7 @@ async function runRetryFailedDeliveriesSlot() {
   }
 }
 
-// Job 8: Delete old logs from DB
+// Job 6: Delete old logs from DB
 /**
  * Slot-based log pruning: attempts to prune old logs up to maxRetries in the slot.
  * Each attempt waits retryInterval minutes if pruning fails.
@@ -865,6 +722,7 @@ async function runPruneOldLogsSlot({
 function startCron() {
   if (!validateEnv()) return;
 
+  // 📩 Generate today's guide
   cron.schedule('0 12 * * *', async () => {
     if (!jobRunning.generate) {
       jobRunning.generate = true;
@@ -872,6 +730,7 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
+  // 🎯 Deliver trial emails (+ farewell)
   cron.schedule('0 13 * * *', async () => {
     if (!jobRunning.trial) {
       jobRunning.trial = true;
@@ -879,6 +738,7 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
+  // 🧠 Deliver paid guides (+ farewell)
   cron.schedule('0 14 * * *', async () => {
     if (!jobRunning.deliver) {
       jobRunning.deliver = true;
@@ -886,20 +746,7 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
-  cron.schedule('0 15 * * *', async () => {
-    if (!jobRunning.trialFarewell) {
-      jobRunning.trialFarewell = true;
-      try { await runSendTrialFarewellsSlot(); } finally { jobRunning.trialFarewell = false; }
-    }
-  }, { timezone: 'Etc/UTC' });
-
-  cron.schedule('0 16 * * *', async () => {
-    if (!jobRunning.farewell) {
-      jobRunning.farewell = true;
-      try { await runSendFarewellEmailsSlot(); } finally { jobRunning.farewell = false; }
-    }
-  }, { timezone: 'Etc/UTC' });
-
+  // 🔁 Retry generation failures
   cron.schedule('0 18 * * *', async () => {
     if (!jobRunning.generate) {
       jobRunning.generate = true;
@@ -907,6 +754,7 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
+  // 🔁 Retry delivery failures
   cron.schedule('0 19 * * *', async () => {
     if (!jobRunning.retry) {
       jobRunning.retry = true;
@@ -914,6 +762,7 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
+  // 🧹 Clean old logs
   cron.schedule('0 3 * * *', async () => {
     if (!jobRunning.prune) {
       jobRunning.prune = true;

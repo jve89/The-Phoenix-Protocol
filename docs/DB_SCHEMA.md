@@ -171,4 +171,23 @@
 
 ---
 
-Let me know if you’d like this saved as `docs/DB_SCHEMA.md`.
+## View: `user_delivery_view`  
+**Purpose:** Provides a unified overview of each user’s subscription state and delivery activity  
+**Used in:** DB inspection, future admin dashboards, enforcement logic audits
+
+| Column         | Type      | Description                                       |
+|----------------|-----------|---------------------------------------------------|
+| id             | integer   | User ID                                           |
+| email          | text      | User email address                               |
+| plan           | integer   | Plan type (0 = expired/unpaid, 1 = paid)         |
+| plan_limit     | integer   | Max number of emails allowed                     |
+| usage_count    | integer   | Number of guides received                        |
+| has_hit_limit  | boolean   | True if `usage_count >= plan_limit`              |
+| is_trial_user  | boolean   | True if user is on free trial                    |
+| farewell_sent  | boolean   | Whether farewell was already sent                |
+| is_subscriber  | boolean   | Whether user was ever a paying subscriber        |
+| unsubscribed   | boolean   | True if user manually unsubscribed               |
+| is_downgraded  | boolean   | True if `plan = 0` and not a subscriber anymore  |
+| total_sent     | integer   | Total emails logged (from `delivery_log`)        |
+| failed_count   | integer   | Number of failed sends                           |
+| last_sent      | timestamp | Timestamp of most recent sent email              |

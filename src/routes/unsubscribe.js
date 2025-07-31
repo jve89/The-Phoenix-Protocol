@@ -74,11 +74,12 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
 
     const result = await db.query(
       `UPDATE users
-       SET plan = 0,
-           usage_count = plan_limit,
-           unsubscribed = TRUE
-       WHERE email = $1
-       RETURNING email`,
+      SET plan = 0,
+          usage_count = plan_limit,
+          unsubscribed = TRUE,
+          farewell_sent = TRUE
+      WHERE email = $1
+      RETURNING email`,
       [email]
     );
 
@@ -87,10 +88,28 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
       return res.status(404).type('text/html').send('<h2>Email not found.</h2>');
     }
 
-    const farewellPath = path.join(__dirname, '../../templates/farewell_email.html');
+    const { rows } = await db.query(
+      'SELECT is_trial_user FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (!rows.length) {
+      logger.warn(`Unsubscribe: user not found for ${email}`);
+      return res.status(404).type('text/html').send('<h2>Email not found.</h2>');
+    }
+
+    const isTrial = rows[0].is_trial_user;
+    const templateName = isTrial ? 'trial_farewell.html' : 'farewell_email.html';
+    const farewellPath = path.join(__dirname, `../../templates/${templateName}`);
     const farewellHtml = await fs.readFile(farewellPath, 'utf-8');
-    await sendRawEmail(email, 'Thank You for Using The Phoenix Protocol', farewellHtml);
-    logger.info(`Farewell email sent to ${email}`);
+
+    await sendRawEmail(
+      email,
+      'Thank You for Using The Phoenix Protocol',
+      farewellHtml
+    );
+
+    logger.info(`Farewell email (${templateName}) sent to ${email}`);
 
     const html = `
       <html>

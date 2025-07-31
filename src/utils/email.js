@@ -1,4 +1,5 @@
 const sgMail = require('@sendgrid/mail');
+const db = require('../db/db');
 const { marked } = require('marked');
 const { convert } = require('html-to-text');
 const jwt = require('jsonwebtoken');
