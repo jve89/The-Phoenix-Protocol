@@ -160,11 +160,14 @@ async function sendMarkdownEmail(to, subject, markdown) {
   await sendRawEmail(to, subject, html);
 }
 
+const { loadTemplate } = require('./loadTemplate'); // ensure this is at the top
+
 /**
- * Renders a guide object into HTML using a given template
+ * Renders a guide object into HTML using /templates/daily_summary.html
  */
-function renderEmailMarkdown(guide, template = defaultTemplate()) {
-  // Case A: It's a full daily guide with multiple variants
+async function renderEmailMarkdown(guide) {
+  const template = await loadTemplate('daily_summary.html');
+
   const isFullGuide = typeof guide === 'object' &&
     Object.values(guide).every(
       v => typeof v === 'object' && ('content' in v || 'title' in v)
@@ -179,30 +182,15 @@ function renderEmailMarkdown(guide, template = defaultTemplate()) {
     }
 
     return template
-      .replace('{{title}}', 'Daily Guide Summary')
-      .replace('{{content}}', fullHtml);
+      .replace(/{{\s*title\s*}}/g, 'Daily Guide Summary')
+      .replace(/{{\s*content\s*}}/g, fullHtml);
   }
 
-  // Case B: Just a single guide object
+
   const contentHtml = marked.parse(guide?.content || '');
   return template
-    .replace('{{title}}', guide?.title || '')
-    .replace('{{content}}', contentHtml);
-}
-
-/**
- * Provides a minimal default email template if none is supplied
- */
-function defaultTemplate() {
-  return `
-  <!DOCTYPE html>
-  <html>
-    <head><meta charset="UTF-8"><title>{{title}}</title></head>
-    <body style="font-family:sans-serif;line-height:1.6;padding:1rem;">
-      <h1>{{title}}</h1>
-      <div>{{content}}</div>
-    </body>
-  </html>`;
+    .replace(/{{\s*title\s*}}/g, guide?.title || '')
+    .replace(/{{\s*content\s*}}/g, contentHtml);
 }
 
 module.exports = {

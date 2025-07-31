@@ -43,8 +43,11 @@ const todayUtc = () => new Date().toISOString().slice(0, 10);
 const logger = {
   info:  msg => logEvent('cron', 'info', msg),
   warn:  msg => logEvent('cron', 'warn', msg),
-  error: msg => logEvent('cron', 'error', msg)
-};
+  error: msg => logEvent('cron', 'error', msg),
+  debug: msg => console.log('[DEBUG]', msg),
+};  
+
+
 
 // Validate required environment variables before running any slots
 const validateEnv = () => {
@@ -58,35 +61,7 @@ const validateEnv = () => {
   return true;
 };
 
-// CLI entry point to manually trigger individual cron jobs (e.g. deliverTrial)
-// CLI entry point to manually trigger individual cron jobs
-async function main() {
-  const job = process.argv[2];
 
-  switch (job) {
-    case 'deliverTrial':
-      await runDeliverTrialEmailsSlot();
-      break;
-    case 'deliverPaid':
-      await runDeliverDailyGuidesSlot();
-      break;
-    case 'generateGuides':
-      await runGenerateDailyGuidesSlot();
-      break;
-    case 'retryGeneration':
-      await runRetryFailedGenerationSlot();
-      break;
-    case 'retryFailedEmails':
-      await runRetryFailedDeliveriesSlot();
-      break;
-    case 'pruneLogs':
-      await runPruneOldLogsSlot();
-      break;
-    default:
-      console.error(`Unknown job: ${job}`);
-      process.exit(1);
-  }
-}
 
 // Job 1: Generate & cache, then send admin backup
 /**
@@ -188,7 +163,7 @@ async function runGenerateDailyGuidesSlot({
         warningBlockMd = warnings.map(w => `> ⚠️ ${w}`).join('\n') + '\n\n---\n';
       }
 
-      const emailPreviewHtml = renderEmailMarkdown(guide);
+      const emailPreviewHtml = await renderEmailMarkdown(guide);
       const adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml + emailPreviewHtml;
       const mdPath = path.join(os.tmpdir(), `daily_guide_${date}.md`);
       const jsonPath = path.join(os.tmpdir(), `daily_guide_${date}.json`);
@@ -213,6 +188,9 @@ async function runGenerateDailyGuidesSlot({
       }
 
       // Send email
+      console.log('[DEBUG] adminHtml type:', typeof adminHtml);
+      console.log('[DEBUG] adminHtml instanceof Promise:', adminHtml instanceof Promise);
+      console.log('[DEBUG] adminHtml snippet:', adminHtml.slice(0, 200));
       await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
       console.log('[CRON] ✅ Admin guide + backup sent');
       logger.info('✅ Admin guide + backup sent');
@@ -770,6 +748,39 @@ function startCron() {
     }
   }, { timezone: 'Etc/UTC' });
 
+}
+
+// CLI job map for manual triggering
+const jobMap = {
+  generate: runGenerateDailyGuidesSlot,
+  trial: runDeliverTrialEmailsSlot,
+  deliver: runDeliverDailyGuidesSlot,
+  retryGenerate: runRetryFailedGenerationSlot,
+  retryDeliver: runRetryFailedDeliveriesSlot,
+  prune: runPruneOldLogsSlot
+};
+
+// Manual CLI trigger: node cron.js <jobName>
+async function main() {
+  const job = process.argv[2];
+  if (!job) {
+    console.error('[CRON] ❌ No job name provided. Usage: node src/utils/cron.js <jobName>');
+    return;
+  }
+
+  const fn = jobMap[job];
+  if (!fn) {
+    console.error(`[CRON] ❌ Unknown job: ${job}`);
+    return;
+  }
+
+  try {
+    console.log(`[CRON] ▶️ Starting job: ${job}`);
+    await fn();
+    console.log(`[CRON] ✅ Job complete: ${job}`);
+  } catch (err) {
+    console.error(`[CRON] ❌ Job failed: ${err.message}`);
+  }
 }
 
 module.exports = { startCron };
