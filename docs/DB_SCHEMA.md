@@ -2,24 +2,31 @@
 > Last updated: 2025-07-31  
 > This document outlines all tables in the `public` schema of the production PostgreSQL database. Each entry includes its purpose, key fields, and usage in the codebase.  
 
+⚠️ Note: This file is manually maintained and may fall out of sync. Always confirm schema using `\d table_name` before making DB changes.
+
 ---
 
 ## Table: `users`
-**Purpose:** Stores user registration details.  
+**Purpose:** Stores user details, subscription state, and tracking data  
 **Used in:** `routes.js`, `db.js`, `cron.js`, `email.js`
 
-| Column      | Type     | Description               |
-|-------------|----------|---------------------------|
-| id          | integer  | Primary key               |
-| email       | text     | User email address        |
-| name        | text     | User display name         |
-| gender      | text     | male/female/neutral       |
-| goal_stage  | text     | moveon/reconnect          |
-| is_trial_user | boolean | Whether on free trial    |
-| plan        | integer  | 0=free trial, 1=paid      |
-| created_at  | timestamp | Signup time              |
-| trial_start | date     | Start of trial window     |
-| farewell_sent | boolean | Whether farewell sent    |
+| Column            | Type      | Description                                  |
+|-------------------|-----------|----------------------------------------------|
+| id                | integer   | Primary key                                  |
+| email             | text      | User email address                           |
+| name              | text      | Display name                                 |
+| gender            | text      | male/female/neutral                          |
+| goal_stage        | text      | moveon / reconnect                           |
+| is_trial_user     | boolean   | Whether user is on free trial                |
+| plan              | integer   | 0 = expired/unpaid, 1 = active plan          |
+| plan_limit        | integer   | Max number of content emails                 |
+| usage_count       | integer   | Number of guides received so far             |
+| farewell_sent     | boolean   | Whether farewell was sent                    |
+| is_subscriber     | boolean   | Whether user is/was a paying subscriber      |
+| unsubscribed      | boolean   | Whether user unsubscribed manually           |
+| last_trial_sent_at| timestamp | Last trial email sent (for 3-day window)     |
+| created_at        | timestamp | Signup time                                  |
+| updated_at        | timestamp | Auto-managed by DB trigger                   |
 
 ---
 
