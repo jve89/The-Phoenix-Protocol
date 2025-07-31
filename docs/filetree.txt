@@ -78,6 +78,7 @@
 |     ├── payment.js
 |     └── validateGuide.js
 ├── templates
+|  ├── daily_summary.html
 |  ├── email.html
 |  ├── farewell_email.html
 |  ├── premium_guide_email.html
@@ -112,7 +113,7 @@
    ├── trigger_guide_cron.js
    └── welcome_email_test.js
 
-directory: 520 file: 2592
+directory: 520 file: 2593
 
 ignored: directory (11)
 

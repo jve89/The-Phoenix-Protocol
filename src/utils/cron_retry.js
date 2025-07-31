@@ -2,7 +2,6 @@
 require('./loadEnv');
 
 // Core dependencies
-const cron = require('node-cron');
 const db = require('../db/db');
 const fs = require('fs').promises;
 const path = require('path');
@@ -13,7 +12,6 @@ const { sendRawEmail, renderEmailMarkdown } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent, logDelivery } = require('./db_logger');
-const { sendDailyGuideBackup } = require('./backup');
 const { marked } = require('marked');
 const { validateGuideContent } = require('./validateGuide');
 
@@ -23,81 +21,52 @@ const VARIANTS = [
   'neutral_moveon', 'neutral_reconnect'
 ];
 
-// Prevent overlapping runs
-const jobRunning = {
-  generatePaid: false,
-  deliverTrial: false,
-  deliverPaid: false,
-  maintenance: false
-};
-
 const todayUtc = () => new Date().toISOString().slice(0, 10);
 
-// Structured logger
 const logger = {
-  info:  msg => logEvent('cron', 'info', msg),
-  warn:  msg => logEvent('cron', 'warn', msg),
-  error: msg => logEvent('cron', 'error', msg),
+  info:  msg => logEvent('cron_retry', 'info', msg),
+  warn:  msg => logEvent('cron_retry', 'warn', msg),
+  error: msg => logEvent('cron_retry', 'error', msg),
   debug: msg => console.log('[DEBUG]', msg),
 };
 
-const validateEnv = () => {
-  const required = ['SENDGRID_API_KEY', 'DATABASE_URL', 'ADMIN_EMAIL'];
-  for (const key of required) {
-    if (!process.env[key]) {
-      logger.error(`Missing ENV ${key} — cron disabled`);
-      return false;
-    }
-  }
-  return true;
-};
-
 /**
- * 1. Generate & cache guides for paid users (12:00 UTC)
+ * Retry: Generate & cache guides for paid users, only if missing
  */
 async function runGeneratePaidSlot() {
   const date = todayUtc();
-  // Idempotency: skip if all guides already exist
   const existing = await loadGuideByDate(date);
   const allVariantsPresent = VARIANTS.every(
     variant => existing?.[variant]?.content?.trim()?.length > 100
   );
   if (allVariantsPresent) {
-    logger.info(`Guide for ${date} already exists. Slot complete.`);
-    // Only send backup if not yet sent
-    const backupLog = await db.query(
-      `SELECT 1 FROM guide_generation_logs
-       WHERE DATE(timestamp) = $1 AND message ILIKE '%Admin guide + backup sent%' LIMIT 1`, [date]
-    );
-    if (backupLog.rowCount > 0) {
-      logger.info(`Admin backup already sent for ${date}. Skipping.`);
-      return;
-    }
-  } else {
-    try {
-      logger.info(`🚀 Generating daily guides for ${date}`);
-      await generateAndCacheDailyGuides();
-      logger.info(`✅ Guide generation complete for ${date}`);
-    } catch (err) {
-      logger.error(`Guide generation failed for ${date}: ${err.message}`);
-      return;
-    }
+    logger.info(`Retry: Guide for ${date} already exists. Skipping.`);
+    return;
   }
-  // Send admin backup
+  logger.info(`Retry: Guide for ${date} missing. Generating now.`);
+  try {
+    await generateAndCacheDailyGuides();
+    logger.info(`Retry: Guide generation complete for ${date}`);
+  } catch (err) {
+    logger.error(`Retry: Guide generation failed for ${date}: ${err.message}`);
+    return;
+  }
+
+  // Admin backup (same as main)
   try {
     const guide = await loadGuideByDate(date);
     const allVariantsPresent = VARIANTS.every(
       variant => guide?.[variant]?.content?.trim()?.length > 100
     );
     if (!allVariantsPresent) {
-      logger.warn(`⚠️ Guide incomplete for ${date}, skipping backup.`);
+      logger.warn(`Retry: Guide incomplete for ${date}, skipping backup.`);
       return;
     }
     if (process.env.ADMIN_EMAIL) {
       const { isValid, warnings } = validateGuideContent(guide, VARIANTS);
       let warningBlockHtml = '', warningBlockMd = '';
       if (!isValid && warnings.length) {
-        logger.warn('⚠️ Guide warnings: ' + warnings.join(' | '));
+        logger.warn('Retry: Guide warnings: ' + warnings.join(' | '));
         warningBlockHtml = `<div style="background:#fff3cd;padding:10px;border-left:5px solid #ffc107;margin-bottom:20px;"><strong>⚠️ Guide Warnings:</strong><ul>` +
           warnings.map(w => `<li>${w}</li>`).join('') + `</ul></div>`;
         warningBlockMd = warnings.map(w => `> ⚠️ ${w}`).join('\n') + '\n\n---\n';
@@ -115,25 +84,24 @@ async function runGeneratePaidSlot() {
       }
       await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
       await fs.writeFile(mdPath, md);
-      await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
-      logger.info('✅ Admin guide + backup sent');
-      // Cleanup
+      await sendRawEmail(process.env.ADMIN_EMAIL, `📦 [RETRY] Daily Guide Backup – ${date}`, adminHtml, [jsonPath, mdPath]);
+      logger.info('Retry: Admin guide + backup sent');
       await fs.unlink(jsonPath).catch(() => {});
       await fs.unlink(mdPath).catch(() => {});
     }
   } catch (err) {
-    logger.error(`Backup email failed: ${err.message}`);
+    logger.error(`Retry: Backup email failed: ${err.message}`);
   }
 }
 
 /**
- * 2. Deliver trial emails & farewells (13:00 UTC)
+ * Retry: Deliver trial emails & farewells to only those missed today
  */
 async function runDeliverTrialSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, usage_count, gender, goal_stage
+      `SELECT id, email, usage_count, gender, goal_stage, last_trial_sent_at
        FROM users
        WHERE is_trial_user = TRUE
          AND unsubscribed = FALSE
@@ -141,7 +109,7 @@ async function runDeliverTrialSlot() {
          AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)`
     ));
   } catch (err) {
-    logger.error(`Trial user query failed: ${err.message}`);
+    logger.error(`Retry: Trial user query failed: ${err.message}`);
     return;
   }
 
@@ -154,15 +122,15 @@ async function runDeliverTrialSlot() {
     try {
       html = await loadTemplate(templatePath);
     } catch (err) {
-      logger.error(`Missing trial template ${templatePath}: ${err.message}`);
+      logger.error(`Retry: Missing trial template ${templatePath}: ${err.message}`);
       continue;
     }
-    const subject = `Phoenix Protocol — Day ${day}`;
+    const subject = `Phoenix Protocol — Day ${day} [RETRY]`;
     const variant = `${gender}_${goal}`;
     try {
       await sendRawEmail(user.email, subject, html);
-      logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
-      await logDelivery(user.id, user.email, variant, 'success', null, 'trial'); // delivery_type
+      logger.info(`Retry: Trial Day ${day} sent: ${user.email}`);
+      await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
       await db.query(
         `UPDATE users SET usage_count = usage_count + 1,
                           last_trial_sent_at = NOW(),
@@ -171,12 +139,12 @@ async function runDeliverTrialSlot() {
         [user.id]
       );
     } catch (err) {
-      logger.error(`Trial send failed for ${user.email}: ${err.message}`);
+      logger.error(`Retry: Trial send failed for ${user.email}: ${err.message}`);
       await logDelivery(user.id, user.email, variant, 'failed', err.message, 'trial');
     }
   }
 
-  // Farewell: users who finished trial but haven't received farewell
+  // Farewell (only those not already sent)
   try {
     const { rows: farewellUsers } = await db.query(
       `SELECT id, email FROM users
@@ -189,30 +157,30 @@ async function runDeliverTrialSlot() {
     if (!html) throw new Error('Missing trial_farewell.html');
     for (const user of farewellUsers) {
       try {
-        const subject = 'Your Trial with The Phoenix Protocol Has Ended';
+        const subject = 'Your Trial with The Phoenix Protocol Has Ended [RETRY]';
         await sendRawEmail(user.email, subject, html);
         await db.query(
           `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
           [user.id]
         );
-        logger.info(`🟣 Trial farewell sent: ${user.email}`);
+        logger.info(`Retry: Trial farewell sent: ${user.email}`);
       } catch (err) {
-        logger.error(`Farewell trial email failed for ${user.email}: ${err.message}`);
+        logger.error(`Retry: Farewell trial email failed for ${user.email}: ${err.message}`);
       }
     }
   } catch (err) {
-    logger.error(`Farewell trial user query failed: ${err.message}`);
+    logger.error(`Retry: Farewell trial user query failed: ${err.message}`);
   }
 }
 
 /**
- * 3. Deliver paid guides & farewells (14:00 UTC)
+ * Retry: Deliver paid guides & farewells only to those missed today
  */
 async function runDeliverPaidSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, farewell_sent
+      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, farewell_sent, first_guide_sent_at
        FROM users
        WHERE plan IS NOT NULL
          AND plan > 0
@@ -220,7 +188,7 @@ async function runDeliverPaidSlot() {
          AND unsubscribed = FALSE`
     ));
   } catch (err) {
-    logger.error(`Paid user query failed: ${err.message}`);
+    logger.error(`Retry: Paid user query failed: ${err.message}`);
     return;
   }
 
@@ -232,47 +200,61 @@ async function runDeliverPaidSlot() {
       loadTemplate('farewell_email.html')
     ]);
   } catch (err) {
-    logger.error('Missing template or guide: ' + err.message);
+    logger.error('Retry: Missing template or guide: ' + err.message);
     return;
   }
 
   for (const user of users) {
     const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
+
     // Skip if user already completed plan
     if (user.usage_count >= user.plan_limit) {
       if (!user.farewell_sent) {
         try {
-          await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
+          await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol [RETRY]", farewellHtml);
           await db.query(
             `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
             [user.id]
           );
-          logger.info(`🟣 Farewell sent: ${user.email}`);
+          logger.info(`Retry: Farewell sent: ${user.email}`);
         } catch (err) {
-          logger.error(`Farewell send failed for ${user.email}: ${err.message}`);
+          logger.error(`Retry: Farewell send failed for ${user.email}: ${err.message}`);
         }
       }
       continue;
     }
-    const section = guide[variant];
-    if (!section?.content) {
-      logger.warn(`No content for ${variant}: ${user.email}`);
+
+    // **Check if today's email was already sent**
+    const alreadySent = user.first_guide_sent_at &&
+      new Date(user.first_guide_sent_at).toISOString().slice(0, 10) === todayUtc() &&
+      user.usage_count > 0;
+
+    if (alreadySent) {
+      logger.info(`Retry: Guide for ${user.email} already sent today. Skipping.`);
       continue;
     }
+
+    const section = guide[variant];
+    if (!section?.content) {
+      logger.warn(`Retry: No content for ${variant}: ${user.email}`);
+      continue;
+    }
+
     let contentHtml;
     try {
       contentHtml = marked.parse(section.content);
     } catch (err) {
-      logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
+      logger.error(`Retry: Markdown parse failed for ${variant}: ${err.message}`);
       continue;
     }
+
     const html = template
       .replace('{{title}}', section.title)
       .replace('{{content}}', contentHtml);
 
     try {
-      await sendRawEmail(user.email, section.title, html);
-      logger.info(`✅ Guide sent: ${user.email}`);
+      await sendRawEmail(user.email, section.title + ' [RETRY]', html);
+      logger.info(`Retry: Guide sent: ${user.email}`);
       await db.query(
         `INSERT INTO delivery_log (user_id,email,variant,status,delivery_type) VALUES ($1,$2,$3,'success','paid')`,
         [user.id, user.email, variant]
@@ -284,7 +266,7 @@ async function runDeliverPaidSlot() {
         [user.id]
       );
     } catch (err) {
-      logger.error(`Send failed for ${user.email}: ${err.message}`);
+      logger.error(`Retry: Send failed for ${user.email}: ${err.message}`);
       await db.query(
         `INSERT INTO delivery_log (user_id,email,variant,status,error_message,delivery_type) VALUES ($1,$2,$3,'failed',$4,'paid')`,
         [user.id, user.email, variant, err.message]
@@ -294,13 +276,10 @@ async function runDeliverPaidSlot() {
 }
 
 /**
- * 4. System maintenance slot (03:00 UTC)
- * - All system cleaning & hygiene tasks live here, modular for future growth.
+ * Retry: System maintenance (idempotent)
  */
 async function runMaintenanceSlot() {
-  logger.info('🔧 Starting system maintenance slot');
-
-  // 1. Prune logs (customize intervals as needed)
+  logger.info('Retry: 🔧 Starting system maintenance slot');
   const logTables = [
     { table: 'guide_generation_logs', col: 'created_at' },
     { table: 'delivery_log', col: 'sent_at' },
@@ -312,49 +291,12 @@ async function runMaintenanceSlot() {
       const res = await db.query(
         `DELETE FROM ${table} WHERE ${col} < NOW() - INTERVAL '90 days'`
       );
-      logger.info(`🧹 Pruned ${res.rowCount} from ${table}`);
+      logger.info(`Retry: 🧹 Pruned ${res.rowCount} from ${table}`);
     } catch (err) {
-      logger.error(`❌ Prune failed for ${table}: ${err.message}`);
+      logger.error(`Retry: ❌ Prune failed for ${table}: ${err.message}`);
     }
   }
-
-  // 2. (Future) Add other cleaning tasks here (archive, orphaned data, etc)
-  logger.info('✅ Maintenance slot complete');
-}
-
-/**
- * Schedule tasks (UTC)
- */
-function startCron() {
-  if (!validateEnv()) return;
-
-  cron.schedule('0 12 * * *', async () => {
-    if (!jobRunning.generatePaid) {
-      jobRunning.generatePaid = true;
-      try { await runGeneratePaidSlot(); } finally { jobRunning.generatePaid = false; }
-    }
-  }, { timezone: 'Etc/UTC' });
-
-  cron.schedule('0 13 * * *', async () => {
-    if (!jobRunning.deliverTrial) {
-      jobRunning.deliverTrial = true;
-      try { await runDeliverTrialSlot(); } finally { jobRunning.deliverTrial = false; }
-    }
-  }, { timezone: 'Etc/UTC' });
-
-  cron.schedule('0 14 * * *', async () => {
-    if (!jobRunning.deliverPaid) {
-      jobRunning.deliverPaid = true;
-      try { await runDeliverPaidSlot(); } finally { jobRunning.deliverPaid = false; }
-    }
-  }, { timezone: 'Etc/UTC' });
-
-  cron.schedule('0 3 * * *', async () => {
-    if (!jobRunning.maintenance) {
-      jobRunning.maintenance = true;
-      try { await runMaintenanceSlot(); } finally { jobRunning.maintenance = false; }
-    }
-  }, { timezone: 'Etc/UTC' });
+  logger.info('Retry: ✅ Maintenance slot complete');
 }
 
 /**
@@ -370,24 +312,22 @@ const jobMap = {
 async function main() {
   const job = process.argv[2];
   if (!job) {
-    console.error('[CRON] ❌ No job name provided. Usage: node src/utils/cron.js <jobName>');
+    console.error('[CRON-RETRY] ❌ No job name provided. Usage: node src/utils/cron_retry.js <jobName>');
     return;
   }
   const fn = jobMap[job];
   if (!fn) {
-    console.error(`[CRON] ❌ Unknown job: ${job}`);
+    console.error(`[CRON-RETRY] ❌ Unknown job: ${job}`);
     return;
   }
   try {
-    console.log(`[CRON] ▶️ Starting job: ${job}`);
+    console.log(`[CRON-RETRY] ▶️ Starting job: ${job}`);
     await fn();
-    console.log(`[CRON] ✅ Job complete: ${job}`);
+    console.log(`[CRON-RETRY] ✅ Job complete: ${job}`);
   } catch (err) {
-    console.error(`[CRON] ❌ Job failed: ${err.message}`);
+    console.error(`[CRON-RETRY] ❌ Job failed: ${err.message}`);
   }
 }
-
-module.exports = { startCron };
 
 if (require.main === module) {
   main();

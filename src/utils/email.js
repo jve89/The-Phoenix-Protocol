@@ -1,29 +1,11 @@
 const sgMail = require('@sendgrid/mail');
-const db = require('../db/db');
+const jwt = require('jsonwebtoken');
 const { marked } = require('marked');
 const { convert } = require('html-to-text');
-const jwt = require('jsonwebtoken');
 const fs = require('fs').promises;
 const path = require('path');
 const { logEvent } = require('./db_logger');
-
-// Structured logger for email utilities
-const logger = {
-  info:  msg => logEvent('email', 'info', msg),
-  warn:  msg => logEvent('email', 'warn', msg),
-  error: msg => logEvent('email', 'error', msg)
-};
-
-// Validate required env or throw
-function validateEnv() {
-  if (!process.env.SENDGRID_API_KEY) {
-    throw new Error('Missing SENDGRID_API_KEY');
-  }
-  if (!process.env.JWT_SECRET) {
-    throw new Error('Missing JWT_SECRET for unsubscribe tokens');
-  }
-}
-validateEnv();
+const { loadTemplate } = require('./loadTemplate');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -32,79 +14,32 @@ const fromEmail = {
   email: 'support@thephoenixprotocol.app'
 };
 
-/**
- * Retry wrapper for transient SendGrid failures with exponential backoff
- */
-async function sendWithRetry(msg, retries = 2) {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      await sgMail.send(msg);
-      logger.info(`SendGrid send success to ${msg.to}`);
-      return;
-    } catch (error) {
-      const status = error.response?.statusCode;
-      const transient = [429, 500, 502, 503, 504].includes(status);
-      const msgTo = Array.isArray(msg.to) ? msg.to.join(',') : msg.to;
-
-      if (!transient || attempt === retries) {
-        logger.error(`SendGrid permanent error for ${msgTo}: ${error.message}`);
-        throw error;
-      }
-      const delayMs = 1000 * Math.pow(2, attempt);
-      logger.warn(`Transient error (${status}) for ${msgTo}, retrying in ${delayMs}ms (${attempt+1}/${retries})`);
-      await new Promise(res => setTimeout(res, delayMs));
-    }
-  }
-}
-
-/**
- * Sends a fully rendered HTML email with optional attachment
- */
+// Atomic email send, with single-attempt (no retries)
 async function sendRawEmail(to, subject, html, attachmentPath = null) {
   if (!to || !subject || typeof html !== 'string' || html.trim().length === 0) {
-    logger.error('Invalid parameters for sendRawEmail', {
-      to,
-      subject,
-      htmlLength: html ? html.length : 'undefined'
-    });
+    logEvent('email', 'error', 'Invalid parameters for sendRawEmail');
     throw new Error('Invalid raw email parameters');
   }
 
-  // Truncate long subjects
-  let finalSubject = subject;
-  if (finalSubject.length > 140) {
-    logger.warn(`Subject too long for ${to}, truncating`);
-    finalSubject = finalSubject.slice(0, 137) + '...';
-  }
+  // Subject truncation (if needed)
+  let finalSubject = subject.length > 140 ? subject.slice(0, 137) + '...' : subject;
 
-  // Replace unsubscribe token placeholder
+  // Always generate a one-time unsubscribe token
   let finalHtml = html;
-  if (html.includes('{{unsubscribe_token}}')) {
-    try {
-      const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '90d' });
-      finalHtml = html.replace(/{{unsubscribe_token}}/g, token);
-    } catch (err) {
-      logger.error(`Failed to generate unsubscribe token for ${to}: ${err.message}`);
-    }
-  }
-
-  // Inject unsubscribe footer if user is active (not unsubscribed)
   try {
-    const { rows } = await db.query('SELECT unsubscribed FROM users WHERE email = $1', [to]);
-    if (rows.length && rows[0].unsubscribed === false) {
-      const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '7d' });
-      const unsubscribeUrl = `https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`;
-      const footer = `
-        <div style="margin-top: 40px; font-size: 12px; color: #888; text-align: center;">
-          <p>If you no longer want to receive these emails, <a href="${unsubscribeUrl}" style="color:#7c3aed;">click here to unsubscribe</a>.</p>
-        </div>
-      `;
-      finalHtml += footer;
-    }
+    const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const unsubscribeUrl = `https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`;
+    const footer = `
+      <div style="margin-top: 40px; font-size: 12px; color: #888; text-align: center;">
+        <p>If you no longer want to receive these emails, <a href="${unsubscribeUrl}" style="color:#7c3aed;">click here to unsubscribe</a>.</p>
+      </div>
+    `;
+    finalHtml += footer;
   } catch (err) {
-    logger.warn(`[sendRawEmail] Failed to inject unsubscribe footer for ${to}: ${err.message}`);
+    logEvent('email', 'warn', `Unsubscribe token error for ${to}: ${err.message}`);
   }
 
+  // Plain text version for fallback
   const text = convert(finalHtml, {
     wordwrap: 130,
     selectors: [{ selector: 'a', options: { hideLinkHrefIfSameAsText: true } }]
@@ -112,7 +47,7 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
 
   const msg = { to, from: fromEmail, subject: finalSubject, html: finalHtml, text };
 
-  // Attach one or multiple files if provided
+  // Attachments (if any)
   if (attachmentPath) {
     msg.attachments = [];
     const paths = Array.isArray(attachmentPath) ? attachmentPath : [attachmentPath];
@@ -125,26 +60,27 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
           disposition: 'attachment'
         });
       } catch (err) {
-        logger.warn(`Attachment failed for ${to}: ${err.message}`);
+        logEvent('email', 'warn', `Attachment failed for ${to}: ${err.message}`);
       }
     }
   }
 
-  logger.info(`[sendRawEmail] Sending to ${to} — ${finalSubject}`);
-  console.log(`[DEBUG] Sending email to ${to} — ${finalSubject}`);
-
-  await sendWithRetry(msg);
+  logEvent('email', 'info', `[sendRawEmail] Sending to ${to} — ${finalSubject}`);
+  try {
+    await sgMail.send(msg);
+    logEvent('email', 'info', `SendGrid send success to ${to}`);
+  } catch (error) {
+    logEvent('email', 'error', `SendGrid error for ${to}: ${error.message}`);
+    throw error;
+  }
 }
 
-/**
- * Converts Markdown to HTML template and sends via sendRawEmail
- */
+// Markdown-to-HTML email sender (helper, optional)
 async function sendMarkdownEmail(to, subject, markdown) {
   if (!to || !subject || !markdown) {
-    logger.error('Invalid parameters for sendMarkdownEmail', { to, subject });
+    logEvent('email', 'error', 'Invalid parameters for sendMarkdownEmail');
     throw new Error('Invalid markdown email parameters');
   }
-
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,18 +92,12 @@ async function sendMarkdownEmail(to, subject, markdown) {
 </head>
 <body>${marked.parse(markdown)}</body>
 </html>`;
-
   await sendRawEmail(to, subject, html);
 }
 
-const { loadTemplate } = require('./loadTemplate'); // ensure this is at the top
-
-/**
- * Renders a guide object into HTML using /templates/daily_summary.html
- */
+// Renders a guide object into HTML using /templates/daily_summary.html
 async function renderEmailMarkdown(guide) {
   const template = await loadTemplate('daily_summary.html');
-
   const isFullGuide = typeof guide === 'object' &&
     Object.values(guide).every(
       v => typeof v === 'object' && ('content' in v || 'title' in v)
@@ -180,13 +110,10 @@ async function renderEmailMarkdown(guide) {
       const safeContent = marked.parse(content || '');
       fullHtml += `<h2>${safeTitle}</h2>\n<div>${safeContent}</div><hr style="margin:2rem 0;">`;
     }
-
     return template
       .replace(/{{\s*title\s*}}/g, 'Daily Guide Summary')
       .replace(/{{\s*content\s*}}/g, fullHtml);
   }
-
-
   const contentHtml = marked.parse(guide?.content || '');
   return template
     .replace(/{{\s*title\s*}}/g, guide?.title || '')
