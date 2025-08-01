@@ -43,6 +43,12 @@
     html {
       scroll-behavior: smooth;
     }
+
+    /* Hide default disclosure arrow */
+    details summary {
+      list-style: none; /* removes default arrow */
+      cursor: pointer;
+    }
   </style>
 </head>
 <body id="top" class="bg-white font-sans overflow-visible">
@@ -54,7 +60,6 @@
 
     <!-- Navigation Tabs -->
     <nav class="hidden xl:flex space-x-8 text-[#393f4a] font-medium items-center">
-
       <div class="relative group">
         <button
           class="flex items-center gap-1 hover:text-[#8c7878] transition focus:outline-none"
@@ -67,49 +72,30 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
           </svg>
         </button>
-
       </div>
 
-      <!-- Other Tabs -->
       <a href="#testimonials" class="hover:text-[#8c7878] transition">Reviews</a>
       <a href="#trial-section" class="hover:text-[#8c7878] transition">Trial</a>
       <a href="#pricing" class="hover:text-[#8c7878] transition">Pricing</a>
       <a href="#about" class="hover:text-[#8c7878] transition">About</a>
     </nav>
 
-    <!-- Mobile Hamburger Button (ensure this exists in your HTML) -->
-    <button id="menu-btn" class="xl:hidden p-2 focus:outline-none">
-      <!-- Icon or text here -->
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
-    </button>
+    <!-- Right side: hamburger + signup -->
+    <div class="flex items-center space-x-4">
+      <!-- Hamburger always visible on small screens -->
+      <button id="menu-btn" class="block xl:hidden p-2 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
 
-    <!-- Mobile Hamburger Menu -->
-    <div id="mobile-menu" class="hidden flex-col space-y-4 bg-white absolute top-16 left-0 w-full px-6 py-4 shadow-lg z-50">
-      <details>
-        <summary class="block text-[#393f4a] hover:text-[#8c7878] cursor-pointer py-2 font-medium select-none outline-none">
-          Product
-        </summary>
-        <div class="ml-3 flex flex-col space-y-1 py-1">
-          <a href="#howitworks" class="block text-[#393f4a] hover:text-[#8c7878]">How It Works</a>
-          <a href="#teaser" class="block text-[#393f4a] hover:text-[#8c7878]">What You Get</a>
-          <a href="#why-choose" class="block text-[#393f4a] hover:text-[#8c7878]">Why Us</a>
-        </div>
-      </details>
-      <a href="#testimonials" class="block text-[#393f4a] hover:text-[#8c7878]">Reviews</a>
-      <a href="#trial-section" class="block text-[#393f4a] hover:text-[#8c7878]">Trial</a>
-      <a href="#pricing" class="block text-[#393f4a] hover:text-[#8c7878]">Pricing</a>
-      <a href="#about" class="block text-[#393f4a] hover:text-[#8c7878]">About</a>
+      <!-- Sign Up button always visible -->
+      <a href="#pricing" class="bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition whitespace-nowrap">
+        Sign Up
+      </a>
     </div>
-
-
-
-    <!-- Top Bar Sign Up Button -->
-    <a href="#pricing" class="hidden xl:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
-      Sign Up
-    </a>
   </header>
+
 
   <!-- Product Dropdown (Global, absolute) -->
   <div
@@ -450,11 +436,27 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      // Mobile hamburger menu toggle
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      if (!menuBtn || !mobileMenu) {
+        console.error('Menu button or mobile menu element not found.');
+      } else {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      // Product dropdown menu setup
       const productBtn = document.querySelector('button[aria-haspopup="true"]');
       const dropdown = document.getElementById('product-dropdown');
-      if (!productBtn || !dropdown) return;
+      if (!productBtn || !dropdown) {
+        console.warn('Product button or dropdown not found. Skipping product dropdown logic.');
+        return;
+      }
 
-      // Position dropdown under button dynamically
+      // Position dropdown dynamically below the product button
       function positionDropdown() {
         const rect = productBtn.getBoundingClientRect();
         dropdown.style.left = `${rect.left}px`;
@@ -470,7 +472,7 @@
         setTimeout(() => {
           dropdown.style.opacity = '1';
           dropdown.style.pointerEvents = 'auto';
-        }, 10); // slight delay to allow display apply before opacity
+        }, 10); // delay for transition
         productBtn.setAttribute('aria-expanded', 'true');
       }
 
@@ -483,11 +485,11 @@
         }, 200); // delay so user can move mouse between button and dropdown
       }
 
-      // Show on mouseenter and focus
+      // Show dropdown on hover and focus
       productBtn.addEventListener('mouseenter', showDropdown);
       productBtn.addEventListener('focus', showDropdown);
 
-      // Hide on mouseleave and blur with delay
+      // Hide dropdown on mouse leave and blur (with delay)
       productBtn.addEventListener('mouseleave', () => {
         hideTimeout = setTimeout(() => {
           if (!dropdown.matches(':hover')) hideDropdown();
@@ -499,14 +501,14 @@
         }, 150);
       });
 
-      // Keep shown if mouse enters dropdown
+      // Keep dropdown shown when hovered
       dropdown.addEventListener('mouseenter', () => {
         clearTimeout(hideTimeout);
         dropdown.style.opacity = '1';
         dropdown.style.pointerEvents = 'auto';
       });
 
-      // Hide dropdown when mouse leaves it
+      // Hide dropdown when mouse leaves
       dropdown.addEventListener('mouseleave', hideDropdown);
     });
   </script>
