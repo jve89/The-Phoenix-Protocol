@@ -45,16 +45,16 @@
     }
   </style>
 </head>
-<body id="top" class="bg-white font-sans">
+<body id="top" class="bg-white font-sans overflow-visible">
 
   <!-- Top Bar -->
-  <header class="flex justify-between items-center py-4 px-6 max-w-6xl mx-auto">
+  <header class="flex justify-between items-center py-4 px-6 max-w-6xl mx-auto overflow-visible z-50">
     <!-- Logo enlarged -->
     <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-20 w-auto">
 
     <!-- Navigation Tabs -->
     <nav class="hidden xl:flex space-x-8 text-[#393f4a] font-medium items-center">
-      <!-- Product Dropdown -->
+
       <div class="relative group">
         <button
           class="flex items-center gap-1 hover:text-[#8c7878] transition focus:outline-none"
@@ -67,16 +67,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
           </svg>
         </button>
-        <div
-          class="dropdown absolute left-0 top-full w-52 bg-white shadow-lg rounded-xl opacity-0 pointer-events-none transition duration-200 z-50
-                group-hover:opacity-100 group-hover:pointer-events-auto
-                group-focus-within:opacity-100 group-focus-within:pointer-events-auto
-                hover:opacity-100 hover:pointer-events-auto"
-        >
-          <a href="#howitworks" class="block px-5 py-3 hover:bg-gray-50 rounded-t-xl">How It Works</a>
-          <a href="#teaser" class="block px-5 py-3 hover:bg-gray-50">What You Get</a>
-          <a href="#why-choose" class="block px-5 py-3 hover:bg-gray-50 rounded-b-xl">Why Us</a>
-        </div>
+
       </div>
 
       <!-- Other Tabs -->
@@ -86,8 +77,15 @@
       <a href="#about" class="hover:text-[#8c7878] transition">About</a>
     </nav>
 
+    <!-- Mobile Hamburger Button (ensure this exists in your HTML) -->
+    <button id="menu-btn" class="xl:hidden p-2 focus:outline-none">
+      <!-- Icon or text here -->
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
 
-    <!-- Mobile Hamburger -->
+    <!-- Mobile Hamburger Menu -->
     <div id="mobile-menu" class="hidden flex-col space-y-4 bg-white absolute top-16 left-0 w-full px-6 py-4 shadow-lg z-50">
       <details>
         <summary class="block text-[#393f4a] hover:text-[#8c7878] cursor-pointer py-2 font-medium select-none outline-none">
@@ -106,16 +104,6 @@
     </div>
 
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden flex-col space-y-4 bg-white absolute top-16 left-0 w-full px-6 py-4 shadow-lg z-50">
-      <a href="#howitworks" class="block text-[#393f4a] hover:text-[#8c7878]">How It Works</a>
-      <a href="#teaser" class="block text-[#393f4a] hover:text-[#8c7878]">What You Get</a>
-      <a href="#why-choose" class="block text-[#393f4a] hover:text-[#8c7878]">Why Us</a>
-      <a href="#testimonials" class="block text-[#393f4a] hover:text-[#8c7878]">Reviews</a>
-      <a href="#trial-section" class="block text-[#393f4a] hover:text-[#8c7878]">Free Trial</a>
-      <a href="#pricing" class="block text-[#393f4a] hover:text-[#8c7878]">Pricing</a>
-      <a href="#about" class="block text-[#393f4a] hover:text-[#8c7878]">About</a>
-    </div>
 
     <!-- Top Bar Sign Up Button -->
     <a href="#pricing" class="hidden xl:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
@@ -123,8 +111,19 @@
     </a>
   </header>
 
+  <!-- Product Dropdown (Global, absolute) -->
+  <div
+    id="product-dropdown"
+    class="fixed left-0 top-0 w-52 bg-white shadow-lg rounded-xl opacity-0 pointer-events-none transition duration-200"
+    style="display: none; z-index: 10000;"
+  >
+    <a href="#howitworks" class="block px-5 py-3 hover:bg-gray-50 rounded-t-xl">How It Works</a>
+    <a href="#teaser" class="block px-5 py-3 hover:bg-gray-50">What You Get</a>
+    <a href="#why-choose" class="block px-5 py-3 hover:bg-gray-50 rounded-b-xl">Why Us</a>
+  </div>
+
   <!-- Hero Section -->
-  <section class="bg-white">
+  <section class="bg-white" style="position: relative; z-index: 0;">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between p-8 md:p-16 space-y-8 md:space-y-0 md:space-x-12">
       <!-- Text Section -->
       <div class="flex-1 text-center md:text-left md:max-w-lg">
@@ -153,7 +152,7 @@
       </div>
 
       <!-- Image Section -->
-      <div class="flex-1 max-w-md relative overflow-hidden rounded-xl shadow-lg">
+     <div class="flex-1 max-w-md relative overflow-hidden rounded-xl shadow-lg" style="position: relative; z-index: 10;">
         <img id="hero-carousel-image"
             src="hero.jpg"
             alt="Post-breakup recovery hero"
@@ -450,46 +449,65 @@
   </footer>
 
   <script>
-    "use strict";
     document.addEventListener("DOMContentLoaded", () => {
-      // 🖼️ Hero carousel functionality
-      const images = ['hero.jpg', 'hero_female.jpg', 'hero_asian.png', 'hero_black.png'];
-      let currentIndex = 0;
-      const carouselImage = document.getElementById('hero-carousel-image');
+      const productBtn = document.querySelector('button[aria-haspopup="true"]');
+      const dropdown = document.getElementById('product-dropdown');
+      if (!productBtn || !dropdown) return;
 
-      if (carouselImage) {
-        setInterval(() => {
-          currentIndex = (currentIndex + 1) % images.length;
-          carouselImage.classList.add('opacity-0');
-          setTimeout(() => {
-            carouselImage.src = images[currentIndex];
-            carouselImage.classList.remove('opacity-0');
-          }, 1000);
-        }, 7000);
+      // Position dropdown under button dynamically
+      function positionDropdown() {
+        const rect = productBtn.getBoundingClientRect();
+        dropdown.style.left = `${rect.left}px`;
+        dropdown.style.top = `${rect.bottom}px`;
       }
 
-      // 🛒 Redirect Buy Now buttons to checkout.html with preselected plan
-      document.querySelectorAll('.buy-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-          e.preventDefault();
-          const plan = button.getAttribute('data-plan');
-          if (plan) {
-            window.location.href = `checkout.html?plan=${plan}`;
-          } else {
-            alert('Plan not found, please try again.');
-          }
-        });
+      let hideTimeout;
+
+      function showDropdown() {
+        clearTimeout(hideTimeout);
+        positionDropdown();
+        dropdown.style.display = 'block';
+        setTimeout(() => {
+          dropdown.style.opacity = '1';
+          dropdown.style.pointerEvents = 'auto';
+        }, 10); // slight delay to allow display apply before opacity
+        productBtn.setAttribute('aria-expanded', 'true');
+      }
+
+      function hideDropdown() {
+        dropdown.style.opacity = '0';
+        dropdown.style.pointerEvents = 'none';
+        productBtn.setAttribute('aria-expanded', 'false');
+        hideTimeout = setTimeout(() => {
+          dropdown.style.display = 'none';
+        }, 200); // delay so user can move mouse between button and dropdown
+      }
+
+      // Show on mouseenter and focus
+      productBtn.addEventListener('mouseenter', showDropdown);
+      productBtn.addEventListener('focus', showDropdown);
+
+      // Hide on mouseleave and blur with delay
+      productBtn.addEventListener('mouseleave', () => {
+        hideTimeout = setTimeout(() => {
+          if (!dropdown.matches(':hover')) hideDropdown();
+        }, 150);
+      });
+      productBtn.addEventListener('blur', () => {
+        hideTimeout = setTimeout(() => {
+          if (!dropdown.matches(':hover')) hideDropdown();
+        }, 150);
       });
 
-      // 🍔 Mobile menu toggle
-      const menuBtn = document.getElementById('menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
+      // Keep shown if mouse enters dropdown
+      dropdown.addEventListener('mouseenter', () => {
+        clearTimeout(hideTimeout);
+        dropdown.style.opacity = '1';
+        dropdown.style.pointerEvents = 'auto';
+      });
 
-      if (menuBtn && mobileMenu) {
-        menuBtn.addEventListener('click', () => {
-          mobileMenu.classList.toggle('hidden');
-        });
-      }
+      // Hide dropdown when mouse leaves it
+      dropdown.addEventListener('mouseleave', hideDropdown);
     });
   </script>
 
