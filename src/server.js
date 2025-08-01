@@ -6,7 +6,6 @@ const unsubscribeRoute = require('./routes/unsubscribe');
 const feedbackRoutes = require('./routes/feedback');
 const { startCron } = require('./utils/cron');
 const { connectAndInit } = require('./db/db');
-
 const fs = require('fs');
 const path = require('path');
 
@@ -80,8 +79,16 @@ if (process.env.NODE_ENV === 'production') {
 
 async function startServer() {
   try {
+    // Connect to DB and run init migrations if any
     await connectAndInit();
+
+    // Optional: Run slot-miss check logic here if you want (not required; see below)
+    // e.g., await catchUpOnMissedSlots();
+
+    // Start cron jobs (must be after DB is ready)
     startCron();
+
+    // Start HTTP server (only after above)
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);
     });

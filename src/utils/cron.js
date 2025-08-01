@@ -13,7 +13,6 @@ const { sendRawEmail, renderEmailMarkdown } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
 const { logEvent, logDelivery } = require('./db_logger');
-const { sendDailyGuideBackup } = require('./backup');
 const { marked } = require('marked');
 const { validateGuideContent } = require('./validateGuide');
 
@@ -89,7 +88,6 @@ async function runGeneratePaidSlot() {
     const allVariantsPresent = VARIANTS.every(
       variant => guide?.[variant]?.content?.trim()?.length > 100
     );
-    
     for (const variant of VARIANTS) {
       if (!guide?.[variant]?.content || guide[variant].content.trim().length <= 100) {
         logger.warn(`[DEBUG] Variant missing or too short: ${variant} (len=${guide?.[variant]?.content?.length || 0})`);
@@ -108,11 +106,8 @@ async function runGeneratePaidSlot() {
         logger.warn('⚠️ Guide warnings: ' + warnings.join(' | '));
         warningBlockHtml = `<div style="background:#fff3cd;padding:10px;border-left:5px solid #ffc107;margin-bottom:20px;"><strong>⚠️ Guide Warnings:</strong><ul>` +
           warnings.map(w => `<li>${w}</li>`).join('') + `</ul></div>`;
-
       }
-
       const emailPreviewHtml = await renderEmailMarkdown(guide);
-
       const adminHtml = `
   <!DOCTYPE html>
   <html lang="en">
@@ -144,16 +139,13 @@ async function runGeneratePaidSlot() {
   </body>
   </html>
       `;
-
       logger.debug('🧪 Guide keys included in email:', Object.keys(guide));
       await sendRawEmail(process.env.ADMIN_EMAIL, `📦 Daily Guide Backup – ${date}`, adminHtml);
       logger.info('✅ Admin guide + backup sent');
-
     }
   } catch (err) {
     logger.error(`Backup email failed: ${err.message}`);
   }
-
 }
 
 /**
@@ -357,6 +349,68 @@ async function runMaintenanceSlot() {
 }
 
 /**
+ * On-boot audit and catch-up — never miss a slot.
+ */
+async function auditAndCatchUp() {
+  const date = todayUtc();
+
+  // 1. Guide generation catch-up
+  const guide = await loadGuideByDate(date);
+  const allVariantsPresent = VARIANTS.every(
+    variant => guide?.[variant]?.content?.trim()?.length > 100
+  );
+  if (!allVariantsPresent) {
+    logger.warn(`[BOOT] Guide for ${date} missing or incomplete. Generating now.`);
+    await runGeneratePaidSlot();
+  } else {
+    logger.info(`[BOOT] Guide for ${date} present. No generation needed.`);
+  }
+
+  // 2. Paid guide delivery catch-up (do not repeat, only if usage lags)
+  // This only runs if guides are present.
+  if (allVariantsPresent) {
+    let users;
+    try {
+      ({ rows: users } = await db.query(
+        `SELECT id, email, gender, goal_stage, plan_limit, usage_count, paid_farewell_sent_at
+         FROM users
+         WHERE plan IS NOT NULL
+           AND plan > 0
+           AND (is_trial_user IS NULL OR is_trial_user = FALSE)
+           AND unsubscribed = FALSE`
+      ));
+    } catch (err) {
+      logger.error(`[BOOT] Paid user query failed: ${err.message}`);
+      users = [];
+    }
+
+    let deliveryPending = false;
+    for (const user of users) {
+      const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
+      if (
+        user.usage_count < user.plan_limit &&
+        guide[variant] &&
+        guide[variant].content &&
+        guide[variant].content.trim().length > 100
+      ) {
+        deliveryPending = true;
+        break;
+      }
+    }
+
+    if (deliveryPending) {
+      logger.warn(`[BOOT] Paid guide delivery pending for some users. Delivering now.`);
+      await runDeliverPaidSlot();
+    } else {
+      logger.info(`[BOOT] All paid user deliveries up to date.`);
+    }
+  }
+
+  // 3. Trial guide/farewell catch-up — similar logic could be added if desired.
+  // For now, only paid content is fully autopiloted.
+}
+
+/**
  * Schedule tasks (UTC)
  */
 function startCron() {
@@ -421,7 +475,8 @@ async function main() {
   }
 }
 
-module.exports = { startCron };
+// Export both startCron and auditAndCatchUp for clean main entry use
+module.exports = { startCron, auditAndCatchUp };
 
 if (require.main === module) {
   main();
