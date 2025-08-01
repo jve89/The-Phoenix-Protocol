@@ -83,7 +83,9 @@ async function runGeneratePaidSlot() {
   }
 
   try {
+    logger.debug('📅 Date passed to loadGuideByDate:', date);
     const guide = await loadGuideByDate(date);
+    logger.debug('📦 Loaded guide object:', guide);
     const allVariantsPresent = VARIANTS.every(
       variant => guide?.[variant]?.content?.trim()?.length > 100
     );
@@ -91,36 +93,60 @@ async function runGeneratePaidSlot() {
       logger.warn(`⚠️ Guide incomplete for ${date}, skipping backup.`);
       return;
     }
+
     if (process.env.ADMIN_EMAIL) {
       const { isValid, warnings } = validateGuideContent(guide, VARIANTS);
-      let warningBlockHtml = '', warningBlockMd = '';
+      let warningBlockHtml = '';
       if (!isValid && warnings.length) {
         logger.warn('⚠️ Guide warnings: ' + warnings.join(' | '));
         warningBlockHtml = `<div style="background:#fff3cd;padding:10px;border-left:5px solid #ffc107;margin-bottom:20px;"><strong>⚠️ Guide Warnings:</strong><ul>` +
           warnings.map(w => `<li>${w}</li>`).join('') + `</ul></div>`;
-        warningBlockMd = warnings.map(w => `> ⚠️ ${w}`).join('\n') + '\n\n---\n';
+
       }
+
       const emailPreviewHtml = await renderEmailMarkdown(guide);
-      const adminHtml = `<h1>Daily Guide Summary - ${date}</h1>` + warningBlockHtml + emailPreviewHtml;
-      const mdPath = path.join(os.tmpdir(), `daily_guide_${date}.md`);
-      const jsonPath = path.join(os.tmpdir(), `daily_guide_${date}.json`);
-      let md = `# Daily Guide Summary - ${date}\n\n` + warningBlockMd;
-      for (const variant of VARIANTS) {
-        const section = guide[variant];
-        if (section?.content) {
-          md += `## ${section.title}\n\n${section.content.trim()}\n\n---\n`;
-        }
+
+      const adminHtml = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Daily Guide Summary - ${date}</title>
+    <style>
+      body {
+        font-family: -apple-system, system-ui, sans-serif;
+        background-color: #f9fafb;
+        color: #393f4a;
+        padding: 20px;
       }
-      await fs.writeFile(jsonPath, JSON.stringify(guide, null, 2));
-      await fs.writeFile(mdPath, md);
-      await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
+      h1 {
+        color: #5f259f;
+      }
+      h2 {
+        margin-top: 1.5em;
+      }
+      hr {
+        margin: 2rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Daily Guide Summary - ${date}</h1>
+    ${warningBlockHtml}
+    ${emailPreviewHtml}
+  </body>
+  </html>
+      `;
+
+      logger.debug('🧪 Guide keys included in email:', Object.keys(guide));
+      await sendRawEmail(process.env.ADMIN_EMAIL, `📦 Daily Guide Backup – ${date}`, adminHtml);
       logger.info('✅ Admin guide + backup sent');
-      await fs.unlink(jsonPath).catch(() => {});
-      await fs.unlink(mdPath).catch(() => {});
+
     }
   } catch (err) {
     logger.error(`Backup email failed: ${err.message}`);
   }
+
 }
 
 /**

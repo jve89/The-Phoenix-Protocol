@@ -1,11 +1,14 @@
+const path = require('path');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
+const mime = require('mime-types'); 
+const fs = require('fs').promises;
 const { marked } = require('marked');
 const { convert } = require('html-to-text');
-const fs = require('fs').promises;
-const path = require('path');
+
 const { logEvent } = require('./db_logger');
 const { loadTemplate } = require('./loadTemplate');
+
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -57,8 +60,10 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
         msg.attachments.push({
           content,
           filename: path.basename(filePath),
+          type: mime.lookup(filePath) || 'application/octet-stream',
           disposition: 'attachment'
         });
+
       } catch (err) {
         logEvent('email', 'warn', `Attachment failed for ${to}: ${err.message}`);
       }
@@ -98,22 +103,24 @@ async function sendMarkdownEmail(to, subject, markdown) {
 // Renders a guide object into HTML using /templates/daily_summary.html
 async function renderEmailMarkdown(guide) {
   const template = await loadTemplate('daily_summary.html');
-  const isFullGuide = typeof guide === 'object' &&
-    Object.values(guide).every(
-      v => typeof v === 'object' && ('content' in v || 'title' in v)
-    );
+  const expectedKeys = ['female_moveon', 'male_moveon', 'female_reconnect', 'male_reconnect'];
+
+  const isFullGuide = expectedKeys.every(key => typeof guide?.[key]?.content === 'string');
 
   if (isFullGuide) {
     let fullHtml = '';
-    for (const [key, { title, content }] of Object.entries(guide)) {
-      const safeTitle = title || key;
-      const safeContent = marked.parse(content || '');
-      fullHtml += `<h2>${safeTitle}</h2>\n<div>${safeContent}</div><hr style="margin:2rem 0;">`;
+    for (const key of expectedKeys) {
+      const { title = key, content = '' } = guide[key] || {};
+      if (content.trim().length > 0) {
+        fullHtml += `<h2>${title}</h2>\n<div>${marked.parse(content)}</div><hr style="margin:2rem 0;">`;
+      }
     }
     return template
       .replace(/{{\s*title\s*}}/g, 'Daily Guide Summary')
-      .replace(/{{\s*content\s*}}/g, fullHtml);
+      .replace(/{{\s*content\s*}}/g, fullHtml || '<p><em>No guide content available.</em></p>');
   }
+
+  // fallback: assume it's a single guide object
   const contentHtml = marked.parse(guide?.content || '');
   return template
     .replace(/{{\s*title\s*}}/g, guide?.title || '')

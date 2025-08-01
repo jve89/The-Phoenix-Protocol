@@ -81,9 +81,9 @@ if (process.env.NODE_ENV === 'production') {
 async function startServer() {
   try {
     await connectAndInit();
+    startCron();
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);
-      startCron();
     });
   } catch (err) {
     console.error('❌ Startup failed:', err);

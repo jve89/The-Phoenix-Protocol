@@ -23,7 +23,7 @@ async function sendDailyGuideBackup(guideJson, htmlBody = '', attachments = []) 
   const subject = `📦 Daily Guide Backup – ${dateStr}`;
   const body = htmlBody || `<p>Attached is the guide backup for ${dateStr}</p>`;
   try {
-    await sendRawEmail(admin, subject, body, attachments);
+    await sendRawEmail(admin, subject, body);
     logEvent('backup', 'info', `Guide backup emailed to ${admin}`);
   } catch (err) {
     logEvent('backup', 'error', `Failed to email backup: ${err.message}`);
