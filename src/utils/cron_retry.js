@@ -132,10 +132,11 @@ async function runDeliverTrialSlot() {
       logger.info(`Retry: Trial Day ${day} sent: ${user.email}`);
       await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
       await db.query(
-        `UPDATE users SET usage_count = usage_count + 1,
-                          last_trial_sent_at = NOW(),
-                          first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
-         WHERE id = $1`,
+        `UPDATE users SET
+            usage_count = usage_count + 1,
+            last_trial_sent_at = NOW(),
+            trial_started_at = COALESCE(trial_started_at, NOW())
+        WHERE id = $1`,
         [user.id]
       );
     } catch (err) {
@@ -150,17 +151,19 @@ async function runDeliverTrialSlot() {
       `SELECT id, email FROM users
        WHERE is_trial_user = TRUE
          AND usage_count >= 3
-         AND farewell_sent = FALSE`
+         AND trial_farewell_sent_at IS NULL`
     );
     if (!farewellUsers.length) return;
     const html = await loadTemplate('trial_farewell.html');
-    if (!html) throw new Error('Missing trial_farewell.html');
     for (const user of farewellUsers) {
       try {
         const subject = 'Your Trial with The Phoenix Protocol Has Ended [RETRY]';
         await sendRawEmail(user.email, subject, html);
         await db.query(
-          `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
+          `UPDATE users SET
+              unsubscribed = TRUE,
+              trial_farewell_sent_at = NOW()
+          WHERE id = $1`,
           [user.id]
         );
         logger.info(`Retry: Trial farewell sent: ${user.email}`);
@@ -180,7 +183,7 @@ async function runDeliverPaidSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, farewell_sent, first_guide_sent_at
+      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, paid_farewell_sent_at, first_guide_sent_at
        FROM users
        WHERE plan IS NOT NULL
          AND plan > 0
@@ -209,11 +212,14 @@ async function runDeliverPaidSlot() {
 
     // Skip if user already completed plan
     if (user.usage_count >= user.plan_limit) {
-      if (!user.farewell_sent) {
+      if (!user.paid_farewell_sent_at) {
         try {
           await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol [RETRY]", farewellHtml);
           await db.query(
-            `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
+            `UPDATE users SET
+                unsubscribed = TRUE,
+                paid_farewell_sent_at = NOW()
+            WHERE id = $1`,
             [user.id]
           );
           logger.info(`Retry: Farewell sent: ${user.email}`);
@@ -224,7 +230,6 @@ async function runDeliverPaidSlot() {
       continue;
     }
 
-    // **Check if today's email was already sent**
     const alreadySent = user.first_guide_sent_at &&
       new Date(user.first_guide_sent_at).toISOString().slice(0, 10) === todayUtc() &&
       user.usage_count > 0;
@@ -260,9 +265,12 @@ async function runDeliverPaidSlot() {
         [user.id, user.email, variant]
       );
       await db.query(
-        `UPDATE users SET usage_count = usage_count + 1,
-                          first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
-         WHERE id = $1`,
+        `UPDATE users SET
+            usage_count = usage_count + 1,
+            first_guide_sent_at = COALESCE(first_guide_sent_at, NOW()),
+            paid_started_at = COALESCE(paid_started_at, NOW()),
+            last_paid_sent_at = NOW()
+        WHERE id = $1`,
         [user.id]
       );
     } catch (err) {

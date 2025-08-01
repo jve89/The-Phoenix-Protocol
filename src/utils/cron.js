@@ -57,14 +57,12 @@ const validateEnv = () => {
  */
 async function runGeneratePaidSlot() {
   const date = todayUtc();
-  // Idempotency: skip if all guides already exist
   const existing = await loadGuideByDate(date);
   const allVariantsPresent = VARIANTS.every(
     variant => existing?.[variant]?.content?.trim()?.length > 100
   );
   if (allVariantsPresent) {
     logger.info(`Guide for ${date} already exists. Slot complete.`);
-    // Only send backup if not yet sent
     const backupLog = await db.query(
       `SELECT 1 FROM guide_generation_logs
        WHERE DATE(timestamp) = $1 AND message ILIKE '%Admin guide + backup sent%' LIMIT 1`, [date]
@@ -83,7 +81,7 @@ async function runGeneratePaidSlot() {
       return;
     }
   }
-  // Send admin backup
+
   try {
     const guide = await loadGuideByDate(date);
     const allVariantsPresent = VARIANTS.every(
@@ -117,7 +115,6 @@ async function runGeneratePaidSlot() {
       await fs.writeFile(mdPath, md);
       await sendDailyGuideBackup(guide, adminHtml, [jsonPath, mdPath]);
       logger.info('✅ Admin guide + backup sent');
-      // Cleanup
       await fs.unlink(jsonPath).catch(() => {});
       await fs.unlink(mdPath).catch(() => {});
     }
@@ -127,7 +124,7 @@ async function runGeneratePaidSlot() {
 }
 
 /**
- * 2. Deliver trial emails & farewells (13:00 UTC)
+ * 2. Deliver trial guides & farewells (13:00 UTC)
  */
 async function runDeliverTrialSlot() {
   let users;
@@ -162,12 +159,13 @@ async function runDeliverTrialSlot() {
     try {
       await sendRawEmail(user.email, subject, html);
       logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
-      await logDelivery(user.id, user.email, variant, 'success', null, 'trial'); // delivery_type
+      await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
       await db.query(
-        `UPDATE users SET usage_count = usage_count + 1,
-                          last_trial_sent_at = NOW(),
-                          first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
-         WHERE id = $1`,
+        `UPDATE users SET 
+            usage_count = usage_count + 1,
+            last_trial_sent_at = NOW(),
+            trial_started_at = COALESCE(trial_started_at, NOW())
+          WHERE id = $1`,
         [user.id]
       );
     } catch (err) {
@@ -176,23 +174,24 @@ async function runDeliverTrialSlot() {
     }
   }
 
-  // Farewell: users who finished trial but haven't received farewell
   try {
     const { rows: farewellUsers } = await db.query(
       `SELECT id, email FROM users
        WHERE is_trial_user = TRUE
          AND usage_count >= 3
-         AND farewell_sent = FALSE`
+         AND trial_farewell_sent_at IS NULL`
     );
     if (!farewellUsers.length) return;
     const html = await loadTemplate('trial_farewell.html');
-    if (!html) throw new Error('Missing trial_farewell.html');
     for (const user of farewellUsers) {
       try {
         const subject = 'Your Trial with The Phoenix Protocol Has Ended';
         await sendRawEmail(user.email, subject, html);
         await db.query(
-          `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
+          `UPDATE users SET 
+              unsubscribed = TRUE, 
+              trial_farewell_sent_at = NOW()
+            WHERE id = $1`,
           [user.id]
         );
         logger.info(`🟣 Trial farewell sent: ${user.email}`);
@@ -212,7 +211,7 @@ async function runDeliverPaidSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, farewell_sent
+      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, paid_farewell_sent_at
        FROM users
        WHERE plan IS NOT NULL
          AND plan > 0
@@ -238,27 +237,31 @@ async function runDeliverPaidSlot() {
 
   for (const user of users) {
     const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
-    // Skip if user already completed plan
     if (user.usage_count >= user.plan_limit) {
-      if (!user.farewell_sent) {
+      if (!user.paid_farewell_sent_at) {
         try {
           await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
           await db.query(
-            `UPDATE users SET farewell_sent = TRUE, unsubscribed = TRUE WHERE id = $1`,
+            `UPDATE users SET 
+                unsubscribed = TRUE, 
+                paid_farewell_sent_at = NOW()
+              WHERE id = $1`,
             [user.id]
           );
-          logger.info(`🟣 Farewell sent: ${user.email}`);
+          logger.info(`🟣 Paid farewell sent: ${user.email}`);
         } catch (err) {
-          logger.error(`Farewell send failed for ${user.email}: ${err.message}`);
+          logger.error(`Paid farewell send failed for ${user.email}: ${err.message}`);
         }
       }
       continue;
     }
+
     const section = guide[variant];
     if (!section?.content) {
       logger.warn(`No content for ${variant}: ${user.email}`);
       continue;
     }
+
     let contentHtml;
     try {
       contentHtml = marked.parse(section.content);
@@ -266,6 +269,7 @@ async function runDeliverPaidSlot() {
       logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
       continue;
     }
+
     const html = template
       .replace('{{title}}', section.title)
       .replace('{{content}}', contentHtml);
@@ -278,13 +282,15 @@ async function runDeliverPaidSlot() {
         [user.id, user.email, variant]
       );
       await db.query(
-        `UPDATE users SET usage_count = usage_count + 1,
-                          first_guide_sent_at = COALESCE(first_guide_sent_at, NOW())
-         WHERE id = $1`,
+        `UPDATE users SET 
+            usage_count = usage_count + 1,
+            paid_started_at = COALESCE(paid_started_at, NOW()),
+            last_paid_sent_at = NOW()
+          WHERE id = $1`,
         [user.id]
       );
     } catch (err) {
-      logger.error(`Send failed for ${user.email}: ${err.message}`);
+      logger.error(`Paid send failed for ${user.email}: ${err.message}`);
       await db.query(
         `INSERT INTO delivery_log (user_id,email,variant,status,error_message,delivery_type) VALUES ($1,$2,$3,'failed',$4,'paid')`,
         [user.id, user.email, variant, err.message]
@@ -295,12 +301,9 @@ async function runDeliverPaidSlot() {
 
 /**
  * 4. System maintenance slot (03:00 UTC)
- * - All system cleaning & hygiene tasks live here, modular for future growth.
  */
 async function runMaintenanceSlot() {
   logger.info('🔧 Starting system maintenance slot');
-
-  // 1. Prune logs (customize intervals as needed)
   const logTables = [
     { table: 'guide_generation_logs', col: 'created_at' },
     { table: 'delivery_log', col: 'sent_at' },
@@ -317,8 +320,6 @@ async function runMaintenanceSlot() {
       logger.error(`❌ Prune failed for ${table}: ${err.message}`);
     }
   }
-
-  // 2. (Future) Add other cleaning tasks here (archive, orphaned data, etc)
   logger.info('✅ Maintenance slot complete');
 }
 
