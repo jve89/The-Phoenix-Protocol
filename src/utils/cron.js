@@ -89,6 +89,13 @@ async function runGeneratePaidSlot() {
     const allVariantsPresent = VARIANTS.every(
       variant => guide?.[variant]?.content?.trim()?.length > 100
     );
+    
+    for (const variant of VARIANTS) {
+      if (!guide?.[variant]?.content || guide[variant].content.trim().length <= 100) {
+        logger.warn(`[DEBUG] Variant missing or too short: ${variant} (len=${guide?.[variant]?.content?.length || 0})`);
+      }
+    }
+
     if (!allVariantsPresent) {
       logger.warn(`⚠️ Guide incomplete for ${date}, skipping backup.`);
       return;

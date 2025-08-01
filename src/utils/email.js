@@ -103,16 +103,15 @@ async function sendMarkdownEmail(to, subject, markdown) {
 // Renders a guide object into HTML using /templates/daily_summary.html
 async function renderEmailMarkdown(guide) {
   const template = await loadTemplate('daily_summary.html');
-  const expectedKeys = ['female_moveon', 'male_moveon', 'female_reconnect', 'male_reconnect'];
+  // Use all present keys instead of a hardcoded subset
+  const keys = Object.keys(guide).filter(k => guide[k]?.content);
 
-  const isFullGuide = expectedKeys.every(key => typeof guide?.[key]?.content === 'string');
-
-  if (isFullGuide) {
+  if (keys.length) {
     let fullHtml = '';
-    for (const key of expectedKeys) {
+    for (const key of keys) {
       const { title = key, content = '' } = guide[key] || {};
       if (content.trim().length > 0) {
-        fullHtml += `<h2>${title}</h2>\n<div>${marked.parse(content)}</div><hr style="margin:2rem 0;">`;
+        fullHtml += `<h2>${key.replace('_', ' ').toUpperCase()} — ${title}</h2>\n<div>${marked.parse(content)}</div><hr style="margin:2rem 0;">`;
       }
     }
     return template

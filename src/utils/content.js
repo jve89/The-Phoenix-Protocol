@@ -9,8 +9,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-
-
 // Helper: UTC date string YYYY-MM-DD
 function todayUtc() {
   return new Date().toISOString().slice(0, 10);
@@ -25,6 +23,7 @@ const VARIANTS = [
 const promptCache = {};
 const promptWarnings = {};
 
+// PROMPT LOADING & DEBUG
 for (const variant of VARIANTS) {
   const promptPath = path.resolve(__dirname, `../../content/prompts/${variant}.js`);
   try {
@@ -70,8 +69,18 @@ for (const variant of VARIANTS) {
   }
 }
 
+// === DEBUG PROMPT CACHE ===
+console.log('[DEBUG] promptCache keys:', Object.keys(promptCache));
+for (const variant of VARIANTS) {
+  if (!promptCache[variant]) {
+    console.log(`[DEBUG] promptCache missing: ${variant}`);
+  } else {
+    console.log(`[DEBUG] promptCache loaded: ${variant} (${promptCache[variant].length} prompts)`);
+  }
+}
+
 /**
- * Generate a guide tip using AI, with model fallback and anti-repeat prompt logic.
+ * Generate a guide tip using AI, with model fallback.
  * @param {string} gender
  * @param {string} goalStage
  * @returns {Promise<string>}
@@ -84,29 +93,8 @@ async function generateTip(gender, goalStage) {
     return 'Guide unavailable at this time.';
   }
 
-  // --- Anti-repeat: Avoid last N days' prompts
-  const N = 7; // Days to avoid repeats (adjust as needed)
-  let used = [];
-  try {
-    const { rows } = await db.query(
-      `SELECT prompt_idx FROM used_prompts WHERE variant = $1 AND date >= $2`,
-      [variant, subDays(new Date(), N).toISOString().slice(0, 10)]
-    );
-    used = rows.map(r => r.prompt_idx);
-  } catch (err) {
-    logEvent('content', 'warn', `Could not query used_prompts for ${variant}: ${err.message}`);
-  }
-  const usedSet = new Set(used);
-
-  // Get unused prompt indexes; fallback to all if pool exhausted
-  const allIndexes = prompts.map((_, i) => i);
-  const unusedIndexes = allIndexes.filter(i => !usedSet.has(i));
-  let idx;
-  if (unusedIndexes.length === 0) {
-    idx = Math.floor(Math.random() * prompts.length);
-  } else {
-    idx = unusedIndexes[Math.floor(Math.random() * unusedIndexes.length)];
-  }
+  // --- Just pick a random prompt (no anti-repeat logic)
+  const idx = Math.floor(Math.random() * prompts.length);
   const promptObj = prompts[idx];
   let promptText;
   try {
@@ -164,37 +152,8 @@ async function generateTip(gender, goalStage) {
         throw new Error('Weak AI output');
       }
 
+      // No deduplication — lean DB, lean logic.
 
-      await db.query(
-        `INSERT INTO used_prompts (date, variant, prompt_idx)
-        VALUES ($1, $2, $3)
-        ON CONFLICT DO NOTHING`,
-        [todayUtc(), variant, idx]
-      );
-
-      // Check for duplicate content
-      const hash = require('crypto').createHash('sha256').update(output).digest('hex');
-      try {
-        const { rows } = await db.query(
-          `SELECT COUNT(*) FROM generated_guides WHERE variant = $1 AND content_hash = $2`,
-          [variant, hash]
-        );
-        if (parseInt(rows[0].count) > 0) {
-          logEvent('content', 'warn', `Duplicate content detected for ${variant} — hash ${hash}`);
-          throw new Error('Duplicate content');
-        }
-
-        // Save hash for future checks
-        await db.query(
-          `INSERT INTO generated_guides (date, variant, prompt_idx, content_hash)
-          VALUES ($1, $2, $3, $4)
-          ON CONFLICT DO NOTHING`,
-          [todayUtc(), variant, idx, hash]
-        );
-      } catch (err) {
-        logEvent('content', 'warn', `Failed to check/store duplicate content hash for ${variant}: ${err.message}`);
-      }
-      
       return output;
 
     } catch (err) {
@@ -214,13 +173,15 @@ async function generateTip(gender, goalStage) {
 async function generateAndCacheDailyGuides() {
   const date = todayUtc();
   await logEvent('content', 'info', `Starting guide generation for ${date}`);
-  const guideObj = { date };
+  const guideObj = {};
 
   for (const variant of VARIANTS) {
     const [gender, stage] = variant.split('_');
     try {
       await logEvent('content', 'info', `Generating ${variant}`);
       const content = await generateTip(gender, stage);
+      
+      console.log(`[DEBUG] Variant: ${variant}, Content: ${content ? '[OK]' : '[MISSING]'}`);
 
       const reviewed = await reviewStory(content);
       const score = await scoreStory(content);
@@ -249,6 +210,7 @@ async function generateAndCacheDailyGuides() {
     }
   }
 
+  console.log('[DEBUG] Generated guideObj:', JSON.stringify(guideObj, null, 2));
   try {
     await db.query(
       `INSERT INTO daily_guides (date, guide)
