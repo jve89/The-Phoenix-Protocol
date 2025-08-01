@@ -53,25 +53,58 @@
     <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-20 w-auto">
 
     <!-- Navigation Tabs -->
-    <nav class="hidden lg:flex space-x-8 text-[#393f4a] font-medium">
+    <nav class="hidden xl:flex space-x-8 text-[#393f4a] font-medium items-center">
+      <!-- Product Dropdown -->
+      <div class="relative group">
+        <button
+          class="flex items-center gap-1 hover:text-[#8c7878] transition focus:outline-none"
+          aria-haspopup="true"
+          aria-expanded="false"
+          tabindex="0"
+        >
+          Product
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div
+          class="dropdown absolute left-0 top-full w-52 bg-white shadow-lg rounded-xl opacity-0 pointer-events-none transition duration-200 z-50
+                group-hover:opacity-100 group-hover:pointer-events-auto
+                group-focus-within:opacity-100 group-focus-within:pointer-events-auto
+                hover:opacity-100 hover:pointer-events-auto"
+        >
+          <a href="#howitworks" class="block px-5 py-3 hover:bg-gray-50 rounded-t-xl">How It Works</a>
+          <a href="#teaser" class="block px-5 py-3 hover:bg-gray-50">What You Get</a>
+          <a href="#why-choose" class="block px-5 py-3 hover:bg-gray-50 rounded-b-xl">Why Us</a>
+        </div>
+      </div>
 
-      <a href="#howitworks" class="hover:text-[#8c7878] transition">How It Works</a>
-      <a href="#teaser" class="hover:text-[#8c7878] transition">What You Get</a>
-      <a href="#why-choose" class="hover:text-[#8c7878] transition">Why Us</a>
+      <!-- Other Tabs -->
       <a href="#testimonials" class="hover:text-[#8c7878] transition">Reviews</a>
+      <a href="#trial-section" class="hover:text-[#8c7878] transition">Trial</a>
       <a href="#pricing" class="hover:text-[#8c7878] transition">Pricing</a>
       <a href="#about" class="hover:text-[#8c7878] transition">About</a>
     </nav>
 
+
     <!-- Mobile Hamburger -->
-    <div class="lg:hidden flex items-center">
-      <button id="menu-btn" class="text-[#393f4a] focus:outline-none">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
+    <div id="mobile-menu" class="hidden flex-col space-y-4 bg-white absolute top-16 left-0 w-full px-6 py-4 shadow-lg z-50">
+      <details>
+        <summary class="block text-[#393f4a] hover:text-[#8c7878] cursor-pointer py-2 font-medium select-none outline-none">
+          Product
+        </summary>
+        <div class="ml-3 flex flex-col space-y-1 py-1">
+          <a href="#howitworks" class="block text-[#393f4a] hover:text-[#8c7878]">How It Works</a>
+          <a href="#teaser" class="block text-[#393f4a] hover:text-[#8c7878]">What You Get</a>
+          <a href="#why-choose" class="block text-[#393f4a] hover:text-[#8c7878]">Why Us</a>
+        </div>
+      </details>
+      <a href="#testimonials" class="block text-[#393f4a] hover:text-[#8c7878]">Reviews</a>
+      <a href="#trial-section" class="block text-[#393f4a] hover:text-[#8c7878]">Trial</a>
+      <a href="#pricing" class="block text-[#393f4a] hover:text-[#8c7878]">Pricing</a>
+      <a href="#about" class="block text-[#393f4a] hover:text-[#8c7878]">About</a>
     </div>
+
 
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden flex-col space-y-4 bg-white absolute top-16 left-0 w-full px-6 py-4 shadow-lg z-50">
@@ -79,12 +112,13 @@
       <a href="#teaser" class="block text-[#393f4a] hover:text-[#8c7878]">What You Get</a>
       <a href="#why-choose" class="block text-[#393f4a] hover:text-[#8c7878]">Why Us</a>
       <a href="#testimonials" class="block text-[#393f4a] hover:text-[#8c7878]">Reviews</a>
+      <a href="#trial-section" class="block text-[#393f4a] hover:text-[#8c7878]">Free Trial</a>
       <a href="#pricing" class="block text-[#393f4a] hover:text-[#8c7878]">Pricing</a>
       <a href="#about" class="block text-[#393f4a] hover:text-[#8c7878]">About</a>
     </div>
 
     <!-- Top Bar Sign Up Button -->
-    <a href="#pricing" class="hidden lg:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
+    <a href="#pricing" class="hidden xl:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition">
       Sign Up
     </a>
   </header>
