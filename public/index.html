@@ -470,6 +470,7 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      // Mobile menu toggle logic
       const menuBtn = document.getElementById('menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
 
@@ -480,6 +481,21 @@
           mobileMenu.classList.toggle('hidden');
         });
       }
+
+      // Hero carousel image rotation logic (simplified, no fade)
+      const carouselImages = [
+        "hero.jpg",
+        "hero_black.png",
+        "hero_asian.png",
+        "hero_female.jpg"
+      ];
+      const imgElement = document.getElementById("hero-carousel-image");
+      let currentIndex = 0;
+
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % carouselImages.length;
+        imgElement.src = carouselImages[currentIndex];
+      }, 20000);
 
       // Product dropdown logic (unchanged)
       const productBtn = document.querySelector('button[aria-haspopup="true"]');
