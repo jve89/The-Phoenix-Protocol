@@ -56,13 +56,13 @@
   <!-- Top Bar -->
   <header class="flex justify-between items-center py-4 px-6 max-w-6xl mx-auto z-50">
     <!-- Logo -->
-    <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-20 w-auto">
+    <img src="logo-purple.svg" alt="The Phoenix Protocol Logo" class="h-20 w-auto mb-1">
 
     <!-- Navigation tabs (hidden on small screens) -->
     <nav class="hidden xl:flex space-x-8 text-[#393f4a] font-medium items-center">
       <div class="relative group">
         <button
-          class="flex items-center gap-1 hover:text-[#8c7878] transition focus:outline-none"
+          class="flex items-center gap-1 font-medium hover:text-[#8c7878] transition focus:outline-none"
           aria-haspopup="true"
           aria-expanded="false"
           tabindex="0"
@@ -89,11 +89,13 @@
         </svg>
       </button>
 
-      <!-- Signup always visible -->
-      <a href="#pricing" class="bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition whitespace-nowrap">
-        Sign Up
-      </a>
     </div>
+
+    <!-- Sign Up button visible only on xl and above -->
+    <a href="#pricing" class="hidden xl:inline-block bg-indigo-600 text-white font-semibold px-5 py-2 rounded hover:bg-indigo-700 shadow-lg transition whitespace-nowrap">
+      Sign Up
+    </a>
+
   </header>
 
 
@@ -127,6 +129,7 @@
     <a href="#trial-section" class="block text-center text-[#393f4a] hover:text-[#8c7878]">Trial</a>
     <a href="#pricing" class="block text-center text-[#393f4a] hover:text-[#8c7878]">Pricing</a>
     <a href="#about" class="block text-center text-[#393f4a] hover:text-[#8c7878]">About</a>
+    <a href="#pricing" class="block xl:hidden w-full bg-indigo-600 text-white font-semibold px-5 py-3 rounded-md hover:bg-indigo-700 shadow-lg transition text-center">Sign Up</a>
   </div>
 
 
@@ -134,17 +137,17 @@
   <section class="bg-white" style="position: relative; z-index: 0;">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:justify-between p-8 md:p-16 space-y-8 md:space-y-0 md:space-x-12">
       <!-- Text Section -->
-      <div class="flex-1 text-center md:text-left md:max-w-lg">
+      <div class="flex-1 text-center md:text-center md:max-w-lg">
         <h1 class="text-4xl md:text-5xl font-bold mb-6 text-[#393f4a]">Breakup Recovery, Tailored for You</h1>
         <p class="text-lg md:text-xl mb-8 text-[#393f4a]">
           Structured, private, AI-powered daily support. 
           <span class="block mt-1">Feel better, one day at a time.</span>
         </p>
-        <!-- CTA Button Layout -->
+       <!-- CTA Button Layout -->
         <div class="flex flex-col items-center gap-4 mt-6">
           <!-- Top row: two smaller buttons -->
           <div class="flex flex-col sm:flex-row gap-4">
-            <a href="/sample-guide.html" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded hover:bg-indigo-700 shadow-lg transition text-sm sm:text-base">
+            <a href="/sample-guide.html" class="border border-indigo-600 text-indigo-600 font-semibold px-5 py-2.5 rounded hover:bg-indigo-50 transition text-sm sm:text-base">
               View a Sample Guide
             </a>
             <a href="#trial-section" class="border border-indigo-600 text-indigo-600 font-semibold px-5 py-2.5 rounded hover:bg-indigo-50 transition text-sm sm:text-base">
@@ -153,7 +156,7 @@
           </div>
 
           <!-- Bottom: wider main CTA -->
-          <a href="#pricing" class="bg-indigo-600 text-white font-semibold px-7 py-3 rounded w-full sm:w-auto text-center hover:bg-indigo-700 shadow-lg transition text-sm sm:text-base">
+          <a href="#pricing" class="border border-indigo-600 text-indigo-600 font-semibold px-7 py-3 rounded w-full sm:w-auto text-center hover:bg-indigo-50 shadow-lg transition text-sm sm:text-base">
             Become a Member
           </a>
         </div>
@@ -170,7 +173,7 @@
   </section>
 
   <!-- How It Works -->
-  <section id="howitworks" class="bg-gray-50 py-16 px-6">
+  <section id="howitworks" class="bg-indigo-50 py-16 px-6">
     <div class="max-w-3xl mx-auto text-center">
       <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">How It Works</h2>
       <div class="grid md:grid-cols-3 gap-8 text-left mt-8">
@@ -214,7 +217,7 @@
   </section>
 
   <!-- Why Choose The Phoenix Protocol -->
-  <section id="why-choose" class="bg-gray-50 py-16 px-6">
+  <section id="why-choose" class="bg-indigo-50 py-16 px-6">
     <div class="max-w-3xl mx-auto text-center">
       <h2 class="text-3xl md:text-4xl font-bold text-[#393f4a] mb-8">Why Choose The Phoenix Protocol?</h2>
       <div class="grid md:grid-cols-3 gap-8 text-left mt-8">
@@ -243,13 +246,16 @@
         The Phoenix Protocol has just launched, and our first users are beginning their recovery journeys. We’re collecting real testimonials right now — check back soon to see authentic stories from people just like you.
       </p>
       <img src="logo-purple.svg" alt="The Phoenix Protocol" class="h-16 mx-auto my-5" />
-      <p class="text-sm text-gray-400 mt-3">
-        Want to share your experience?<br>
-        <a href="mailto:support@thephoenixprotocol.app" class="underline hover:text-indigo-700">
-          Email us
+      <div style="margin-bottom: 12px; font-size: 1rem; color: #6b7280;">
+        💬 <strong>Want to share your experience with The Phoenix Protocol?</strong><br>
+        Your feedback helps others and makes the program stronger.<br>
+        <a href="https://www.thephoenixprotocol.app/feedback.html"
+          class="inline-block mt-3 px-6 py-2 rounded bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+          target="_blank"
+          rel="noopener noreferrer">
+          Leave Feedback
         </a>
-        and help inspire others.
-      </p>
+      </div>
     </div>
   </section>
 
@@ -384,7 +390,7 @@
           <h3 class="text-lg font-bold mb-2 text-gray-800">7 Days</h3>
           <p class="mb-4 text-gray-500">$9 one-time payment for 7 days of structured support.</p>
         </div>
-        <a href="#" data-plan="7" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
+        <a href="/checkout.html?plan=7" data-plan="7" class="buy-button block bg-indigo-600 text-white text-center font-semibold py-2 rounded hover:bg-indigo-700 transition">Buy Now</a>
       </div>
 
       <!-- 30-Day Plan -->
@@ -393,7 +399,7 @@
           <h3 class="text-lg font-bold mb-2 text-gray-800">30 Days</h3>
           <p class="mb-4 text-gray-500">$19 one-time payment for 30 days of guidance.</p>
         </div>
-        <a href="#" data-plan="30" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
+        <a href="/checkout.html?plan=30" data-plan="30" class="buy-button block bg-indigo-600 text-white text-center font-semibold py-2 rounded hover:bg-indigo-700 transition">Buy Now</a>
       </div>
 
       <!-- 90-Day Plan -->
@@ -402,7 +408,7 @@
           <h3 class="text-lg font-bold mb-2 text-gray-800">90 Days</h3>
           <p class="mb-4 text-gray-500">$49 one-time payment for 90 days of guidance.</p>
         </div>
-        <a href="#" data-plan="90" class="buy-button block bg-purple-600 text-white text-center font-semibold py-2 rounded hover:bg-purple-700 transition">Buy Now</a>
+        <a href="/checkout.html?plan=90" data-plan="90" class="buy-button block bg-indigo-600 text-white text-center font-semibold py-2 rounded hover:bg-indigo-700 transition">Buy Now</a>
       </div>
     </div>
 
@@ -419,28 +425,34 @@
 
 
   <!-- About -->
-  <section id="about" class="max-w-4xl mx-auto py-16 px-6 text-center">
-    <img src="founder.png" alt="Johan van Erkel" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover object-center">
-    <h2 class="text-2xl font-semibold mb-2 text-[#393f4a]">Johan van Erkel</h2>
-    <p class="text-[#8c7878] mb-4">Founder of The Phoenix Protocol</p>
-    <p class="max-w-xl mx-auto text-[#8c7878] mb-4">
-      After my own breakup, I found myself searching everywhere for clear, practical help — and all I saw were vague platitudes or one-size-fits-all advice. I needed real steps, real support, and a plan to move forward, one day at a time. That’s why I created The Phoenix Protocol.
-    </p>
-    <p class="max-w-xl mx-auto text-[#8c7878] mb-4">
-      Every lesson and exercise comes from what actually helped me get out of bed, rebuild my self-worth, and make sense of what happened. I know how lonely heartbreak feels. My goal is to make sure you never feel stuck or powerless — and that you always have something concrete you can do today.
-    </p>
-    <p class="max-w-xl mx-auto text-[#8c7878]">
-      If you’re reading this, know that I’ve been where you are. You’re not alone, and you don’t have to figure it out on your own. This program is the roadmap I wish I’d had — and now, it’s yours.
-    </p>
+  <section id="about" class="bg-white py-16 px-6 text-center">
+    <div class="max-w-4xl mx-auto">
+      <img src="founder.png" alt="Johan van Erkel" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover object-center">
+      <h2 class="text-2xl font-semibold mb-2 text-[#393f4a]">Johan van Erkel</h2>
+      <p class="text-[#8c7878] mb-4">Founder of The Phoenix Protocol</p>
+      <p class="max-w-xl mx-auto text-[#8c7878] mb-4">
+        After my own breakup, I found myself searching everywhere for clear, practical help — and all I saw were vague platitudes or one-size-fits-all advice. I needed real steps, real support, and a plan to move forward, one day at a time. That’s why I created The Phoenix Protocol.
+      </p>
+      <p class="max-w-xl mx-auto text-[#8c7878] mb-4">
+        Every lesson and exercise comes from what actually helped me get out of bed, rebuild my self-worth, and make sense of what happened. I know how lonely heartbreak feels. My goal is to make sure you never feel stuck or powerless — and that you always have something concrete you can do today.
+      </p>
+      <p class="max-w-xl mx-auto text-[#8c7878]">
+        If you’re reading this, know that I’ve been where you are. You’re not alone, and you don’t have to figure it out on your own. This program is the roadmap I wish I’d had — and now, it’s yours.
+      </p>
+    </div>
   </section>
 
   <!-- Final CTA -->
   <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-12 px-6">
     <h2 class="text-2xl md:text-3xl font-semibold mb-4">Not sure yet? See the real thing.</h2>
-    <a href="sample-guide.html" class="inline-block bg-white text-purple-700 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100 transition">
+    <br>
+    <a href="sample-guide.html" class="inline-block bg-white text-indigo-700 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100 transition">
       View a Real Sample Guide
     </a>
-    <p class="text-sm text-white/80 mt-2">No sign-up needed. See exactly what you get before you buy.</p>
+    <div>
+      <br>
+      <p class="text-sm text-white/80 mt-2">No sign-up needed. See exactly what you get before you buy.</p>
+    </div>
   </section>
 
   <footer class="text-center text-sm text-[#8c7878] py-6 space-y-2">
