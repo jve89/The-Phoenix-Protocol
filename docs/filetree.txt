@@ -27,8 +27,6 @@
 |  ├── README_LOCK.md
 |  ├── filetree.txt
 |  └── setup.md
-├── dropdown-test
-|  └── test-dropdown.html
 ├── package-lock.json
 ├── package.json
 ├── public
@@ -109,7 +107,7 @@
 └── test
    └── send_admin_backup.js
 
-directory: 521 file: 2588
+directory: 520 file: 2587
 
 ignored: directory (11)
 

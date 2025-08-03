@@ -6,6 +6,10 @@ const MAX_MESSAGE_LENGTH = 2000;
 /**
  * Insert an event log into guide_generation_logs table.
  * Non-blocking: returns immediately and logs errors internally.
+ * 
+ * Note: relies on DB default timestamp for created_at.
+ * To be absolutely safe, NOW() is used explicitly as fallback.
+ * 
  * @param {string} source - Category of the log (e.g. 'cron', 'email', 'server').
  * @param {string} level - Log level: 'info', 'warn', 'error'. Default: 'info'.
  * @param {string} message - Log message content.
@@ -20,7 +24,7 @@ function logEvent(source, level = 'info', message) {
     ? message.slice(0, MAX_MESSAGE_LENGTH) + '...[truncated]'
     : message;
   return db.query(
-    `INSERT INTO guide_generation_logs (source, level, message) VALUES ($1, $2, $3)`,
+    `INSERT INTO guide_generation_logs (source, level, message, created_at) VALUES ($1, $2, $3, NOW())`,
     [source, level, msg]
   ).catch(err => {
     console.error('[db_logger] Failed to insert log:', err.stack || err);
@@ -29,6 +33,10 @@ function logEvent(source, level = 'info', message) {
 
 /**
  * Log a delivery status to delivery_log table.
+ * 
+ * Note: relies on DB default timestamp for sent_at.
+ * To be absolutely safe, NOW() is used explicitly as fallback.
+ * 
  * @param {number} userId 
  * @param {string} email 
  * @param {string} variant 
@@ -39,8 +47,8 @@ function logEvent(source, level = 'info', message) {
 async function logDelivery(userId, email, variant, status, errorMessage = null, deliveryType) {
   try {
     await db.query(
-      `INSERT INTO delivery_log (user_id, email, variant, status, error_message, delivery_type)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO delivery_log (user_id, email, variant, status, error_message, delivery_type, sent_at)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
       [userId, email, variant, status, errorMessage, deliveryType]
     );
   } catch (err) {

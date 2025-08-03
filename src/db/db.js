@@ -19,26 +19,47 @@ pool.on('error', (err) => {
 
 // DDL for initial schema (idempotent)
 const initSQL = [
+  // Users table with all audited columns
   `CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     name TEXT,
     gender TEXT NOT NULL,
     goal_stage TEXT NOT NULL,
-    plan TEXT,
-    plan_limit INTEGER DEFAULT 0,
+    plan INTEGER NOT NULL,
+    plan_limit INTEGER NOT NULL,
+    is_trial_user BOOLEAN NOT NULL DEFAULT FALSE,
     usage_count INTEGER DEFAULT 0,
-    bounces INTEGER DEFAULT 0,
-    session_id TEXT,
-    first_guide_sent_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    last_trial_sent_at TIMESTAMP,
+    last_paid_sent_at TIMESTAMP,
+    trial_started_at TIMESTAMP,
+    paid_started_at TIMESTAMP,
+    trial_farewell_sent_at TIMESTAMP,
+    paid_farewell_sent_at TIMESTAMP,
+    unsubscribed BOOLEAN
   );`,
-  `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_trial_user BOOLEAN DEFAULT FALSE;`,
+
+  // daily_guides table with date type and created_at timestamp
   `CREATE TABLE IF NOT EXISTS daily_guides (
-    date TEXT PRIMARY KEY,
-    guide JSONB NOT NULL
+    date DATE PRIMARY KEY,
+    guide JSONB NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
   );`,
+
+  // delivery_log table creation with audited columns
+  `CREATE TABLE IF NOT EXISTS delivery_log (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    email TEXT,
+    variant TEXT,
+    status TEXT,
+    error_message TEXT,
+    sent_at TIMESTAMP,
+    delivery_type TEXT
+  );`,
+
+  // guide_generation_logs table, adding created_at default
   `CREATE TABLE IF NOT EXISTS guide_generation_logs (
     id SERIAL PRIMARY KEY,
     source TEXT,

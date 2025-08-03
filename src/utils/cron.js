@@ -64,7 +64,7 @@ async function runGeneratePaidSlot() {
     logger.info(`Guide for ${date} already exists. Slot complete.`);
     const backupLog = await db.query(
       `SELECT 1 FROM guide_generation_logs
-       WHERE DATE(timestamp) = $1 AND message ILIKE '%Admin guide + backup sent%' LIMIT 1`, [date]
+      WHERE DATE(created_at) = $1 AND message ILIKE '%Admin guide + backup sent%' LIMIT 1`, [date]
     );
     if (backupLog.rowCount > 0) {
       logger.info(`Admin backup already sent for ${date}. Skipping.`);
@@ -332,8 +332,7 @@ async function runMaintenanceSlot() {
   const logTables = [
     { table: 'guide_generation_logs', col: 'created_at' },
     { table: 'delivery_log', col: 'sent_at' },
-    { table: 'daily_guides', col: 'date' },
-    { table: 'fallback_logs', col: 'timestamp' }
+    { table: 'daily_guides', col: 'date' }
   ];
   for (const { table, col } of logTables) {
     try {
