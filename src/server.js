@@ -60,11 +60,12 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Auto-register clean routes for all public .html pages
-fs.readdirSync(path.join(__dirname, 'public'))
+const publicDir = path.join(__dirname, '..', 'public');
+fs.readdirSync(publicDir)
   .filter(file => file.endsWith('.html'))
   .forEach(file => {
     const route = '/' + file.replace(/\.html$/, '');
-    const filePath = path.join(__dirname, 'public', file);
+    const filePath = path.join(publicDir, file);
 
     console.log(`🔗 Routing ${route} → ${file}`);
 
@@ -72,7 +73,6 @@ fs.readdirSync(path.join(__dirname, 'public'))
       res.sendFile(filePath);
     });
 
-    // Optional: redirect .html to clean version (SEO-friendly)
     app.get('/' + file, (req, res) => {
       res.redirect(301, route);
     });
