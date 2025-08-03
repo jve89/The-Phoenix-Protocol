@@ -59,6 +59,25 @@ app.use('/webhook', webhookRoutes);
 app.use(express.json());
 app.use(express.static('public'));
 
+// Auto-register clean routes for all public .html pages
+fs.readdirSync(path.join(__dirname, 'public'))
+  .filter(file => file.endsWith('.html'))
+  .forEach(file => {
+    const route = '/' + file.replace(/\.html$/, '');
+    const filePath = path.join(__dirname, 'public', file);
+
+    console.log(`🔗 Routing ${route} → ${file}`);
+
+    app.get(route, (req, res) => {
+      res.sendFile(filePath);
+    });
+
+    // Optional: redirect .html to clean version (SEO-friendly)
+    app.get('/' + file, (req, res) => {
+      res.redirect(301, route);
+    });
+  });
+
 // Register feedback *before* general routes, both under /api
 app.use('/api', feedbackRoutes);
 app.use('/api', routes);
@@ -97,5 +116,10 @@ async function startServer() {
     process.exit(1);
   }
 }
+
+// Global 404 fallback
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
 
 startServer();
