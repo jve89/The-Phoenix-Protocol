@@ -88,14 +88,46 @@ for (const variant of VARIANTS) {
 async function generateTip(gender, goalStage) {
   const variant = `${gender}_${goalStage}`;
   const prompts = promptCache[variant];
-  if (!prompts) {
+  if (!prompts || prompts.length === 0) {
     logEvent('content', 'error', `No prompts for variant ${variant}`);
     return 'Guide unavailable at this time.';
   }
 
-  // --- Just pick a random prompt (no anti-repeat logic)
-  const idx = Math.floor(Math.random() * prompts.length);
-  const promptObj = prompts[idx];
+  // STEP 1 — Fetch recent guide contents for this variant (last 7 days)
+  let recentContents = new Set();
+  try {
+    const { rows } = await db.query(`
+      SELECT guide FROM daily_guides
+      WHERE date >= CURRENT_DATE - INTERVAL '7 days'
+    `);
+    for (const row of rows) {
+      const content = row.guide?.[variant]?.content?.trim();
+      if (content && content.length > 100) recentContents.add(content);
+    }
+  } catch (err) {
+    logEvent('content', 'warn', `Failed to load recent guides for dedup: ${err.message}`);
+    // Fallback: proceed without exclusions
+  }
+
+  // STEP 2 — Filter prompt pool
+  const usablePrompts = prompts.filter(p => {
+    try {
+      const testOutput = typeof p.prompt === 'function' ? p.prompt(gender, goalStage).trim() : '';
+      return testOutput.length > 50 && !recentContents.has(testOutput);
+    } catch {
+      return false;
+    }
+  });
+
+  const pool = usablePrompts.length > 0 ? usablePrompts : prompts;
+  if (usablePrompts.length === 0) {
+    logEvent('content', 'info', `⚠️ All prompts used in past 7 days for ${variant}. Using full pool.`);
+  }
+
+  // STEP 3 — Select prompt and build text
+  const idx = Math.floor(Math.random() * pool.length);
+  const promptObj = pool[idx];
+
   let promptText;
   try {
     if (typeof promptObj === 'string') {
@@ -110,7 +142,7 @@ async function generateTip(gender, goalStage) {
     return 'Guide generation error.';
   }
 
-  // Model fallback logic
+  // STEP 4 — Model fallback logic
   let lastError = null;
 
   for (let i = 0; i < MODELS.length; i++) {
@@ -124,7 +156,7 @@ async function generateTip(gender, goalStage) {
 
       const output = completion.choices[0].message.content.trim();
 
-      // Attempt to extract a title from the AI content (first line as H1 or sentence)
+      // Extract title
       const lines = output.split('\n').map(l => l.trim()).filter(Boolean);
       let title = '';
       if (lines[0].startsWith('#')) {
@@ -133,10 +165,9 @@ async function generateTip(gender, goalStage) {
         title = lines[0];
       }
 
-      // Validate title quality
+
       if (
-        !title ||
-        title.length < 5 ||
+        !title || title.length < 5 ||
         title.toLowerCase() === variant.toLowerCase() ||
         /^[a-z_]+$/.test(title.toLowerCase())
       ) {
@@ -152,7 +183,7 @@ async function generateTip(gender, goalStage) {
         throw new Error('Weak AI output');
       }
 
-      // No deduplication — lean DB, lean logic.
+      
 
       return output;
 
