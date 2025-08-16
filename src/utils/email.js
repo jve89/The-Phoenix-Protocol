@@ -25,21 +25,30 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
   }
 
   // Subject truncation (if needed)
-  let finalSubject = subject.length > 140 ? subject.slice(0, 137) + '...' : subject;
+  const finalSubject = subject.length > 140 ? subject.slice(0, 137) + '...' : subject;
 
-  // Always generate a one-time unsubscribe token
-  let finalHtml = html;
+  // Build unsubscribe token + URL
+  let token = '';
+  let unsubscribeUrl = '';
   try {
-    const token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    const unsubscribeUrl = `https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`;
-    const footer = `
-      <div style="margin-top: 40px; font-size: 12px; color: #888; text-align: center;">
-        <p>If you no longer want to receive these emails, <a href="${unsubscribeUrl}" style="color:#7c3aed;">click here to unsubscribe</a>.</p>
-      </div>
-    `;
-    finalHtml += footer;
+    token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '365d' });
+    unsubscribeUrl = `https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`;
   } catch (err) {
     logEvent('email', 'warn', `Unsubscribe token error for ${to}: ${err.message}`);
+  }
+
+  // Only append our tiny footer if the HTML doesn't already contain an unsubscribe
+  const hasCustomUnsub = /{{\s*unsubscribe_token\s*}}|\/unsubscribe\?token=/i.test(html);
+  let finalHtml = html;
+
+  if (!hasCustomUnsub && unsubscribeUrl) {
+    const footer = `
+      <div style="margin-top:40px;font-size:12px;color:#888;text-align:center;">
+        <p>If you no longer want to receive these emails,
+          <a href="${unsubscribeUrl}" style="color:#4f46e5;">click here to unsubscribe</a>.
+        </p>
+      </div>`;
+    finalHtml += footer;
   }
 
   // Plain text version for fallback
@@ -48,7 +57,24 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     selectors: [{ selector: 'a', options: { hideLinkHrefIfSameAsText: true } }]
   });
 
-  const msg = { to, from: fromEmail, subject: finalSubject, html: finalHtml, text };
+  // Build message
+  const msg = {
+    to,
+    from: fromEmail,
+    subject: finalSubject,
+    html: finalHtml,
+    text,
+    // Prevent SendGrid from adding its own unsubscribe/footer on these emails
+    mailSettings: {
+      subscriptionTracking: { enable: false },
+      footer: { enable: false },
+    },
+    // Help Gmail/Apple Mail with one-click unsubscribe
+    headers: unsubscribeUrl ? {
+      'List-Unsubscribe': `<${unsubscribeUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    } : undefined,
+  };
 
   // Attachments (if any)
   if (attachmentPath) {
@@ -63,7 +89,7 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
           type: mime.lookup(filePath) || 'application/octet-stream',
           disposition: 'attachment'
         });
-
+        
       } catch (err) {
         logEvent('email', 'warn', `Attachment failed for ${to}: ${err.message}`);
       }
