@@ -1,3 +1,4 @@
+// src/routes/webhooks.js
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
@@ -74,7 +75,7 @@ router.post(
         `UPDATE users SET
             plan = $1,
             plan_limit = $2,
-            usage_count = 0,
+            paid_usage_count = 0,                -- was usage_count
             gender = $3,
             goal_stage = $4,
             session_id = $5,

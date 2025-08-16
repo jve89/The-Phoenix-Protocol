@@ -19,7 +19,7 @@ pool.on('error', (err) => {
 
 // DDL for initial schema (idempotent)
 const initSQL = [
-  // Users table with all audited columns
+  // Users table (mirrors prod schema; split counters + safe defaults)
   `CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
@@ -29,7 +29,8 @@ const initSQL = [
     plan INTEGER NOT NULL,
     plan_limit INTEGER NOT NULL,
     is_trial_user BOOLEAN NOT NULL DEFAULT FALSE,
-    usage_count INTEGER DEFAULT 0,
+    trial_usage_count INTEGER NOT NULL DEFAULT 0,
+    paid_usage_count  INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT NOW(),
     last_trial_sent_at TIMESTAMP,
     last_paid_sent_at TIMESTAMP,
@@ -37,17 +38,19 @@ const initSQL = [
     paid_started_at TIMESTAMP,
     trial_farewell_sent_at TIMESTAMP,
     paid_farewell_sent_at TIMESTAMP,
-    unsubscribed BOOLEAN
+    unsubscribed BOOLEAN DEFAULT FALSE,
+    session_id TEXT,
+    bounces INTEGER NOT NULL DEFAULT 0
   );`,
 
-  // daily_guides table with date type and created_at timestamp
+  // daily_guides table with date PK and created_at timestamp
   `CREATE TABLE IF NOT EXISTS daily_guides (
     date DATE PRIMARY KEY,
     guide JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
   );`,
 
-  // delivery_log table creation with audited columns
+  // delivery_log with safe defaults + FK to users (matches prod)
   `CREATE TABLE IF NOT EXISTS delivery_log (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -55,11 +58,24 @@ const initSQL = [
     variant TEXT,
     status TEXT,
     error_message TEXT,
-    sent_at TIMESTAMP,
+    sent_at TIMESTAMP DEFAULT NOW(),
     delivery_type TEXT
   );`,
 
-  // guide_generation_logs table, adding created_at default
+  // Ensure FK exists (idempotent: add if missing)
+  `DO $$
+   BEGIN
+     IF NOT EXISTS (
+       SELECT 1 FROM pg_constraint
+       WHERE conname = 'delivery_log_user_id_fkey'
+     ) THEN
+       ALTER TABLE delivery_log
+         ADD CONSTRAINT delivery_log_user_id_fkey
+         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+     END IF;
+   END$$;`,
+
+  // guide_generation_logs table, created_at default
   `CREATE TABLE IF NOT EXISTS guide_generation_logs (
     id SERIAL PRIMARY KEY,
     source TEXT,

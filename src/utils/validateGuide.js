@@ -7,13 +7,15 @@
  * @param {number} minLength - Optional minimum content length.
  * @returns {{ isValid: boolean, warnings: string[] }}
  */
-function validateGuideContent(guide, variants = [], minLength = 150) {
+function validateGuideContent(guide, variants = [], minLength = 500) {
   const warnings = [];
+  let hasErrors = false;
 
   for (const variant of variants) {
     const section = guide[variant];
     if (!section) {
       warnings.push(`🟥 Missing section for variant: ${variant}`);
+      hasErrors = true;
       continue;
     }
 
@@ -21,11 +23,13 @@ function validateGuideContent(guide, variants = [], minLength = 150) {
 
     if (!content || typeof content !== 'string' || !content.trim()) {
       warnings.push(`🟥 Empty or invalid content for variant: ${variant}`);
+      hasErrors = true;
       continue;
     }
 
     if (!title || typeof title !== 'string' || !title.trim()) {
       warnings.push(`🟥 Missing or invalid title for variant: ${variant}`);
+      hasErrors = true;
     } else if (title.trim().toLowerCase() === variant.toLowerCase()) {
       warnings.push(`⚠️ Title equals variant key for ${variant}: "${title}"`);
     }
@@ -36,7 +40,7 @@ function validateGuideContent(guide, variants = [], minLength = 150) {
   }
 
   return {
-    isValid: warnings.length === 0,
+    isValid: !hasErrors,
     warnings
   };
 }

@@ -1,3 +1,4 @@
+// src/routes/routes.js
 const express = require('express');
 const db = require('../db/db');
 const { createCheckoutSession } = require('../utils/payment');
@@ -60,12 +61,25 @@ router.get('/cron/status', (req, res) => {
   res.json({ cronLastRun: lastRun });
 });
 
+/**
+ * Debug: list users
+ * Show both counters so we can verify separation at a glance.
+ */
 router.get('/debug/list-users', asyncHandler(async (req, res) => {
   logger.info('Debug list-users');
-  const { rows } = await db.query('SELECT id, email, plan, usage_count FROM users ORDER BY id');
+  const { rows } = await db.query(`
+    SELECT id, email, plan, plan_limit, is_trial_user, trial_usage_count, paid_usage_count
+    FROM users
+    ORDER BY id
+  `);
   res.json(rows);
 }));
 
+/**
+ * Signup / Plan (trial or paid)
+ * - Trials: plan=3, uses trial_usage_count
+ * - Paid: plan in {7,30,90}, uses paid_usage_count
+ */
 router.post('/signup', asyncHandler(async (req, res) => {
   const email = sanitizeInput(req.body.email);
   const name = sanitizeInput(req.body.name) || null;
@@ -95,74 +109,96 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
   try {
     const { rows } = await db.query(
-      'SELECT plan_limit, usage_count, plan FROM users WHERE email = $1',
+      `SELECT plan_limit, plan, is_trial_user, trial_usage_count, paid_usage_count
+       FROM users WHERE email = $1`,
       [email]
     );
 
     if (rows.length) {
       const user = rows[0];
 
-      if (user.plan === 3 && user.usage_count < 3) {
+      // Existing user guardrails
+      const currentUsage = user.is_trial_user ? (user.trial_usage_count || 0) : (user.paid_usage_count || 0);
+
+      // Active trial?
+      if (user.is_trial_user && user.plan === 3 && currentUsage < 3) {
         logger.warn(`Trial already in progress for ${email}`);
         return res.status(400).json({ error: 'You already have an active trial.' });
       }
 
-      if (user.usage_count < user.plan_limit) {
+      // Active paid plan?
+      if (!user.is_trial_user && user.plan_limit && currentUsage < user.plan_limit) {
         logger.warn(`Active plan exists for ${email}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
       }
 
+      // Renewal / switching plan
       logger.info(`Renewing plan for ${email}`);
 
       if (planInt === 3) {
+        // (Re)start trial cleanly
         await db.query(
           `UPDATE users SET
-            plan = $1,
-            goal_stage = $2,
-            plan_limit = $3,
-            usage_count = 0,
-            unsubscribed = FALSE,
-            trial_started_at = $5,
-            last_trial_sent_at = NULL,
-            trial_farewell_sent_at = NULL
-          WHERE email = $4`,
+              plan = $1,
+              goal_stage = $2,
+              plan_limit = $3,
+              is_trial_user = TRUE,
+              trial_usage_count = 0,
+              unsubscribed = FALSE,
+              trial_started_at = $5,
+              last_trial_sent_at = NULL,
+              trial_farewell_sent_at = NULL
+            WHERE email = $4`,
           [planInt, goal_stage, planInt, email, now]
         );
       } else {
+        // (Re)start paid cleanly
         await db.query(
           `UPDATE users SET
-            plan = $1,
-            goal_stage = $2,
-            plan_limit = $3,
-            usage_count = 0,
-            unsubscribed = FALSE,
-            paid_started_at = $5,
-            last_paid_sent_at = NULL,
-            paid_farewell_sent_at = NULL
-          WHERE email = $4`,
+              plan = $1,
+              goal_stage = $2,
+              plan_limit = $3,
+              is_trial_user = FALSE,
+              paid_usage_count = 0,
+              unsubscribed = FALSE,
+              paid_started_at = $5,
+              last_paid_sent_at = NULL,
+              paid_farewell_sent_at = NULL
+            WHERE email = $4`,
           [planInt, goal_stage, planInt, email, now]
         );
       }
 
     } else {
+      // New user
       logger.info(`Creating new user ${email}`);
       const isTrial = planInt === 3;
 
       if (isTrial) {
         await db.query(
           `INSERT INTO users (
-            email, name, gender, plan, plan_limit, usage_count, goal_stage, is_trial_user,
-            trial_started_at, last_trial_sent_at, trial_farewell_sent_at
-          ) VALUES ($1,$2,$3,$4,$5,0,$6,$7,$8,NULL,NULL)`,
-          [email, name, gender, planInt, planInt, goal_stage, isTrial, now]
+            email, name, gender, plan, plan_limit, goal_stage, is_trial_user,
+            trial_usage_count, paid_usage_count,
+            trial_started_at, last_trial_sent_at, trial_farewell_sent_at,
+            unsubscribed
+          ) VALUES ($1,$2,$3,$4,$5,$6,TRUE,
+                   0,0,
+                   $7,NULL,NULL,
+                   FALSE)`,
+          [email, name, gender, planInt, planInt, goal_stage, now]
         );
       } else {
         await db.query(
           `INSERT INTO users (
-            email, name, gender, plan, plan_limit, usage_count, goal_stage, is_trial_user,
-            paid_started_at, last_paid_sent_at, paid_farewell_sent_at
-          ) VALUES ($1,$2,$3,$4,$5,0,$6,$7,NULL,$8,NULL)`,
-          [email, name, gender, planInt, planInt, goal_stage, false, now]
+            email, name, gender, plan, plan_limit, goal_stage, is_trial_user,
+            trial_usage_count, paid_usage_count,
+            paid_started_at, last_paid_sent_at, paid_farewell_sent_at,
+            unsubscribed
+          ) VALUES ($1,$2,$3,$4,$5,$6,FALSE,
+                   0,0,
+                   $7,NULL,NULL,
+                   FALSE)`,
+          [email, name, gender, planInt, planInt, goal_stage, now]
         );
       }
     }
@@ -175,6 +211,7 @@ router.post('/signup', asyncHandler(async (req, res) => {
       return res.json({ message: 'Trial signup successful', url: null });
     }
 
+    // Paid: create checkout session
     console.log(`🧪 Creating checkout session for: ${email}, plan: ${planInt}, gender: ${gender}, goal: ${goal_stage}`);
     const url = await createCheckoutSession(email, planInt, gender, goal_stage);
     res.json({ message: 'Sign-up successful', url });

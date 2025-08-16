@@ -1,3 +1,4 @@
+// src/routes/unsubscribe.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -72,7 +73,7 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
     const email = decoded.email;
     logger.info(`Processing unsubscribe for ${email}`);
 
-    // Only need to fetch user once!
+    // Fetch trial flag once
     const { rows } = await db.query(
       'SELECT is_trial_user FROM users WHERE email = $1',
       [email]
@@ -84,21 +85,30 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
     const isTrial = rows[0].is_trial_user;
     const farewellTimeField = isTrial ? 'trial_farewell_sent_at' : 'paid_farewell_sent_at';
 
-    const result = await db.query(
-      `UPDATE users
-      SET plan = 0,
-          usage_count = plan_limit,
-          unsubscribed = TRUE,
-          farewell_sent = TRUE,
-          ${farewellTimeField} = NOW()
-      WHERE email = $1
-      RETURNING email`,
-      [email]
-    );
-
-    if (result.rowCount === 0) {
-      logger.warn(`Unsubscribe: no user found for ${email}`);
-      return res.status(404).type('text/html').send('<h2>Email not found.</h2>');
+    // ✅ Patch: stop using legacy usage_count
+    // ✅ Patch: remove nonexistent farewell_sent column
+    if (isTrial) {
+      // Trial: mark as unsubscribed and cap TRIAL usage at plan_limit
+      await db.query(
+        `UPDATE users
+         SET plan = 0,
+             trial_usage_count = plan_limit,
+             unsubscribed = TRUE,
+             ${farewellTimeField} = NOW()
+         WHERE email = $1`,
+        [email]
+      );
+    } else {
+      // Paid: mark as unsubscribed and cap PAID usage at plan_limit
+      await db.query(
+        `UPDATE users
+         SET plan = 0,
+             paid_usage_count = plan_limit,
+             unsubscribed = TRUE,
+             ${farewellTimeField} = NOW()
+         WHERE email = $1`,
+        [email]
+      );
     }
 
     const templateName = isTrial ? 'trial_farewell.html' : 'farewell_email.html';

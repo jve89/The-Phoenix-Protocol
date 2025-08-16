@@ -8,7 +8,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
 
-// App modules
+// App modules 
 const { sendRawEmail, renderEmailMarkdown } = require('./email');
 const { generateAndCacheDailyGuides, loadTodayGuide, loadGuideByDate } = require('./content');
 const { loadTemplate } = require('./loadTemplate');
@@ -64,7 +64,7 @@ async function runGeneratePaidSlot() {
     logger.info(`Guide for ${date} already exists. Slot complete.`);
     const backupLog = await db.query(
       `SELECT 1 FROM guide_generation_logs
-      WHERE DATE(created_at) = $1 AND message ILIKE '%Admin guide + backup sent%' LIMIT 1`, [date]
+       WHERE DATE(created_at) = $1 AND message ILIKE '%Admin guide + backup sent%' LIMIT 1`, [date]
     );
     if (backupLog.rowCount > 0) {
       logger.info(`Admin backup already sent for ${date}. Skipping.`);
@@ -121,15 +121,9 @@ async function runGeneratePaidSlot() {
         color: #393f4a;
         padding: 20px;
       }
-      h1 {
-        color: #5f259f;
-      }
-      h2 {
-        margin-top: 1.5em;
-      }
-      hr {
-        margin: 2rem 0;
-      }
+      h1 { color: #5f259f; }
+      h2 { margin-top: 1.5em; }
+      hr { margin: 2rem 0; }
     </style>
   </head>
   <body>
@@ -155,11 +149,11 @@ async function runDeliverTrialSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, usage_count, gender, goal_stage
+      `SELECT id, email, trial_usage_count, gender, goal_stage
        FROM users
        WHERE is_trial_user = TRUE
          AND unsubscribed = FALSE
-         AND usage_count < 3
+         AND trial_usage_count < 3
          AND (last_trial_sent_at IS NULL OR last_trial_sent_at::date != CURRENT_DATE)`
     ));
   } catch (err) {
@@ -168,10 +162,11 @@ async function runDeliverTrialSlot() {
   }
 
   for (const user of users) {
-    const day = user.usage_count + 1;
+    const day = (user.trial_usage_count || 0) + 1;
     const gender = user.gender || 'neutral';
     const goal = user.goal_stage || 'reconnect';
     const templatePath = `trial/${gender}_${goal}_day${day}.html`;
+
     let html;
     try {
       html = await loadTemplate(templatePath);
@@ -179,6 +174,7 @@ async function runDeliverTrialSlot() {
       logger.error(`Missing trial template ${templatePath}: ${err.message}`);
       continue;
     }
+
     const subject = `Phoenix Protocol — Day ${day}`;
     const variant = `${gender}_${goal}`;
     try {
@@ -187,7 +183,7 @@ async function runDeliverTrialSlot() {
       await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
       await db.query(
         `UPDATE users SET 
-            usage_count = usage_count + 1,
+            trial_usage_count = trial_usage_count + 1,
             last_trial_sent_at = NOW(),
             trial_started_at = COALESCE(trial_started_at, NOW())
           WHERE id = $1`,
@@ -203,10 +199,11 @@ async function runDeliverTrialSlot() {
     const { rows: farewellUsers } = await db.query(
       `SELECT id, email FROM users
        WHERE is_trial_user = TRUE
-         AND usage_count >= 3
+         AND trial_usage_count >= 3
          AND trial_farewell_sent_at IS NULL`
     );
     if (!farewellUsers.length) return;
+
     const html = await loadTemplate('trial_farewell.html');
     for (const user of farewellUsers) {
       try {
@@ -236,7 +233,7 @@ async function runDeliverPaidSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, gender, goal_stage, plan_limit, usage_count, paid_farewell_sent_at
+      `SELECT id, email, gender, goal_stage, plan_limit, paid_usage_count, paid_farewell_sent_at
        FROM users
        WHERE plan IS NOT NULL
          AND plan > 0
@@ -262,7 +259,8 @@ async function runDeliverPaidSlot() {
 
   for (const user of users) {
     const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
-    if (user.usage_count >= user.plan_limit) {
+
+    if ((user.paid_usage_count || 0) >= user.plan_limit) {
       if (!user.paid_farewell_sent_at) {
         try {
           await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
@@ -308,7 +306,7 @@ async function runDeliverPaidSlot() {
       );
       await db.query(
         `UPDATE users SET 
-            usage_count = usage_count + 1,
+            paid_usage_count = paid_usage_count + 1,
             paid_started_at = COALESCE(paid_started_at, NOW()),
             last_paid_sent_at = NOW()
           WHERE id = $1`,
@@ -371,7 +369,7 @@ async function auditAndCatchUp() {
     let users;
     try {
       ({ rows: users } = await db.query(
-        `SELECT id, email, gender, goal_stage, plan_limit, usage_count, paid_farewell_sent_at
+        `SELECT id, email, gender, goal_stage, plan_limit, paid_usage_count, paid_farewell_sent_at
          FROM users
          WHERE plan IS NOT NULL
            AND plan > 0
@@ -387,7 +385,7 @@ async function auditAndCatchUp() {
     for (const user of users) {
       const variant = `${user.gender || 'neutral'}_${user.goal_stage || 'reconnect'}`;
       if (
-        user.usage_count < user.plan_limit &&
+        (user.paid_usage_count || 0) < user.plan_limit &&
         guide[variant] &&
         guide[variant].content &&
         guide[variant].content.trim().length > 100
