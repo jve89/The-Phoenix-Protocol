@@ -4,9 +4,7 @@ require('./loadEnv');
 // Core dependencies
 const cron = require('node-cron');
 const db = require('../db/db');
-const fs = require('fs').promises;
-const path = require('path');
-const os = require('os');
+const jwt = require('jsonwebtoken');
 
 // App modules 
 const { sendRawEmail, renderEmailMarkdown } = require('./email');
@@ -41,7 +39,7 @@ const logger = {
 };
 
 const validateEnv = () => {
-  const required = ['SENDGRID_API_KEY', 'DATABASE_URL', 'ADMIN_EMAIL'];
+  const required = ['SENDGRID_API_KEY', 'DATABASE_URL', 'ADMIN_EMAIL', 'JWT_SECRET'];
   for (const key of required) {
     if (!process.env[key]) {
       logger.error(`Missing ENV ${key} — cron disabled`);
@@ -121,7 +119,7 @@ async function runGeneratePaidSlot() {
         color: #393f4a;
         padding: 20px;
       }
-      h1 { color: #5f259f; }
+      h1 { color: #4f46e5; }
       h2 { margin-top: 1.5em; }
       hr { margin: 2rem 0; }
     </style>
@@ -168,32 +166,42 @@ async function runDeliverTrialSlot() {
     const templatePath = `trial/${gender}_${goal}_day${day}.html`;
 
     let html;
-    try {
-      html = await loadTemplate(templatePath);
-    } catch (err) {
-      logger.error(`Missing trial template ${templatePath}: ${err.message}`);
-      continue;
-    }
+      try {
+        html = await loadTemplate(templatePath);
+      } catch (err) {
+        logger.error(`Missing trial template ${templatePath}: ${err.message}`);
+        continue;
+      }
 
-    const subject = `Phoenix Protocol — Day ${day}`;
-    const variant = `${gender}_${goal}`;
-    try {
-      await sendRawEmail(user.email, subject, html);
-      logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
-      await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
-      await db.query(
-        `UPDATE users SET 
-            trial_usage_count = trial_usage_count + 1,
-            last_trial_sent_at = NOW(),
-            trial_started_at = COALESCE(trial_started_at, NOW())
-          WHERE id = $1`,
-        [user.id]
-      );
-    } catch (err) {
-      logger.error(`Trial send failed for ${user.email}: ${err.message}`);
-      await logDelivery(user.id, user.email, variant, 'failed', err.message, 'trial');
+      const subject = `Phoenix Protocol — Day ${day}`;
+      const variant = `${gender}_${goal}`;
+
+      // 🔐 Inject unsubscribe token
+      let token = '';
+      try {
+        token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '365d' });
+      } catch (e) {
+        logger.error(`JWT sign failed for ${user.email}: ${e.message}`);
+      }
+      const htmlWithToken = html.replace(/{{unsubscribe_token}}/g, token || 'invalid');
+
+      try {
+        await sendRawEmail(user.email, subject, htmlWithToken);
+        logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
+        await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
+        await db.query(
+          `UPDATE users SET 
+              trial_usage_count = trial_usage_count + 1,
+              last_trial_sent_at = NOW(),
+              trial_started_at = COALESCE(trial_started_at, NOW())
+            WHERE id = $1`,
+          [user.id]
+        );
+      } catch (err) {
+        logger.error(`Trial send failed for ${user.email}: ${err.message}`);
+        await logDelivery(user.id, user.email, variant, 'failed', err.message, 'trial');
+      }
     }
-  }
 
   try {
     const { rows: farewellUsers } = await db.query(
@@ -286,19 +294,26 @@ async function runDeliverPaidSlot() {
     }
 
     let contentHtml;
-    try {
-      contentHtml = marked.parse(section.content);
-    } catch (err) {
-      logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
-      continue;
-    }
+        try {
+          contentHtml = marked.parse(section.content);
+        } catch (err) {
+          logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
+          continue;
+        }
+
+        const token = (() => {
+      try { return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '365d' }); }
+      catch (e) { logger.error(`JWT sign failed for ${user.email}: ${e.message}`); return 'invalid'; }
+    })();
 
     const html = template
-      .replace('{{title}}', section.title)
-      .replace('{{content}}', contentHtml);
+      .replace(/{{title}}/g, section.title)
+      .replace(/{{content}}/g, contentHtml)
+      .replace(/{{unsubscribe_token}}/g, token);
 
     try {
       await sendRawEmail(user.email, section.title, html);
+
       logger.info(`✅ Guide sent: ${user.email}`);
       await db.query(
         `INSERT INTO delivery_log (user_id,email,variant,status,delivery_type) VALUES ($1,$2,$3,'success','paid')`,
@@ -329,9 +344,10 @@ async function runMaintenanceSlot() {
   logger.info('🔧 Starting system maintenance slot');
   const logTables = [
     { table: 'guide_generation_logs', col: 'created_at' },
-    { table: 'delivery_log', col: 'sent_at' },
-    { table: 'daily_guides', col: 'date' }
+    { table: 'delivery_log',         col: 'sent_at'     },
+    { table: 'daily_guides',         col: 'date'        },
   ];
+
   for (const { table, col } of logTables) {
     try {
       const res = await db.query(
