@@ -70,24 +70,24 @@ router.post(
         return res.json({ received: true });
       }
 
-      const now = new Date();
       const { rowCount } = await db.query(
         `UPDATE users SET
-            plan = $1,
-            plan_limit = $2,
-            paid_usage_count = 0,                -- was usage_count
-            gender = $3,
-            goal_stage = $4,
-            session_id = $5,
-            is_trial_user = FALSE,
-            paid_started_at = COALESCE(paid_started_at, $7),
-            last_paid_sent_at = NULL,
+            plan                  = $1,
+            plan_limit            = $2,
+            paid_usage_count      = 0,                -- was usage_count
+            gender                = $3,
+            goal_stage            = $4,
+            session_id            = $5,
+            is_trial_user         = FALSE,
+            unsubscribed          = FALSE,            -- 🔑 re-enable deliveries
+            paid_started_at       = NOW(),            -- reset anchor for new paid cycle
+            last_paid_sent_at     = NULL,
             paid_farewell_sent_at = NULL,
-            trial_started_at = NULL,
-            last_trial_sent_at = NULL,
+            trial_started_at      = NULL,
+            last_trial_sent_at    = NULL,
             trial_farewell_sent_at = NULL
           WHERE email = $6`,
-        [plan, limit, gender, goalStage, sessionId, email, now]
+        [plan, limit, gender, goalStage, sessionId, email]
       );
       if (!rowCount) {
         logger.warn(`No user updated for session ${sessionId}, email ${email}`);
