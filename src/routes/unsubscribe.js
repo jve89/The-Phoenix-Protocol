@@ -96,7 +96,6 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
     const isTrial = user.is_trial_user;
     const farewellTimeField = isTrial ? 'trial_farewell_sent_at' : 'paid_farewell_sent_at';
 
-    // Update with defensive defaults
     try {
       if (isTrial) {
         await db.query(
@@ -137,7 +136,9 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
       await sendRawEmail(
         email,
         'Thank You for Using The Phoenix Protocol',
-        farewellHtml
+        farewellHtml,
+        null,
+        { suppressUnsubscribeFooter: true, suppressFeedbackFooter: false } // feedback yes, unsubscribe no
       );
       logger.info(`Farewell email (${templateName}) sent to ${email}`);
     } catch (e) {

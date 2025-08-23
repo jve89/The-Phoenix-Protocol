@@ -1,3 +1,4 @@
+// src/utils/backup.js
 const fs = require('fs').promises;
 const { sendRawEmail } = require('./email');
 const { logEvent } = require('./db_logger');
@@ -44,7 +45,13 @@ async function sendDailyGuideBackup(guideJson, htmlBody = '', attachments = []) 
   const body = htmlBody || `<p>Attached is the guide backup for ${dateStr}</p>`;
 
   try {
-    await sendRawEmail(admin, subject, body, safeAttachments.length ? safeAttachments : null);
+    await sendRawEmail(
+      admin,
+      subject,
+      body,
+      safeAttachments.length ? safeAttachments : null,
+      { suppressUnsubscribeFooter: true, suppressFeedbackFooter: true } // system mail: no footers
+    );
     logEvent('backup', 'info', `Guide backup emailed to ${admin}`);
   } catch (err) {
     logEvent('backup', 'error', `Failed to email backup: ${err.message}`);

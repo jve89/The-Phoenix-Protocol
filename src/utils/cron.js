@@ -124,7 +124,13 @@ async function runGeneratePaidSlot() {
     ${warningBlockHtml}
     ${emailPreviewHtml}
   </body></html>`;
-      await sendRawEmail(process.env.ADMIN_EMAIL, `📦 Daily Guide Backup – ${date}`, adminHtml);
+      await sendRawEmail(
+        process.env.ADMIN_EMAIL,
+        `📦 Daily Guide Backup – ${date}`,
+        adminHtml,
+        null,
+        { suppressUnsubscribeFooter: true, suppressFeedbackFooter: true }
+      );
       logger.info('✅ Admin guide + backup sent');
     }
   } catch (err) {
@@ -204,7 +210,13 @@ async function runDeliverTrialSlot() {
     for (const user of farewellUsers) {
       try {
         const subject = 'Your Trial with The Phoenix Protocol Has Ended';
-        await sendRawEmail(user.email, subject, html);
+        await sendRawEmail(
+          user.email,
+          subject,
+          html,
+          null,
+          { suppressUnsubscribeFooter: true, suppressFeedbackFooter: false }
+        );
         await db.query(
           `UPDATE users SET 
               unsubscribed = TRUE, 
@@ -263,7 +275,13 @@ async function runDeliverPaidSlot() {
     if ((user.paid_usage_count || 0) >= user.plan_limit) {
       if (!user.paid_farewell_sent_at) {
         try {
-          await sendRawEmail(user.email, "Thank You for Using The Phoenix Protocol", farewellHtml);
+          await sendRawEmail(
+            user.email,
+            "Thank You for Using The Phoenix Protocol",
+            farewellHtml,
+            null,
+            { suppressUnsubscribeFooter: true, suppressFeedbackFooter: false }
+          );
           await db.query(
             `UPDATE users SET 
                 unsubscribed = TRUE, 
@@ -484,7 +502,6 @@ async function main() {
     console.error(`[CRON] ❌ Job failed: ${err.message}`);
   }
 }
-
 
 module.exports = { startCron, auditAndCatchUp };
 

@@ -13,6 +13,7 @@ const {
   hasUnsubscribe,
   renderFooter,
 } = require('./unsubscribeFooter');
+const { renderFeedbackFooter } = require('./feedbackFooter');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -23,26 +24,22 @@ const fromEmail = {
 
 // --- helpers ---------------------------------------------------------------
 
-/** Remove a single leading H1/H2 from an HTML fragment. */
 function stripLeadingHeading(html) {
   if (typeof html !== 'string') return html;
   return html.replace(/^\s*<h[12][^>]*>[\s\S]*?<\/h[12]>\s*/i, '');
 }
 
-/** Force consistent heading sizes inside content fragments by downgrading any stray H1s to H2. */
 function normalizeHeadings(html) {
   if (typeof html !== 'string') return html;
   return html.replace(/<h1([^>]*)>/gi, '<h2$1>').replace(/<\/h1>/gi, '</h2>');
 }
 
-/** Render Markdown -> sanitized HTML fragment */
 function renderMd(md) {
   const raw = marked.parse(md || '');
   const noLead = stripLeadingHeading(raw);
   return normalizeHeadings(noLead);
 }
 
-/** Strip basic Markdown from a subject line (subjects are plain text). */
 function stripMdSubject(s) {
   return String(s || '')
     .replace(/^#+\s*/, '')
@@ -55,13 +52,17 @@ function stripMdSubject(s) {
 
 // --- email sending ---------------------------------------------------------
 
-async function sendRawEmail(to, subject, html, attachmentPath = null) {
+async function sendRawEmail(to, subject, html, attachmentPath = null, options = {}) {
+  const {
+    suppressUnsubscribeFooter = false,
+    suppressFeedbackFooter = false,
+  } = options;
+
   if (!to || !subject || typeof html !== 'string' || html.trim().length === 0) {
     logEvent('email', 'error', 'Invalid parameters for sendRawEmail');
     throw new Error('Invalid raw email parameters');
   }
 
-  // Sanitize Markdown before truncation for subjects
   const cleanedSubject = stripMdSubject(subject);
   const finalSubject = cleanedSubject.length > 140 ? cleanedSubject.slice(0, 137) + '...' : cleanedSubject;
 
@@ -74,17 +75,23 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     logEvent('email', 'warn', `Unsubscribe token error for ${to}: ${err.message}`);
   }
 
-  // Replace {{unsubscribe_token}} placeholders before deciding footer injection
   if (token) {
     html = html.replace(/{{\s*unsubscribe_token\s*}}/g, token);
   }
 
-  // Detect if template already carries an unsubscribe link
+  // Detect existing blocks to avoid duplicates
   const hasCustomUnsub = hasUnsubscribe(html);
+  const hasFeedbackCta = /thephoenixprotocol\.app\/feedback\.html/i.test(html);
 
   let finalHtml = html;
 
-  if (!hasCustomUnsub && unsubscribeUrl) {
+  // 1) Feedback CTA (above unsubscribe). Inject unless suppressed or already present.
+  if (!suppressFeedbackFooter && !hasFeedbackCta) {
+    finalHtml += renderFeedbackFooter();
+  }
+
+  // 2) Unsubscribe footer. Inject unless suppressed or already present.
+  if (!suppressUnsubscribeFooter && !hasCustomUnsub && unsubscribeUrl) {
     finalHtml += renderFooter(unsubscribeUrl);
   }
 
@@ -99,10 +106,9 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     subject: finalSubject,
     html: finalHtml,
     text,
-    // Correct SendGrid keys (snake_case)
     tracking_settings: { subscription_tracking: { enable: false } },
     mail_settings: { footer: { enable: false } },
-    headers: unsubscribeUrl
+    headers: unsubscribeUrl && !suppressUnsubscribeFooter
       ? {
           'List-Unsubscribe': `<${unsubscribeUrl}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
@@ -138,7 +144,6 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
   }
 }
 
-// Simple Markdown sender (kept for completeness)
 async function sendMarkdownEmail(to, subject, markdown) {
   if (!to || !subject || !markdown) {
     logEvent('email', 'error', 'Invalid parameters for sendMarkdownEmail');
@@ -158,11 +163,9 @@ async function sendMarkdownEmail(to, subject, markdown) {
   await sendRawEmail(to, stripMdSubject(subject), html);
 }
 
-// Render a guide object using /templates/daily_summary.html while enforcing consistent headings
 async function renderEmailMarkdown(guide) {
   const template = await loadTemplate('daily_summary.html');
 
-  // If guide is a multi-section object
   const keys = Object.keys(guide || {}).filter(k => guide[k]?.content);
   if (keys.length) {
     let fullHtml = '';
@@ -183,7 +186,6 @@ async function renderEmailMarkdown(guide) {
       .replace(/{{\s*content\s*}}/g, fullHtml || '<p><em>No guide content available.</em></p>');
   }
 
-  // Fallback: single guide object
   const safeTitle = (guide && guide.title) ? String(guide.title) : 'Your Daily Guide';
   const contentHtml = renderMd(guide?.content || '');
   return template

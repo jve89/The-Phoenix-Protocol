@@ -1,5 +1,5 @@
 
-# Snapshot @ a98fde5 on 2025-08-23 09:44:37 UTC — DO NOT EDIT
+# Snapshot @ 7c0388f on 2025-08-23 19:20:14 UTC — DO NOT EDIT
 
 
 /workspace/The-Phoenix-Protocol
@@ -12,11 +12,17 @@
 ├── content
 |  ├── archive
 |  |  ├── female_moveon_old.js
+|  |  ├── female_moveon_v2.js
 |  |  ├── female_reconnect_old.js
+|  |  ├── female_reconnect_v2.js
 |  |  ├── male_moveon_old.js
+|  |  ├── male_moveon_v2.js
 |  |  ├── male_reconnect_old.js
+|  |  ├── male_reconnect_v2.js
 |  |  ├── neutral_moveon_old.js
-|  |  └── neutral_reconnect_old.js
+|  |  ├── neutral_moveon_v2.js
+|  |  ├── neutral_reconnect_old.js
+|  |  └── neutral_reconnect_v2.js
 |  └── prompts
 |     ├── female_moveon.js
 |     ├── female_reconnect.js
@@ -65,8 +71,6 @@
 ├── src
 |  ├── db
 |  |  └── db.js
-|  ├── public
-|  |  └── uploads
 |  ├── routes
 |  |  ├── feedback.js
 |  |  ├── routes.js
@@ -82,10 +86,9 @@
 |     ├── loadEnv.js
 |     ├── loadTemplate.js
 |     ├── payment.js
+|     ├── unsubscribeFooter.js
 |     └── validateGuide.js
 ├── templates
-|  ├── daily_summary.html
-|  ├── email.html
 |  ├── farewell_email.html
 |  ├── premium_guide_email.html
 |  ├── trial
@@ -107,13 +110,38 @@
 |  |  ├── neutral_reconnect_day1.html
 |  |  ├── neutral_reconnect_day2.html
 |  |  └── neutral_reconnect_day3.html
-|  ├── trial_day1.html
+|  ├── trial_farewell.html
+|  └── welcome.html
+├── templates.backup.20250823191022
+|  ├── farewell_email.html
+|  ├── premium_guide_email.html
+|  ├── trial
+|  |  ├── female_moveon_day1.html
+|  |  ├── female_moveon_day2.html
+|  |  ├── female_moveon_day3.html
+|  |  ├── female_reconnect_day1.html
+|  |  ├── female_reconnect_day2.html
+|  |  ├── female_reconnect_day3.html
+|  |  ├── male_moveon_day1.html
+|  |  ├── male_moveon_day2.html
+|  |  ├── male_moveon_day3.html
+|  |  ├── male_reconnect_day1.html
+|  |  ├── male_reconnect_day2.html
+|  |  ├── male_reconnect_day3.html
+|  |  ├── neutral_moveon_day1.html
+|  |  ├── neutral_moveon_day2.html
+|  |  ├── neutral_moveon_day3.html
+|  |  ├── neutral_reconnect_day1.html
+|  |  ├── neutral_reconnect_day2.html
+|  |  └── neutral_reconnect_day3.html
 |  ├── trial_farewell.html
 |  └── welcome.html
 └── test
-   └── send_admin_backup.js
+   ├── send_admin_backup.js
+   ├── sendgrid_smoketest.cjs
+   └── test_unsub_footer.js
 
-directory: 522 file: 2588
+directory: 522 file: 2616
 
 ignored: directory (11)
 
