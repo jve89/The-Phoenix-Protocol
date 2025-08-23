@@ -8,6 +8,11 @@ const { convert } = require('html-to-text');
 
 const { logEvent } = require('./db_logger');
 const { loadTemplate } = require('./loadTemplate');
+const {
+  buildUnsubscribeUrl,
+  hasUnsubscribe,
+  renderFooter,
+} = require('./unsubscribeFooter');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -27,7 +32,6 @@ function stripLeadingHeading(html) {
 /** Force consistent heading sizes inside content fragments by downgrading any stray H1s to H2. */
 function normalizeHeadings(html) {
   if (typeof html !== 'string') return html;
-  // Only convert remaining H1s, keep other tags intact
   return html.replace(/<h1([^>]*)>/gi, '<h2$1>').replace(/<\/h1>/gi, '</h2>');
 }
 
@@ -41,11 +45,11 @@ function renderMd(md) {
 /** Strip basic Markdown from a subject line (subjects are plain text). */
 function stripMdSubject(s) {
   return String(s || '')
-    .replace(/^#+\s*/, '')            // leading # headings
-    .replace(/\*\*(.*?)\*\*/g, '$1')  // bold
-    .replace(/\*(.*?)\*/g, '$1')      // italic
-    .replace(/[`_~>]/g, '')           // misc md chars
-    .replace(/\s{2,}/g, ' ')          // collapse spaces
+    .replace(/^#+\s*/, '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/[`_~>]/g, '')
+    .replace(/\s{2,}/g, ' ')
     .trim();
 }
 
@@ -65,29 +69,23 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
   let unsubscribeUrl = '';
   try {
     token = jwt.sign({ email: to }, process.env.JWT_SECRET, { expiresIn: '365d' });
-    unsubscribeUrl = `https://www.thephoenixprotocol.app/unsubscribe?token=${encodeURIComponent(token)}`;
+    unsubscribeUrl = buildUnsubscribeUrl(to, token);
   } catch (err) {
     logEvent('email', 'warn', `Unsubscribe token error for ${to}: ${err.message}`);
   }
 
   // Replace {{unsubscribe_token}} placeholders before deciding footer injection
-  if (unsubscribeUrl) {
+  if (token) {
     html = html.replace(/{{\s*unsubscribe_token\s*}}/g, token);
   }
 
   // Detect if template already carries an unsubscribe link
-  const hasCustomUnsub = /\/unsubscribe\?token=|{{\s*unsubscribe_token\s*}}/i.test(html);
+  const hasCustomUnsub = hasUnsubscribe(html);
 
   let finalHtml = html;
 
   if (!hasCustomUnsub && unsubscribeUrl) {
-    const footer = `
-      <div style="margin-top:40px;font-size:12px;color:#888;text-align:center;">
-        <p>If you no longer want to receive these emails,
-          <a href="${unsubscribeUrl}" style="color:#4f46e5;">click here to unsubscribe</a>.
-        </p>
-      </div>`;
-    finalHtml += footer;
+    finalHtml += renderFooter(unsubscribeUrl);
   }
 
   const text = convert(finalHtml, {
@@ -101,14 +99,15 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     subject: finalSubject,
     html: finalHtml,
     text,
-    mailSettings: {
-      subscriptionTracking: { enable: false },
-      footer: { enable: false },
-    },
-    headers: unsubscribeUrl ? {
-      'List-Unsubscribe': `<${unsubscribeUrl}>`,
-      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-    } : undefined,
+    // Correct SendGrid keys (snake_case)
+    tracking_settings: { subscription_tracking: { enable: false } },
+    mail_settings: { footer: { enable: false } },
+    headers: unsubscribeUrl
+      ? {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        }
+      : undefined,
   };
 
   if (attachmentPath) {
