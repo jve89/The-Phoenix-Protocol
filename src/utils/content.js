@@ -17,6 +17,17 @@ function todayUtc() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// Helper: strip basic Markdown from a first-line title
+function stripMdTitle(s) {
+  return String(s || '')
+    .replace(/^#+\s*/, '')            // leading #
+    .replace(/\*\*(.*?)\*\*/g, '$1')  // **bold**
+    .replace(/\*(.*?)\*/g, '$1')      // *italic*
+    .replace(/[`_~>]/g, '')           // misc md chars
+    .replace(/\s{2,}/g, ' ')          // collapse spaces
+    .trim();
+}
+
 // Load and validate prompt files synchronously at startup
 const VARIANTS = [
   'male_moveon', 'male_reconnect',
@@ -166,13 +177,11 @@ async function generateTip(gender, goalStage) {
         throw new Error('Empty model output');
       }
 
-      // Extract title
+      // Extract title from first line (strip Markdown markers)
       const lines = output.split('\n').map(l => l.trim()).filter(Boolean);
       let title = '';
-      if (lines[0]?.startsWith('#')) {
-        title = lines[0].replace(/^#+\s*/, '').trim();
-      } else {
-        title = lines[0] || '';
+      if (lines[0]) {
+        title = stripMdTitle(lines[0]);
       }
 
       if (
@@ -236,7 +245,7 @@ async function generateAndCacheDailyGuides() {
       }
 
       const lines = (content || '').split('\n').filter(Boolean);
-      let title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
+      let title = stripMdTitle(lines[0] || '') || 'Your Guide';
       if (!title || title.length > 100) {
         title = variant.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
       }

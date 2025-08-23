@@ -38,6 +38,17 @@ function renderMd(md) {
   return normalizeHeadings(noLead);
 }
 
+/** Strip basic Markdown from a subject line (subjects are plain text). */
+function stripMdSubject(s) {
+  return String(s || '')
+    .replace(/^#+\s*/, '')            // leading # headings
+    .replace(/\*\*(.*?)\*\*/g, '$1')  // bold
+    .replace(/\*(.*?)\*/g, '$1')      // italic
+    .replace(/[`_~>]/g, '')           // misc md chars
+    .replace(/\s{2,}/g, ' ')          // collapse spaces
+    .trim();
+}
+
 // --- email sending ---------------------------------------------------------
 
 async function sendRawEmail(to, subject, html, attachmentPath = null) {
@@ -46,7 +57,9 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     throw new Error('Invalid raw email parameters');
   }
 
-  const finalSubject = subject.length > 140 ? subject.slice(0, 137) + '...' : subject;
+  // Sanitize Markdown before truncation for subjects
+  const cleanedSubject = stripMdSubject(subject);
+  const finalSubject = cleanedSubject.length > 140 ? cleanedSubject.slice(0, 137) + '...' : cleanedSubject;
 
   let token = '';
   let unsubscribeUrl = '';
@@ -57,7 +70,14 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     logEvent('email', 'warn', `Unsubscribe token error for ${to}: ${err.message}`);
   }
 
-  const hasCustomUnsub = /{{\s*unsubscribe_token\s*}}|\/unsubscribe\?token=/i.test(html);
+  // Replace {{unsubscribe_token}} placeholders before deciding footer injection
+  if (unsubscribeUrl) {
+    html = html.replace(/{{\s*unsubscribe_token\s*}}/g, token);
+  }
+
+  // Detect if template already carries an unsubscribe link
+  const hasCustomUnsub = /\/unsubscribe\?token=|{{\s*unsubscribe_token\s*}}/i.test(html);
+
   let finalHtml = html;
 
   if (!hasCustomUnsub && unsubscribeUrl) {
@@ -136,7 +156,7 @@ async function sendMarkdownEmail(to, subject, markdown) {
 </head>
 <body>${renderMd(markdown)}</body>
 </html>`;
-  await sendRawEmail(to, subject, html);
+  await sendRawEmail(to, stripMdSubject(subject), html);
 }
 
 // Render a guide object using /templates/daily_summary.html while enforcing consistent headings

@@ -35,6 +35,18 @@
       max-width: 160px;
       height: auto;
     }
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 1.5rem 0 0.5rem;
+    }
+    p { line-height: 1.4; color: #555; }
   </style>
 </head>
 <body>
@@ -43,21 +55,17 @@
       <img src="https://www.thephoenixprotocol.app/logo-purple.png" alt="The Phoenix Protocol">
     </div>
 
-    <p style="font-size:22px;font-weight:bold;margin-bottom:1rem;text-align:center;">
-      Welcome to Day 1 of your Phoenix trial
-    </p>
+    <h1>Welcome to Day 1 of your Phoenix trial</h1>
 
-    <p style="font-size:16px;color:#555;line-height:1.4;margin-bottom:2rem;">
+    <p>
       This is one of three curated stories to help you start moving forward after heartbreak. You’ll also find a small gift attached — something to support you between the words.
     </p>
 
-    <p style="font-size:16px;color:#555;line-height:1.4;margin-bottom:2.5rem;text-align:center;font-style:italic;">
+    <p style="text-align:center;font-style:italic;">
       Now, take a breath — and let’s begin.
     </p>
 
-    <p style="font-size:18px;font-weight:bold;margin-bottom:1rem;">
-      Reaching Out Without Losing Yourself
-    </p>
+    <h2>Reaching Out Without Losing Yourself</h2>
 
     <p>There’s a specific kind of quiet that follows a breakup — not just the absence of messages, but the way your day no longer contains a familiar check-in, a shared joke, a small ritual that used to anchor you. In that quiet, reconnecting can feel like the most honest question you could ask: is there anything alive here, now, worth exploring again?</p>
 
@@ -87,11 +95,11 @@
 
     <p style="font-weight:bold;margin-top:1.5rem;">That was Day 1 of your Phoenix Protocol trial.</p>
 
-    <p style="margin-top:1.5rem;line-height:1.4;">
+    <p style="margin-top:1.5rem;">
       Tomorrow, you’ll receive a completely different story — just as focused, just as real. These trial emails are all handpicked and written to stand on their own.
     </p>
 
-    <p style="line-height:1.4;">And if today’s message helped you even a little… imagine having this kind of clarity every day for the next month.</p>
+    <p>And if today’s message helped you even a little… imagine having this kind of clarity every day for the next month.</p>
 
     <!-- CTA Button -->
     <div style="text-align:center;margin-top:2rem;">
@@ -117,12 +125,10 @@
       </a>
     </div>
 
+    <!-- Footer note (no unsubscribe link; backend injects it) -->
     <div class="footer">
       <hr style="margin:32px 0 20px 0;border:none;border-top:1px solid #eee;">
-      You are receiving this email because you signed up for The Phoenix Protocol.<br>
-      <a href="https://www.thephoenixprotocol.app/unsubscribe?token={{unsubscribe_token}}" 
-        target="_blank"
-        style="color:#999;font-size:12px;">Unsubscribe</a>.
+      You are receiving this email because you signed up for The Phoenix Protocol.
     </div>
   </div>
 </body>
