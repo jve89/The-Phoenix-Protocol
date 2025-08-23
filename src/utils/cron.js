@@ -20,7 +20,7 @@ const VARIANTS = [
   'neutral_moveon', 'neutral_reconnect'
 ];
 
-// Prevent overlapping runs
+// Prevent overlapping runs (single-process only)
 const jobRunning = {
   generatePaid: false,
   deliverTrial: false,
@@ -48,6 +48,22 @@ const validateEnv = () => {
   }
   return true;
 };
+
+// --- helpers for stable HTML ---------------------------------------------
+
+function stripLeadingHeading(html) {
+  if (typeof html !== 'string') return html;
+  return html.replace(/^\s*<h[12][^>]*>[\s\S]*?<\/h[12]>\s*/i, '');
+}
+function normalizeHeadings(html) {
+  if (typeof html !== 'string') return html;
+  return html.replace(/<h1([^>]*)>/gi, '<h2$1>').replace(/<\/h1>/gi, '</h2>');
+}
+function renderMd(md) {
+  const raw = marked.parse(md || '');
+  const noLead = stripLeadingHeading(raw);
+  return normalizeHeadings(noLead);
+}
 
 /**
  * 1. Generate & cache guides for paid users (12:00 UTC)
@@ -80,17 +96,10 @@ async function runGeneratePaidSlot() {
   }
 
   try {
-    logger.debug('📅 Date passed to loadGuideByDate:', date);
     const guide = await loadGuideByDate(date);
-    logger.debug('📦 Loaded guide object:', guide);
     const allVariantsPresent = VARIANTS.every(
       variant => guide?.[variant]?.content?.trim()?.length > 100
     );
-    for (const variant of VARIANTS) {
-      if (!guide?.[variant]?.content || guide[variant].content.trim().length <= 100) {
-        logger.warn(`[DEBUG] Variant missing or too short: ${variant} (len=${guide?.[variant]?.content?.length || 0})`);
-      }
-    }
 
     if (!allVariantsPresent) {
       logger.warn(`⚠️ Guide incomplete for ${date}, skipping backup.`);
@@ -109,29 +118,12 @@ async function runGeneratePaidSlot() {
       const adminHtml = `
   <!DOCTYPE html>
   <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Daily Guide Summary - ${date}</title>
-    <style>
-      body {
-        font-family: -apple-system, system-ui, sans-serif;
-        background-color: #f9fafb;
-        color: #393f4a;
-        padding: 20px;
-      }
-      h1 { color: #4f46e5; }
-      h2 { margin-top: 1.5em; }
-      hr { margin: 2rem 0; }
-    </style>
-  </head>
+  <head><meta charset="UTF-8"><title>Daily Guide Summary - ${date}</title></head>
   <body>
     <h1>Daily Guide Summary - ${date}</h1>
     ${warningBlockHtml}
     ${emailPreviewHtml}
-  </body>
-  </html>
-      `;
-      logger.debug('🧪 Guide keys included in email:', Object.keys(guide));
+  </body></html>`;
       await sendRawEmail(process.env.ADMIN_EMAIL, `📦 Daily Guide Backup – ${date}`, adminHtml);
       logger.info('✅ Admin guide + backup sent');
     }
@@ -166,42 +158,39 @@ async function runDeliverTrialSlot() {
     const templatePath = `trial/${gender}_${goal}_day${day}.html`;
 
     let html;
-      try {
-        html = await loadTemplate(templatePath);
-      } catch (err) {
-        logger.error(`Missing trial template ${templatePath}: ${err.message}`);
-        continue;
-      }
-
-      const subject = `Phoenix Protocol — Day ${day}`;
-      const variant = `${gender}_${goal}`;
-
-      // 🔐 Inject unsubscribe token
-      let token = '';
-      try {
-        token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '365d' });
-      } catch (e) {
-        logger.error(`JWT sign failed for ${user.email}: ${e.message}`);
-      }
-      const htmlWithToken = html.replace(/{{unsubscribe_token}}/g, token || 'invalid');
-
-      try {
-        await sendRawEmail(user.email, subject, htmlWithToken);
-        logger.info(`✅ Trial Day ${day} sent: ${user.email}`);
-        await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
-        await db.query(
-          `UPDATE users SET 
-              trial_usage_count = trial_usage_count + 1,
-              last_trial_sent_at = NOW(),
-              trial_started_at = COALESCE(trial_started_at, NOW())
-            WHERE id = $1`,
-          [user.id]
-        );
-      } catch (err) {
-        logger.error(`Trial send failed for ${user.email}: ${err.message}`);
-        await logDelivery(user.id, user.email, variant, 'failed', err.message, 'trial');
-      }
+    try {
+      html = await loadTemplate(templatePath);
+    } catch (err) {
+      logger.error(`Missing trial template ${templatePath}: ${err.message}`);
+      continue;
     }
+
+    const subject = `Phoenix Protocol — Day ${day}`;
+    const variant = `${gender}_${goal}`;
+    let token = '';
+    try {
+      token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '365d' });
+    } catch (e) {
+      logger.error(`JWT sign failed for ${user.email}: ${e.message}`);
+    }
+    const htmlWithToken = html.replace(/{{unsubscribe_token}}/g, token || 'invalid');
+
+    try {
+      await sendRawEmail(user.email, subject, htmlWithToken);
+      await logDelivery(user.id, user.email, variant, 'success', null, 'trial');
+      await db.query(
+        `UPDATE users SET 
+            trial_usage_count = trial_usage_count + 1,
+            last_trial_sent_at = NOW(),
+            trial_started_at = COALESCE(trial_started_at, NOW())
+          WHERE id = $1`,
+        [user.id]
+      );
+    } catch (err) {
+      logger.error(`Trial send failed for ${user.email}: ${err.message}`);
+      await logDelivery(user.id, user.email, variant, 'failed', err.message, 'trial');
+    }
+  }
 
   try {
     const { rows: farewellUsers } = await db.query(
@@ -211,7 +200,6 @@ async function runDeliverTrialSlot() {
          AND trial_farewell_sent_at IS NULL`
     );
     if (!farewellUsers.length) return;
-
     const html = await loadTemplate('trial_farewell.html');
     for (const user of farewellUsers) {
       try {
@@ -241,12 +229,16 @@ async function runDeliverPaidSlot() {
   let users;
   try {
     ({ rows: users } = await db.query(
-      `SELECT id, email, gender, goal_stage, plan_limit, paid_usage_count, paid_farewell_sent_at
+      `SELECT id, email, gender, goal_stage, plan_limit, paid_usage_count, paid_farewell_sent_at, last_paid_sent_at, paid_started_at
        FROM users
        WHERE plan IS NOT NULL
          AND plan > 0
          AND (is_trial_user IS NULL OR is_trial_user = FALSE)
-         AND unsubscribed = FALSE`
+         AND unsubscribed = FALSE
+         AND paid_farewell_sent_at IS NULL
+         AND paid_started_at IS NOT NULL
+         AND now() >= paid_started_at
+         AND (last_paid_sent_at IS NULL OR last_paid_sent_at::date != CURRENT_DATE)`
     ));
   } catch (err) {
     logger.error(`Paid user query failed: ${err.message}`);
@@ -294,14 +286,14 @@ async function runDeliverPaidSlot() {
     }
 
     let contentHtml;
-        try {
-          contentHtml = marked.parse(section.content);
-        } catch (err) {
-          logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
-          continue;
-        }
+    try {
+      contentHtml = renderMd(section.content);
+    } catch (err) {
+      logger.error(`Markdown parse failed for ${variant}: ${err.message}`);
+      continue;
+    }
 
-        const token = (() => {
+    const token = (() => {
       try { return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '365d' }); }
       catch (e) { logger.error(`JWT sign failed for ${user.email}: ${e.message}`); return 'invalid'; }
     })();
@@ -311,10 +303,17 @@ async function runDeliverPaidSlot() {
       .replace(/{{content}}/g, contentHtml)
       .replace(/{{unsubscribe_token}}/g, token);
 
+    // Same-day guard (belt-and-suspenders)
+    if (user.last_paid_sent_at && user.last_paid_sent_at.toISOString().slice(0,10) === todayUtc()) {
+      logger.info(`Skip duplicate send for ${user.email} (already sent today)`);
+      continue;
+    }
+
     try {
       await sendRawEmail(user.email, section.title, html);
 
-      logger.info(`✅ Guide sent: ${user.email}`);
+      // Transactional log + counter update
+      await db.query('BEGIN');
       await db.query(
         `INSERT INTO delivery_log (user_id,email,variant,status,delivery_type) VALUES ($1,$2,$3,'success','paid')`,
         [user.id, user.email, variant]
@@ -327,7 +326,11 @@ async function runDeliverPaidSlot() {
           WHERE id = $1`,
         [user.id]
       );
+      await db.query('COMMIT');
+
+      logger.info(`✅ Guide sent: ${user.email}`);
     } catch (err) {
+      await db.query('ROLLBACK');
       logger.error(`Paid send failed for ${user.email}: ${err.message}`);
       await db.query(
         `INSERT INTO delivery_log (user_id,email,variant,status,error_message,delivery_type) VALUES ($1,$2,$3,'failed',$4,'paid')`,
@@ -367,7 +370,6 @@ async function runMaintenanceSlot() {
 async function auditAndCatchUp() {
   const date = todayUtc();
 
-  // 1. Guide generation catch-up
   const guide = await loadGuideByDate(date);
   const allVariantsPresent = VARIANTS.every(
     variant => guide?.[variant]?.content?.trim()?.length > 100
@@ -379,8 +381,6 @@ async function auditAndCatchUp() {
     logger.info(`[BOOT] Guide for ${date} present. No generation needed.`);
   }
 
-  // 2. Paid guide delivery catch-up (do not repeat, only if usage lags)
-  // This only runs if guides are present.
   if (allVariantsPresent) {
     let users;
     try {
@@ -418,9 +418,6 @@ async function auditAndCatchUp() {
       logger.info(`[BOOT] All paid user deliveries up to date.`);
     }
   }
-
-  // 3. Trial guide/farewell catch-up — similar logic could be added if desired.
-  // For now, only paid content is fully autopiloted.
 }
 
 /**
@@ -488,7 +485,7 @@ async function main() {
   }
 }
 
-// Export both startCron and auditAndCatchUp for clean main entry use
+
 module.exports = { startCron, auditAndCatchUp };
 
 if (require.main === module) {

@@ -1,20 +1,21 @@
 module.exports = [
   {
-    format: "<Format Type>",                  // e.g., "mindset shift," "emotional detox"
+    format: "<Format Type>",                  // e.g., "mindset shift", "emotional detox"
     tone: "<Detailed Tone Descriptors>",      // e.g., "gentle, insightful, validating"
     theme: "<Central Theme>",                 // e.g., "letting go of jealousy"
     prompt: (gender, goalStage) => `
-You are a breakup recovery coach writing a **premium guide for a female user who wants to move on**.
+You are a breakup recovery coach writing a **premium guide for a <neutral/female/male> user**.
 
 ### Topic: <Clear, Engaging Topic Title>
 
 ### Requirements:
-- <Defined word-count range (e.g., 450–700 words)>
-- Clearly follow the structural flow:
-  1. **Introductory Hook**
-  2. **Emotional Insight**
-  3. **Practical Emotional Tool**
-  4. **Empowering Closing**
+- 500–<upper> words
+- Write in Markdown. **Start with an H1 title (# <Clear, Engaging Topic Title>) then write the piece.**
+- Scaffold:
+  - H1 Title
+  - Short Intro (include one line noting context: gender=\${gender}, goalStage=\${goalStage})
+  - 2–4 H2 body sections
+  - **Final: Practice:** with 2–4 concrete steps
 - <List specific insights, exercises, original metaphors, or scenarios explicitly>
 
 ⚠️ SAFETY:

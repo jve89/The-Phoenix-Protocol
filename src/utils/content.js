@@ -2,12 +2,15 @@ const path = require('path');
 const { subDays } = require('date-fns');
 const db = require('../db/db');
 const { logEvent } = require('./db_logger');
-const { validateGuideContent } = require('../../src/utils/validateGuide');
+const { validateGuideContent } = require('./validateGuide'); // fixed path
 const OpenAI = require('openai');
+
 const MODELS = ['gpt-4o', 'gpt-4', 'gpt-3.5-turbo'];
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
+
+const openai = OPENAI_KEY
+  ? new OpenAI({ apiKey: OPENAI_KEY, timeout: 30000, maxRetries: 2 })
+  : null;
 
 // Helper: UTC date string YYYY-MM-DD
 function todayUtc() {
@@ -40,11 +43,10 @@ for (const variant of VARIANTS) {
         warnings.push(`❌ Invalid prompt at index ${i}`);
         return;
       }
-
       try {
         const testOutput = p.prompt(...variant.split('_'));
         if (typeof testOutput !== 'string' || testOutput.trim().length < 100) {
-          warnings.push(`⚠️ Weak output at index ${i} (${testOutput.length} chars)`);
+          warnings.push(`⚠️ Weak output at index ${i} (${(testOutput || '').length} chars)`);
         } else {
           cleaned.push(p);
         }
@@ -93,6 +95,11 @@ async function generateTip(gender, goalStage) {
     return 'Guide unavailable at this time.';
   }
 
+  if (!openai) {
+    logEvent('content', 'error', 'OPENAI_API_KEY missing. Cannot generate guide.');
+    return 'Guide generation temporarily unavailable.';
+  }
+
   // STEP 1 — Fetch recent guide contents for this variant (last 7 days)
   let recentContents = new Set();
   try {
@@ -106,7 +113,7 @@ async function generateTip(gender, goalStage) {
     }
   } catch (err) {
     logEvent('content', 'warn', `Failed to load recent guides for dedup: ${err.message}`);
-    // Fallback: proceed without exclusions
+    // Proceed without exclusions
   }
 
   // STEP 2 — Filter prompt pool
@@ -154,20 +161,22 @@ async function generateTip(gender, goalStage) {
         max_tokens: 1100
       });
 
-      const output = completion.choices[0].message.content.trim();
+      const output = (completion.choices?.[0]?.message?.content || '').trim();
+      if (!output) {
+        throw new Error('Empty model output');
+      }
 
       // Extract title
       const lines = output.split('\n').map(l => l.trim()).filter(Boolean);
       let title = '';
-      if (lines[0].startsWith('#')) {
-        title = lines[0].replace(/^#+\s*/, '');
+      if (lines[0]?.startsWith('#')) {
+        title = lines[0].replace(/^#+\s*/, '').trim();
       } else {
-        title = lines[0];
+        title = lines[0] || '';
       }
 
-
       if (
-        !title || title.length < 5 ||
+        !title || title.length < 5 || title.length > 100 ||
         title.toLowerCase() === variant.toLowerCase() ||
         /^[a-z_]+$/.test(title.toLowerCase())
       ) {
@@ -183,14 +192,11 @@ async function generateTip(gender, goalStage) {
         throw new Error('Weak AI output');
       }
 
-      
-
       return output;
 
     } catch (err) {
       lastError = err;
       logEvent('content', 'warn', `OpenAI model ${MODELS[i]} failed for ${variant}: ${err.message}`);
-
     }
   }
 
@@ -211,11 +217,16 @@ async function generateAndCacheDailyGuides() {
     try {
       await logEvent('content', 'info', `Generating ${variant}`);
       const content = await generateTip(gender, stage);
-      
+
       console.log(`[DEBUG] Variant: ${variant}, Content: ${content ? '[OK]' : '[MISSING]'}`);
 
-      const reviewed = await reviewStory(content);
-      const score = await scoreStory(content);
+      // Optional QA passes are disabled unless explicitly turned on
+      let reviewed = null;
+      let score = null;
+      if (process.env.QA_ENABLED === 'true') {
+        reviewed = await reviewStory(content);
+        score = await scoreStory(content);
+      }
 
       if (score) {
         await logEvent('qa', 'info', `[${variant}] Scores: ${JSON.stringify(score)}`);
@@ -224,7 +235,7 @@ async function generateAndCacheDailyGuides() {
         await logEvent('qa', 'info', `[${variant}] Review delta:\n--- Original ---\n${content}\n--- Reviewed ---\n${reviewed}`);
       }
 
-      const lines = content.split('\n').filter(Boolean);
+      const lines = (content || '').split('\n').filter(Boolean);
       let title = (lines[0]?.replace(/^#+/, '').trim()) || 'Your Guide';
       if (!title || title.length > 100) {
         title = variant.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -233,7 +244,7 @@ async function generateAndCacheDailyGuides() {
       guideObj[variant] = {
         title,
         content,
-        markdown: content  // 🔥 This fixes markdown email errors
+        markdown: content
       };
     } catch (err) {
       logEvent('content', 'error', `Generation error for ${variant}: ${err.message}`);
@@ -286,6 +297,7 @@ async function loadTodayGuide() {
  * This is only logged — not shown to users.
  */
 async function scoreStory(storyContent) {
+  if (!openai) return null;
   const prompt = `
 You are an expert editor for a healing-focused email product. Evaluate the following story on a scale from 1–10 for:
 
@@ -319,8 +331,8 @@ ${storyContent}
       max_tokens: 300
     });
 
-    const raw = result.choices[0].message.content.trim();
-    return JSON.parse(raw);
+    const raw = (result.choices?.[0]?.message?.content || '').trim();
+    return raw ? JSON.parse(raw) : null;
   } catch (err) {
     logEvent('qa', 'warn', `Scoring failed: ${err.message}`);
     return null;
@@ -333,6 +345,7 @@ ${storyContent}
  * For dev use only — not shown to users yet.
  */
 async function reviewStory(storyContent) {
+  if (!openai) return null;
   const prompt = `
 You are a senior editor for a breakup recovery email product. This story will be sent to emotionally vulnerable readers.
 
@@ -357,7 +370,7 @@ ${storyContent}
       max_tokens: 1300
     });
 
-    return result.choices[0].message.content.trim();
+    return (result.choices?.[0]?.message?.content || '').trim() || null;
   } catch (err) {
     logEvent('qa', 'warn', `Review failed: ${err.message}`);
     return null;

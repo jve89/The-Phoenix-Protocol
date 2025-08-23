@@ -7,8 +7,8 @@
 ## 🔥 Key Features
 
 * ✅ **6 Personalised Variants**:
-  `male_reconnect`, `male_moveon`
-  `female_reconnect`, `female_moveon`
+  `male_reconnect`, `male_moveon`  
+  `female_reconnect`, `female_moveon`  
   `neutral_reconnect`, `neutral_moveon`
 
 * 💳 Stripe checkout + webhook-based activation
@@ -17,7 +17,9 @@
 
 * 🔁 Retry queue for failed email attempts
 
-* 🧠 GPT prompt system for content generation
+* 🧠 GPT prompt system for content generation  
+  – All prompts start with an H1, minimum length ≥500 words  
+  – Standard scaffold: **Title → Intro (with gender/goalStage reference) → Sections → Final: Practice**
 
 * 🔓 JWT-powered unsubscribe system
 
@@ -32,7 +34,7 @@
 ```
 .
 ├── content/
-│   ├── prompts/               # Prompt files per variant (6 total)
+│   ├── prompts/               # Prompt files per variant (6 total, standardized)
 │   ├── daily_cache/           # JSON guide output (auto-generated daily)
 │   └── fallback.json          # Emergency fallback if guide fails
 │
@@ -65,7 +67,7 @@ STRIPE_SECRET_KEY
 STRIPE_PUBLIC_KEY
 STRIPE_WEBHOOK_SECRET
 SENDGRID_API_KEY
-GROK_API_KEY       # Optional (used for AI tip variant)
+GROK_API_KEY       # Legacy / optional (experimental AI tips)
 JWT_SECRET
 ```
 
@@ -126,7 +128,6 @@ Route: `POST /api/webhooks`
 * Updates user payment status
 * Triggers auto-refund after 5 bounces
 * Refund logic in:
-
   * `src/utils/payment.js`
   * `src/routes/webhooks.js`
 
@@ -143,8 +144,8 @@ Prompt variants live in:
   └── ...etc
 ```
 
-Each exports template strings that fuel daily guide generation.
-To update: edit prompt file → rerun guide generator.
+Each exports 50 entries with format, tone, theme, and a `.prompt` function.  
+All prompts now follow the standardized scaffold for reliability.
 
 ---
 
@@ -171,14 +172,13 @@ Check logs under `/logs/`:
 
 * `send_today_guide.log` – Email sends
 * `generate_today_guide_debug.log` – Content generation
-* `email_retry_failures.json` – Email retry queue
+* `email_retry_failures.json` – Email retry queue snapshot
 
 ---
 
 ## 🚀 Deployment
 
-Fully Heroku-ready.
-Ensure the following are present:
+Fully Heroku-ready. Ensure the following are present:
 
 ```
 /Procfile
@@ -191,10 +191,6 @@ package.json  → with "start": "node src/server.js"
 
 ## 👨‍💻 Author
 
-Made by **Johan (@vanerkel)**
-Cleanly architected for long-term operation with minimal oversight.
+Made by **Johan (@vanerkel)**  
+Cleanly architected for long-term operation with minimal oversight.  
 No fluff. Just recovery — delivered.
-
----
-
-

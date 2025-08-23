@@ -10,8 +10,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Turning Pain Into Progress) then write the piece.**
-- Scaffold: H1 → short Intro (include one line noting context: gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 body sections → final **Practice:** section with 2–4 steps.
 - Frame emotional pain as raw energy — something to be transmuted, not suppressed
 - Introduce a metaphor: “emotional compost” — what feels rotten now can fertilise future selfhood
 - Offer a 3-step transformation ritual: Sit With It, Soften It, Shape It
@@ -33,8 +31,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 550–800 words
-- Write in Markdown. **Start with an H1 title (# The You Who’s Rising) then write the piece.**
-- Scaffold: H1 → short Intro (include one line with gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** wrap-up.
 - Introduce the concept of “identity scaffolding” — temporary supports that help rebuild a sense of self
 - Share a case story of someone rediscovering agency through micro-choices and habit shifts
 - Offer a visual identity map with 4 zones: Old Echoes, Present Anchors, Future Pulls, and Core Constants
@@ -56,8 +52,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–900 words
-- Write in Markdown. **Start with an H1 title (# What to Do With Missing Them) then write the piece.**
-- Scaffold: H1 → short Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** at end.
 - Validate the emotional realism of missing someone who hurt you or left
 - Differentiate between missing the *person* vs the *feeling, familiarity, or future*
 - Offer a worksheet: “Longing Decoder” with 3 introspective prompts to clarify emotional needs
@@ -79,8 +73,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Create the Goodbye You Never Had) then write the piece.**
-- Scaffold: H1 → short Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** final ritualisation.
 - Explain how closure is often something we *create*, not something we’re given
 - Offer 4 symbolic goodbye rituals (e.g. voice memo to the universe, burying a note, candle ritual, etc.)
 - Include a story of someone who made peace through symbolic action, not conversation
@@ -102,8 +94,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Call Your Energy Back) then write the piece.**
-- Scaffold: H1 → Intro (include one line with gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** recap.
 - Introduce the idea of “emotional leakage” — how we leave parts of ourselves behind
 - Teach a short daily practice to reclaim mental/emotional space (visual cue + grounding mantra)
 - Include a list of 5 signs your energy is still entangled with someone
@@ -125,8 +115,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# When You Still Feel Tied to Them) then write the piece.**
-- Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** somatic steps.
 - Explain how emotional bonds can linger physically (e.g., tension, dreams, rumination)
 - Share a body-based unwinding ritual (e.g., movement, shaking, cold rinse, or gentle stretch)
 - Introduce a journaling prompt: “Where in my body am I still holding this?”
@@ -148,8 +136,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–800 words
-- Write in Markdown. **Start with an H1 title (# Rewrite the Ending) then write the piece.**
-- Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** journal.
 - Invite the reader to separate fact from interpretation in their breakup story
 - Offer a structured journal sequence: What happened → What I told myself → What I choose now
 - Share a short story of someone who reframed their breakup into a pivotal moment of self-respect
@@ -171,8 +157,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# It’s Safe to Let People In Again) then write the piece.**
-- Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** reentry steps.
 - Acknowledge how trust, safety, and energy change after heartbreak
 - Offer 3 layers of reentry: Inner Circle (1–2 people), Outer Ring (familiar faces), Casual Flow (new connections)
 - Include self-check prompts: “What am I afraid will happen if I’m seen?”
@@ -194,8 +178,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# What This Breakup Taught You About You) then write the piece.**
-- Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** question set.
 - Offer a guided reflection with 5 questions:
   1. What boundary did I discover I needed?
   2. What part of me dimmed to keep the peace?
@@ -220,8 +202,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# When You Can’t Stop Thinking About Them) then write the piece.**
-- Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** redirects.
 - Explain cognitive looping and how the brain seeks resolution
 - Share 3 redirection strategies: Scheduled Rumination, Creative Refocus, Social Interruption
 - Include a short story of someone who replaced looping with meaningful momentum
@@ -243,8 +223,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–800 words
-- Write in Markdown. **Start with an H1 title (# You’re Not Broken — It’s a Brain Loop) then write the piece.**
-- Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** reset steps.
 - Explain how emotional breakups mimic obsessive loops (using light “emotional OCD” metaphors)
 - Teach the “Catch–Name–Reframe” method
 - Include a 5-minute breath + grounding reset for spiralling thoughts
@@ -266,8 +244,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 550–750 words
-- Write in Markdown. **Start with an H1 title (# When Your Life Was Built Around Them) then write the piece.**
-- Scaffold: H1 → Intro (add one line: gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** one action.
 - Discuss post-breakup identity collapse when shared goals unravel
 - Offer a “Dream Sorting” chart: Mine / Shared / Undiscovered
 - Guide the reader in identifying one daily action aligned with reclaimed purpose
@@ -289,8 +265,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 500–650 words
-- Write in Markdown. **Start with an H1 title (# Not Everyone Deserves Access to Your Healing) then write the piece.**
-- Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** boundary cues.
 - Outline 3-tier support model: Safe People, Neutral Listeners, Curious Observers
 - Include a permission script: “Thanks for checking in — I’m keeping this part quiet right now”
 - Offer a visual guide for choosing who gets what level of detail
@@ -312,8 +286,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Missing Them Doesn’t Mean You Should Go Back) then write the piece.**
-- Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** soothing tools.
 - Explain how oxytocin/dopamine cycles create emotional withdrawal pangs
 - Use the metaphor: “phantom bond” — your heart still expects contact
 - Provide 3 tools to soothe nervous system (breath, mantra, movement)
@@ -334,9 +306,7 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 ### Topic: If You’re on the Bathroom Floor, This Is For You
 
 ### Requirements:
-- 500–650 words
-- Write in Markdown. **Start with an H1 title (# If You’re on the Bathroom Floor, This Is For You) then write the piece.**
-- Scaffold: H1 → brief Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** first-aid steps.
+- 450–650 words
 - Offer a 3-step emotional first aid sequence: Cold Touch / Grounded Truth / Safe Action
 - Use body-oriented language to pull the reader into the present
 - Include 1-liner mantra: “You are not collapsing — you are clearing space.”
@@ -358,8 +328,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# The “What Ifs” Are Not Your Compass) then write the piece.**
-- Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** two-column work.
 - Discuss rumination around alternate realities
 - Introduce a two-column journal practice: "What I Imagined / What I Know"
 - Share an anecdote of someone trapped in mental time travel who returned to the now
@@ -381,8 +349,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# Stop Clicking Their Name) then write the piece.**
-- Scaffold: H1 → Intro (state gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** D–D–D plan.
 - Discuss digital self-harm and dopamine reward cycles
 - Offer a tool: Delay–Distract–Delete (3 stages of reclaiming digital agency)
 - Share a story of someone who broke their pattern and felt powerful again
@@ -404,8 +370,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 550–750 words
-- Write in Markdown. **Start with an H1 title (# You Weren’t Too Much — You Were Just Misread) then write the piece.**
-- Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** mirror script.
 - Unpack the shame of feeling “too emotional, too intense, too needy”
 - Use soundwave metaphor: “Some people hear static. Others hear music.”
 - Offer an “I Am” mirror script for reclaiming identity
@@ -427,8 +391,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# You Can Miss Them and Still Move Forward) then write the piece.**
-- Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** both/and map.
 - Normalize coexisting emotions after a breakup
 - Introduce “The Both/And Map” — a journal prompt with columns for opposite truths
 - Use an example of a person who moved forward while still longing
@@ -450,8 +412,6 @@ You are a breakup recovery coach writing a **premium guide for a neutral-gender 
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Write the Breakup Story That Sets You Free) then write the piece.**
-- Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** agency prompts.
 - Teach a story-framing exercise: Before / During / After — but centred on self
 - Include a question set that helps the reader rediscover agency in each phase
 - Emphasise that this isn’t rewriting truth — it’s reclaiming voice
@@ -473,8 +433,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 550–800 words
-  - Write in Markdown. **Start with an H1 title (# You Didn’t Just Lose a Person — You’re Losing a Pattern) then write the piece.**
-  - Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** cycle spotlight.
   - Introduce the concept of attachment patterns masquerading as love
   - Include a “cycle spotlight” worksheet — highlight triggers, hooks, and collapse points
   - Compare emotional addiction to muscle memory
@@ -496,8 +454,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–700 words
-  - Write in Markdown. **Start with an H1 title (# You’re Still in There — You Were Never Just Their Other Half) then write the piece.**
-  - Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** self-return checklist.
   - Explore identity enmeshment in long-term or intense breakups
   - Use a metaphor: “fogged mirror” — you forgot what you looked like
   - Include a “self-return checklist” — small things that reconnect to individuality
@@ -518,9 +474,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: You Don’t Have to Know Where You’re Going to Walk Away
 
   ### Requirements:
-  - 500–650 words
-  - Write in Markdown. **Start with an H1 title (# You Don’t Have to Know Where You’re Going to Walk Away) then write the piece.**
-  - Scaffold: H1 → Intro (state gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** micro-next.
+  - 450–650 words
   - Challenge the myth that healing requires a fixed plan
   - Include a “micro-next” tool — one small action that signals direction
   - Use a metaphor: “foggy trail” — clarity comes *after* movement begins
@@ -542,8 +496,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 600–850 words
-  - Write in Markdown. **Start with an H1 title (# Not Every Thought You Have Right Now Is Yours) then write the piece.**
-  - Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** thought scrubbing.
   - Teach how stress, shame, and old narratives hijack internal voice
   - Include a “thought scrubbing” exercise to separate self from scripts
   - Add a sample inner dialogue reframe: “I messed it up” → “I was doing my best in pain”
@@ -565,8 +517,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–750 words
-  - Write in Markdown. **Start with an H1 title (# Sometimes the Sadness Hits After You Think You’re Over It) then write the piece.**
-  - Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** grief echo.
   - Explain grief stages as non-linear, using metaphor: “emotional weather fronts”
   - Introduce “grief echo” journal technique for late-stage feelings
   - Include story of someone blindsided by sadness weeks later
@@ -588,8 +538,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–700 words
-  - Write in Markdown. **Start with an H1 title (# Write the Goodbye Letter You Never Sent) then write the piece.**
-  - Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** letter template.
   - Describe the power of unsent letters as containers for closure
   - Provide a template with 3 sections: What I Wanted, What I Know Now, What I Let Go
   - Add sample excerpts for inspiration
@@ -611,8 +559,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–750 words
-  - Write in Markdown. **Start with an H1 title (# If You Feel Like You’re Back at Day One — You’re Not) then write the piece.**
-  - Scaffold: H1 → Intro (state gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** snapshot map.
   - Introduce “loop illusion” — returning feelings ≠ no progress
   - Offer a “snapshot map” tool to measure backward vs. deeper healing
   - Use metaphor: “spiral staircase” — same views, higher ground
@@ -633,9 +579,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: Peace Doesn’t Always Feel Peaceful at First
 
   ### Requirements:
-  - 500–650 words
-  - Write in Markdown. **Start with an H1 title (# Peace Doesn’t Always Feel Peaceful at First) then write the piece.**
-  - Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** body check-in.
+  - 450–650 words
   - Explain nervous system dysregulation after chaotic relationships
   - Teach a “calm doesn’t mean numb” body check-in exercise
   - Compare to addiction withdrawal — peace may feel empty before it feels safe
@@ -657,8 +601,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–800 words
-  - Write in Markdown. **Start with an H1 title (# What If the Best Connection of Your Life Is Still Ahead?) then write the piece.**
-  - Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** next-chapter writing.
   - Use future-anchored reflection: “What would it feel like to be met fully?”
   - Include a guided writing prompt: “Design your next chapter without old constraints”
   - End with: “Hope is not naïve — it’s the first act of rebuilding.”
@@ -679,8 +621,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 600–850 words
-  - Write in Markdown. **Start with an H1 title (# You Can’t Heal While Holding the Rope) then write the piece.**
-  - Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** letting-go grip.
   - Use the metaphor of tug-of-war — the pain lies in holding tight
   - Walk through “the letting go grip” — physical and mental release technique
   - Offer story of someone who stopped struggling and found stillness
@@ -701,9 +641,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: Stop Rewriting the Ending in Your Mind
 
   ### Requirements:
-  - 500–650 words
-  - Write in Markdown. **Start with an H1 title (# Stop Rewriting the Ending in Your Mind) then write the piece.**
-  - Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** reality lock.
+  - 450–650 words
   - Explain the psychological loop of imagining alternate outcomes
   - Share a technique: “reality lock” — gently affirming what actually happened
   - Provide a short journaling prompt: “What was true, even if it hurt?”
@@ -724,9 +662,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: What Would You Say to a Friend in Your Situation?
 
   ### Requirements:
-  - 500–600 words
-  - Write in Markdown. **Start with an H1 title (# What Would You Say to a Friend in Your Situation?) then write the piece.**
-  - Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** mirror script.
+  - 450–600 words
   - Guide the reader in imagining their own story from an outside perspective
   - Include a script for a mirror dialogue (spoken out loud or journaled)
   - Reframe harsh self-talk with language of support and grace
@@ -748,8 +684,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–700 words
-  - Write in Markdown. **Start with an H1 title (# Let Regret Point You Forward) then write the piece.**
-  - Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** 3-part journal.
   - Explore how regret reveals personal values (e.g. honesty, boundaries, care)
   - Introduce a 3-part journaling structure: "What I did / What I wish / What I’ll protect next time"
   - Use the metaphor of a compass: regret isn’t punishment — it’s direction
@@ -770,9 +704,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: Your Nervous System Needs a Soft Landing
 
   ### Requirements:
-  - 500–600 words
-  - Write in Markdown. **Start with an H1 title (# Your Nervous System Needs a Soft Landing) then write the piece.**
-  - Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** pre-sleep routine.
+  - 450–600 words
   - Address why evenings can trigger overthinking or longing
   - Offer a calming pre-sleep routine: music, scent, breathwork, visualisation
   - Include a mantra or script to say aloud before bed
@@ -794,8 +726,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–650 words
-  - Write in Markdown. **Start with an H1 title (# Healing Isn’t a Straight Line) then write the piece.**
-  - Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** note tracker.
   - Normalize emotional fluctuations (e.g. sudden crying, unexpected dreams, good days followed by dips)
   - Use the metaphor of a tide: movement doesn’t mean regression
   - Include a reader note tracker template: “Today I felt / I chose / I’ll try again tomorrow”
@@ -817,8 +747,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–700 words
-  - Write in Markdown. **Start with an H1 title (# You Don’t Have to Say It to Let It Go) then write the piece.**
-  - Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** private ritual.
   - Address the imaginary arguments, messages, or confessions we rehearse post-breakup
   - Validate the emotional need for "finishing the sentence"
   - Offer a private writing ritual (e.g. a voice memo or unsent message)
@@ -839,9 +767,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: Make Your Space Yours Again
 
   ### Requirements:
-  - 500–600 words
-  - Write in Markdown. **Start with an H1 title (# Make Your Space Yours Again) then write the piece.**
-  - Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** reclaim ritual.
+  - 450–600 words
   - Explore how environments hold memory, emotion, and energy
   - Include practical suggestions: rearranging furniture, lighting candles, swapping scents
   - Introduce a small ritual for reclaiming your room or bed
@@ -862,9 +788,7 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
   ### Topic: The Text You’re About to Send
 
   ### Requirements:
-  - 500–650 words
-  - Write in Markdown. **Start with an H1 title (# The Text You’re About to Send) then write the piece.**
-  - Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** 3-minute pause.
+  - 450–650 words
   - Validate the emotional build-up that creates texting urges
   - Provide a 3-minute pause exercise: name the urge, feel it, choose a redirect
   - Suggest a "Message to Self" journal where you write it — but don’t send
@@ -886,8 +810,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–750 words
-  - Write in Markdown. **Start with an H1 title (# Name What It Was — and What It Wasn’t) then write the piece.**
-  - Scaffold: H1 → Intro (state gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** two-column review.
   - Help the reader distinguish between real love, projection, and unmet needs
   - Use a two-column journaling format: “What I Felt” vs “What Was Shown”
   - Offer an optional audio reflection exercise (self-narrated)
@@ -909,8 +831,6 @@ Avoid rewriting as erasure. Hold space for nuance, truth, and growth.
 
   ### Requirements:
   - 500–650 words
-  - Write in Markdown. **Start with an H1 title (# You Don’t Owe Anyone an Explanation) then write the piece.**
-  - Scaffold: H1 → Intro (include gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** boundary checklist.
   - Address the sting of being judged (“Why aren't you over it?”)
   - Teach a self-validation technique: “I know my story. I trust my pace.”
   - Include a social boundary checklist: what to share, what to protect
@@ -931,9 +851,7 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 ### Topic: Come Back to Your Centre
 
 ### Requirements:
-- 500–600 words
-- Write in Markdown. **Start with an H1 title (# Come Back to Your Centre) then write the piece.**
-- Scaffold: H1 → Intro (add one line: gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** breath anchor.
+- 450–600 words
 - Describe the disorientation that follows emotional dependence
 - Offer a centring breath-based anchor ritual (“Place hand on heart…”)
 - Share a visualisation: self as a lighthouse, grounded in their own truth
@@ -955,8 +873,6 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# What If You Were Never Meant to 'Get Over It'?) then write the piece.**
-- Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → **Practice:** personal definition.
 - Examine societal pressure to “bounce back” quickly
 - Offer counter-narratives from non-Western or ancestral views of grief
 - Include journaling prompt: “What does healing look like for *me*?”
@@ -977,9 +893,7 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 ### Topic: The Season Is Changing — So Are You
 
 ### Requirements:
-- 500–600 words
-- Write in Markdown. **Start with an H1 title (# The Season Is Changing — So Are You) then write the piece.**
-- Scaffold: H1 → Intro (state gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** “new shoots”.
+- 450–600 words
 - Use seasonal metaphors (e.g. winter into spring) to frame emotional evolution
 - Guide reader in a sensory reflection of their own “internal season”
 - Offer gentle self-celebration checklist: “New shoots” in thought or habit
@@ -1001,8 +915,6 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 
 ### Requirements:
 - 500–650 words
-- Write in Markdown. **Start with an H1 title (# You Don’t Have to Answer That Message) then write the piece.**
-- Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** response flow.
 - Validate the stress of receiving texts or DMs from an ex
 - Offer a self-check flow: “Is this helpful / healing / necessary?”
 - Provide message templates: decline, delay, block, or ignore
@@ -1023,9 +935,7 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 ### Topic: Crying Isn’t Weak — It’s Movement
 
 ### Requirements:
-- 500–600 words
-- Write in Markdown. **Start with an H1 title (# Crying Isn’t Weak — It’s Movement) then write the piece.**
-- Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** grief flow.
+- 450–600 words
 - Explore emotional release as a physical detox (tears, breath, trembling)
 - Introduce “grief flow” space: music, dim lights, no interruptions
 - End with a gentle affirmation: “This isn’t falling apart. This is letting go.”
@@ -1046,8 +956,6 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# One Step a Day Is Enough) then write the piece.**
-- Scaffold: H1 → Intro (gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** micro-goals.
 - Counter pressure to “feel better faster” or “date again soon”
 - Offer micro-goals system: connection, comfort, clarity
 - Include a reflection tracker: “Today I noticed / I supported / I softened”
@@ -1068,9 +976,7 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 ### Topic: The Song, The Café, The Jacket — What Now?
 
 ### Requirements:
-- 500–650 words
-- Write in Markdown. **Start with an H1 title (# The Song, The Café, The Jacket — What Now?) then write the piece.**
-- Scaffold: H1 → Intro (state gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** 3-Rs.
+- 450–650 words
 - Help the reader navigate real-world emotional landmines
 - Share three strategies: reframe, replace, or release
 - Include journaling line: “When I see this, I want to feel…”
@@ -1092,8 +998,6 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Write a Letter from Your Future Self) then write the piece.**
-- Scaffold: H1 → Intro (mention gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** letter script.
 - Guide the user to imagine their life one year ahead — healed, grounded
 - Include scripted letter format: “Here’s what we’ve learned…”
 - Provide anchoring line: “I promise, we’re okay now”
@@ -1114,9 +1018,7 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 ### Topic: Where Does the Hurt Live in Your Body?
 
 ### Requirements:
-- 500–600 words
-- Write in Markdown. **Start with an H1 title (# Where Does the Hurt Live in Your Body?) then write the piece.**
-- Scaffold: H1 → Intro (add one line: gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** body scan.
+- 450–600 words
 - Explore physical sensations tied to heartbreak (jaw, chest, stomach)
 - Share somatic scan script and release gestures (shaking, stretching)
 - Include body affirmation: “You’re allowed to soften”
@@ -1138,8 +1040,6 @@ You are a breakup recovery coach writing a **premium guide for a user who wants 
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# It Might Rain Tomorrow — and That’s Okay) then write the piece.**
-- Scaffold: H1 → Intro (note gender=\${gender}, goalStage=\${goalStage}) → 2–3 H2 sections → **Practice:** care kit.
 - Use a weather metaphor to normalise mood changes
 - Help the reader plan for “cloudy days” with care kits and low bars
 - Offer self-check tool: “Forecasting with compassion”

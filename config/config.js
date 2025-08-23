@@ -1,4 +1,4 @@
-// Centralized configuration with validation
+// src/config/config.js
 const dotenv = require('dotenv');
 
 // Load .env in non-production for local dev
@@ -12,34 +12,41 @@ function isValidEmail(email) {
   return typeof email === 'string' && re.test(email);
 }
 
+// Helper to safely read envs with trimming
+function env(key, fallback = '') {
+  const val = process.env[key];
+  return typeof val === 'string' ? val.trim() : fallback;
+}
+
 // PORT
-const rawPort = process.env.PORT || '3000';
+const rawPort = env('PORT', '3000');
 const port = parseInt(rawPort, 10);
 if (isNaN(port) || port <= 0 || port > 65535) {
   throw new Error(`Invalid PORT value: ${rawPort}`);
 }
 
 // FROM_EMAIL
-const fromEmail = process.env.FROM_EMAIL || 'support@thephoenixprotocol.app';
+const fromEmail = env('FROM_EMAIL', 'support@thephoenixprotocol.app');
 if (!isValidEmail(fromEmail)) {
   throw new Error(`Invalid FROM_EMAIL: ${fromEmail}`);
 }
 
 // SUPPORT_EMAIL
-const supportEmail = process.env.SUPPORT_EMAIL || 'support@thephoenixprotocol.app';
+const supportEmail = env('SUPPORT_EMAIL', 'support@thephoenixprotocol.app');
 if (!isValidEmail(supportEmail)) {
   throw new Error(`Invalid SUPPORT_EMAIL: ${supportEmail}`);
 }
 
 // ADMIN_EMAIL (optional)
-const adminEmail = process.env.ADMIN_EMAIL || '';
+const adminEmail = env('ADMIN_EMAIL', '');
 if (adminEmail && !isValidEmail(adminEmail)) {
   throw new Error(`Invalid ADMIN_EMAIL: ${adminEmail}`);
 }
 
-module.exports = {
+// Immutable export
+module.exports = Object.freeze({
   port,
   fromEmail,
   supportEmail,
   adminEmail
-};
+});

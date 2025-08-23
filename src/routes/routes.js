@@ -14,6 +14,7 @@ const logger = {
   error: msg => logEvent('routes', 'error', msg)
 };
 
+// === Rate limiter ===
 const rateLimitMap = new Map();
 const WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS = 20;
@@ -31,9 +32,10 @@ function rateLimiter(req, res, next) {
     return res.status(429).send('Too many requests, slow down.');
   }
 
-  if (rateLimitMap.size > 5000) {
+  // Cleanup old entries if map grows large
+  if (rateLimitMap.size > 1000) {
     for (const [key, ts] of rateLimitMap) {
-      if (ts[ts.length - 1] < now - WINDOW_MS) {
+      if (!ts.length || now - ts[ts.length - 1] > WINDOW_MS) {
         rateLimitMap.delete(key);
       }
     }
@@ -42,8 +44,14 @@ function rateLimiter(req, res, next) {
   next();
 }
 
-function sanitizeInput(value) {
-  return typeof value === 'string' ? value.trim() : '';
+function sanitizeInput(value, maxLen = 255) {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  return trimmed.slice(0, maxLen);
+}
+
+function validEmail(email) {
+  return typeof email === 'string' && email.includes('@') && email.length <= 254;
 }
 
 const asyncHandler = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
@@ -61,10 +69,7 @@ router.get('/cron/status', (req, res) => {
   res.json({ cronLastRun: lastRun });
 });
 
-/**
- * Debug: list users
- * Show both counters so we can verify separation at a glance.
- */
+// === Debug ===
 router.get('/debug/list-users', asyncHandler(async (req, res) => {
   logger.info('Debug list-users');
   const { rows } = await db.query(`
@@ -75,11 +80,7 @@ router.get('/debug/list-users', asyncHandler(async (req, res) => {
   res.json(rows);
 }));
 
-/**
- * Signup / Plan (trial or paid)
- * - Trials: plan=3, uses trial_usage_count
- * - Paid: plan in {7,30,90}, uses paid_usage_count
- */
+// === Signup endpoint ===
 router.post('/signup', asyncHandler(async (req, res) => {
   const email = sanitizeInput(req.body.email);
   const name = sanitizeInput(req.body.name) || null;
@@ -88,8 +89,8 @@ router.post('/signup', asyncHandler(async (req, res) => {
   const rawGoal = sanitizeInput(req.body.goal_stage);
   const goal_stage = rawGoal === 'reconnect' ? 'reconnect' : 'moveon';
 
-  if (!email || !gender || !plan || !rawGoal) {
-    logger.error(`Signup validation failed: missing ${JSON.stringify({ email, gender, plan, rawGoal })}`);
+  if (!validEmail(email) || !gender || !plan || !rawGoal) {
+    logger.error(`Signup validation failed: missing/invalid ${JSON.stringify({ email, gender, plan, rawGoal })}`);
     return res.status(400).json({ error: 'Email, gender, plan, and goal_stage are required.' });
   }
 
@@ -104,6 +105,11 @@ router.post('/signup', asyncHandler(async (req, res) => {
   }
 
   const welcomeTemplate = await loadTemplate('welcome.html');
+  if (!welcomeTemplate) {
+    logger.error('Missing welcome template');
+    return res.status(500).json({ error: 'Internal config error' });
+  }
+
   const now = new Date();
   const planInt = parseInt(plan, 10);
 
@@ -116,17 +122,13 @@ router.post('/signup', asyncHandler(async (req, res) => {
 
     if (rows.length) {
       const user = rows[0];
-
-      // Existing user guardrails
       const currentUsage = user.is_trial_user ? (user.trial_usage_count || 0) : (user.paid_usage_count || 0);
 
-      // Active trial?
       if (user.is_trial_user && user.plan === 3 && currentUsage < 3) {
         logger.warn(`Trial already in progress for ${email}`);
         return res.status(400).json({ error: 'You already have an active trial.' });
       }
 
-      // Active paid plan?
       if (!user.is_trial_user && user.plan_limit && currentUsage < user.plan_limit) {
         logger.warn(`Active plan exists for ${email}`);
         return res.status(400).json({ error: 'You already have an active plan.' });
@@ -136,7 +138,6 @@ router.post('/signup', asyncHandler(async (req, res) => {
       logger.info(`Renewing plan for ${email}`);
 
       if (planInt === 3) {
-        // (Re)start trial cleanly
         await db.query(
           `UPDATE users SET
               plan = $1,
@@ -152,7 +153,6 @@ router.post('/signup', asyncHandler(async (req, res) => {
           [planInt, goal_stage, planInt, email, now]
         );
       } else {
-        // (Re)start paid cleanly
         await db.query(
           `UPDATE users SET
               plan = $1,
@@ -168,7 +168,6 @@ router.post('/signup', asyncHandler(async (req, res) => {
           [planInt, goal_stage, planInt, email, now]
         );
       }
-
     } else {
       // New user
       logger.info(`Creating new user ${email}`);
@@ -179,12 +178,10 @@ router.post('/signup', asyncHandler(async (req, res) => {
           `INSERT INTO users (
             email, name, gender, plan, plan_limit, goal_stage, is_trial_user,
             trial_usage_count, paid_usage_count,
-            trial_started_at, last_trial_sent_at, trial_farewell_sent_at,
-            unsubscribed
+            trial_started_at, unsubscribed
           ) VALUES ($1,$2,$3,$4,$5,$6,TRUE,
                    0,0,
-                   $7,NULL,NULL,
-                   FALSE)`,
+                   $7,FALSE)`,
           [email, name, gender, planInt, planInt, goal_stage, now]
         );
       } else {
@@ -192,36 +189,41 @@ router.post('/signup', asyncHandler(async (req, res) => {
           `INSERT INTO users (
             email, name, gender, plan, plan_limit, goal_stage, is_trial_user,
             trial_usage_count, paid_usage_count,
-            paid_started_at, last_paid_sent_at, paid_farewell_sent_at,
-            unsubscribed
+            paid_started_at, unsubscribed
           ) VALUES ($1,$2,$3,$4,$5,$6,FALSE,
                    0,0,
-                   $7,NULL,NULL,
-                   FALSE)`,
+                   $7,FALSE)`,
           [email, name, gender, planInt, planInt, goal_stage, now]
         );
       }
     }
 
-    await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
-    logger.info(`Welcome email sent to ${email}`);
+    try {
+      await sendRawEmail(email, 'Welcome to The Phoenix Protocol', welcomeTemplate);
+      logger.info(`Welcome email sent to ${email}`);
+    } catch (e) {
+      logger.error(`Welcome email failed to ${email}: ${e.message}`);
+    }
 
     if (planInt === 3) {
-      logger.info(`Trial user created: ${email}`);
       return res.json({ message: 'Trial signup successful', url: null });
     }
 
     // Paid: create checkout session
-    console.log(`🧪 Creating checkout session for: ${email}, plan: ${planInt}, gender: ${gender}, goal: ${goal_stage}`);
-    const url = await createCheckoutSession(email, planInt, gender, goal_stage);
-    res.json({ message: 'Sign-up successful', url });
+    try {
+      const url = await createCheckoutSession(email, planInt, gender, goal_stage);
+      res.json({ message: 'Sign-up successful', url });
+    } catch (e) {
+      logger.error(`Checkout creation failed for ${email}: ${e.message}`);
+      res.status(500).json({ error: 'Payment setup failed' });
+    }
   } catch (err) {
     logger.error(`Signup failed for ${email}: ${err.message}`);
     res.status(500).json({ error: 'Sign-up failed' });
-    console.error('❌ Stripe error:', err);
   }
 }));
 
+// === Explicit checkout session endpoint ===
 router.post('/create-checkout-session', asyncHandler(async (req, res) => {
   const email = sanitizeInput(req.body.email);
   const plan = sanitizeInput(req.body.plan);
@@ -229,8 +231,8 @@ router.post('/create-checkout-session', asyncHandler(async (req, res) => {
   const rawGoal = sanitizeInput(req.body.goal_stage);
   const goal_stage = rawGoal === 'reconnect' ? 'reconnect' : 'moveon';
 
-  if (!email || !plan || !rawGoal) {
-    logger.error(`Validation failed for checkout: missing ${JSON.stringify({ email, plan, rawGoal })}`);
+  if (!validEmail(email) || !plan || !rawGoal) {
+    logger.error(`Validation failed for checkout: ${JSON.stringify({ email, plan, rawGoal })}`);
     return res.status(400).json({ error: 'Email, plan, and goal_stage are required.' });
   }
 
@@ -249,7 +251,6 @@ router.post('/create-checkout-session', asyncHandler(async (req, res) => {
     res.json({ url });
   } catch (err) {
     logger.error(`Checkout session error for ${email}: ${err.message}`);
-    console.error(err);
     res.status(500).json({ error: 'Payment setup failed' });
   }
 }));

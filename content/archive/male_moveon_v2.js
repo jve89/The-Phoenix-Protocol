@@ -9,9 +9,6 @@ module.exports = [
   ### Topic: Stop Waiting for Her to Come Back
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 550–850 words
   - Help him break the quiet cycle of “what if she reaches out?”
   - Share the story of a man who kept his life on pause for a year — and what snapped him out of it
@@ -33,9 +30,6 @@ module.exports = [
   ### Topic: You Were a Whole Man Before Her — And You Still Are
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–900 words
   - Dismantle the idea that “manhood” was tied to being chosen
   - Include 3 traits that define grounded masculinity after heartbreak
@@ -57,9 +51,6 @@ module.exports = [
   ### Topic: Talk to the Part of You That’s Still Hurting
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 550–800 words
   - Guide him to write a short letter *from* his hurt self and *to* his hurt self
   - Use inner child framing sparingly; make it adult-accessible
@@ -81,9 +72,6 @@ module.exports = [
   ### Topic: What’s Helping You Heal — And What’s Just Hiding the Hurt?
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 500–750 words
   - Offer a self-audit framework: *Soothing vs. Numbing*
   - Provide 5 examples of each (e.g., working out vs. compulsive gym escape)
@@ -105,9 +93,6 @@ module.exports = [
   ### Topic: You’re Not Broken — You’re Just in a Loop
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 550–900 words
   - Unpack how repeated thoughts create emotional inertia
   - Introduce the “Loop Catching” method:
@@ -132,9 +117,6 @@ module.exports = [
   ### Topic: What You Think She's Posting For — and What She Actually Might Be
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–850 words
   - Challenge assumptions about her online life without mocking them
   - Break down the 3 projection traps: *She’s fine*, *She’s proving a point*, *She’s replacing me*
@@ -156,9 +138,6 @@ module.exports = [
   ### Topic: Don’t Rush Back — Build Your Next Relationship Intentionally
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–900 words
   - Offer a 4-pillar clarity tool:
     1. Emotional Availability
@@ -184,9 +163,6 @@ module.exports = [
   ### Topic: It's Over — And That's Okay to Say Out Loud
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 500–700 words
   - Guide him through a 10-minute spoken meditation he can record for himself
   - Key sections:
@@ -211,9 +187,6 @@ module.exports = [
   ### Topic: Design the Man You’re Becoming
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–850 words
   - Guide him through a sketch-based exercise:
     - Draw a split self: “Hurt Self” vs. “Healed Self”
@@ -237,9 +210,6 @@ module.exports = [
   ### Topic: Forgive Yourself for What You Didn’t Know Back Then
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 500–750 words
   - Explore common regrets men hold: things unsaid, overreactions, missed cues
   - Offer a 3-part self-forgiveness ritual:
@@ -263,9 +233,6 @@ You are a breakup recovery coach writing a **premium guide for a male user who w
 ### Topic: She Wasn’t Perfect — And That’s Not Betrayal
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–850 words
 - Unpack the emotional pattern of idealising an ex after separation
 - Explain how memory distortion protects the heart but stalls growth
@@ -290,9 +257,6 @@ You are a breakup recovery coach writing a **premium guide for a man healing in 
 ### Topic: Write It So You Can Burn It
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–750 words
 - Offer a guided journaling process for men who won’t say it out loud
 - Include three categories:
@@ -317,9 +281,6 @@ You are a breakup coach writing a **premium mindset guide for a man feeling emot
 ### Topic: You’re Not Failing — You’re Healing in Place
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Redefine “being stuck” as an overloaded phase, not a character flaw
 - Introduce the metaphor of a man digging a tunnel — not lost, just unseen progress
@@ -341,9 +302,6 @@ You are a breakup recovery coach writing a **premium guide for men struggling wi
 ### Topic: Two Men, Same Pain — Two Very Different Outcomes
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 650–950 words
 - Share two fictional but realistic stories:
   - One man who spiralled into revenge and self-erasure
@@ -366,9 +324,6 @@ You are a breakup coach writing a **premium guide for a man who still feels her 
 ### Topic: Clearing the Room — Emotional Detox for Men
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–800 words
 - Describe how emotional residue lingers: objects, habits, smells, songs
 - Offer a 4-step detox process:
@@ -393,9 +348,6 @@ You are a breakup recovery coach writing a **structured emotional guide for a ma
 ### Topic: What Still Feels Unfinished?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Frame the concept of “unfinished business” as emotional noise
 - Share the story of a man who kept thinking, “I never got to say…”
@@ -421,9 +373,6 @@ You are a breakup recovery coach writing a **premium guide for a man who forgot 
 ### Topic: You Were More Than Her Partner
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Help the reader rediscover his own *before*, *beside*, and *beyond*
 - Introduce the “Identity Layers” model:
@@ -448,9 +397,6 @@ You are a breakup coach writing a **premium guide for a man hiding from himself*
 ### Topic: What Truth Are You Avoiding?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–700 words
 - Frame avoidance as self-protection, not weakness
 - Offer a 4-question internal honesty test:
@@ -475,9 +421,6 @@ You are a breakup recovery coach writing a **guide for a man who wants to honour
 ### Topic: Your Personal Goodbye Ritual
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–900 words
 - Define emotional closure as a *decision*, not an event
 - Share 3 example rituals from men who created meaning:
@@ -502,9 +445,6 @@ You are a breakup recovery coach writing a **structured guide for a man rebuildi
 ### Topic: Your 30-Day Reconnection Plan
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 650–950 words
 - Frame reconnection with self as an active project
 - Break it into 4 weekly themes:
@@ -529,9 +469,6 @@ You are a breakup recovery coach writing a **deep reflection guide for a man lea
 ### Topic: The Truth That’s Still in Your Chest
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Invite the reader to name the unsaid truth, whether regret, gratitude, or frustration
 - Share a micro-case of a man who felt lighter once he wrote his “truth letter”
@@ -553,10 +490,7 @@ You are a breakup recovery coach writing a **boundary guide for a man moving for
 ### Topic: Why Space Is Not Cruel — It’s Necessary
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 700)
+- 450–700 words
 - Explain why “being friends too soon” sabotages healing
 - Share the story of a man who stayed in contact and couldn’t stop hoping
 - Offer 3 steps to honour healthy distance: unfollow, uncheck, untangle
@@ -577,9 +511,6 @@ You are a breakup recovery coach writing a **premium identity reset guide for me
 ### Topic: Building Your Strength Without Her Reflection
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 650–900 words
 - Explore how relationships shape male self-image
 - Offer a 3-core structure for rebuilding: *Purpose*, *Presence*, *Pride*
@@ -601,9 +532,6 @@ You are a breakup coach writing a **guide to navigating loneliness for men**.
 ### Topic: The Nights That Feel Longest
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Normalize loneliness as part of healing
 - Share a real moment of a man who almost reached out just to fill a void
@@ -625,10 +553,7 @@ You are a breakup coach writing a **premium energy guide for a man post-breakup*
 ### Topic: Where Your Energy Goes Now
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 750)
+- 450–750 words
 - Use the metaphor of an “emotional budget” (time, energy, focus)
 - Share 4 reinvestment categories: *Body*, *Skill*, *Adventure*, *Peace*
 - Provide a simple weekly habit planner
@@ -649,10 +574,7 @@ You are a breakup coach writing a **mindset shift guide for a man regaining cont
 ### Topic: What If This Ending Was Your Choice?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 750)
+- 450–750 words
 - Invite the reader to imagine himself as the chooser, not the abandoned
 - Share a case of a man who reframed his breakup and found freedom
 - Include 3 reflection questions: *What do I no longer accept?* *What’s mine to keep?* *What’s mine to release?*
@@ -673,9 +595,6 @@ You are a breakup coach writing a **pattern awareness guide for a man caught in 
 ### Topic: Breaking the Loop of Old Habits
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–900 words
 - Explain 3 common relapse triggers: late-night texts, social stalking, fantasy loops
 - Share a story of a man who broke the cycle through self-awareness
@@ -697,9 +616,6 @@ You are a breakup coach guiding a man to hold his memories without pain.
 ### Topic: Turning Memories Into Lessons
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Teach the difference between keeping memories and clinging to them
 - Share 3 steps: *Name what it taught you*, *Thank it*, *Store it*
@@ -721,9 +637,6 @@ You are a breakup coach writing a **resilience guide for men when their ex moves
 ### Topic: Her New Life Is Not About You
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–850 words
 - Normalize the pain of seeing her with someone else
 - Share a man’s story of feeling “replaced” and how he shifted the narrative
@@ -745,10 +658,7 @@ You are a breakup coach writing a **mindset detox guide for a man chasing extern
 ### Topic: Stop Competing With Ghosts
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 700)
+- 450–700 words
 - Explain how “winning the breakup” is just ego noise
 - Use a micro-case of a man who chased success only to still feel empty
 - Offer 3 steps to reclaim personal goals: *Why am I doing this?*, *What’s mine?*, *Who am I beyond her?*
@@ -769,9 +679,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: You Are Still a Man
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–850 words
   - Explore how breakups can trigger shame or loss of masculine confidence
   - Reframe masculinity as responsibility, presence, and self-leadership
@@ -793,9 +700,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Talk to the Boy Who Was Hurt First
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 650–900 words
   - Invite the reader to explore whether the breakup pain echoes earlier wounds (e.g., abandonment, rejection)
   - Introduce a simple self-dialogue exercise between his adult self and his inner boy
@@ -816,9 +720,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Pretending You’re Fine Is Slowing You Down
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 500–800 words
   - Explain the cost of emotional performance (e.g., at work, with friends, on social media)
   - Encourage naming real feelings in a private journal
@@ -840,9 +741,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Burn the Message You’ll Never Send
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 550–850 words
   - Help the reader write a message he’ll never send — then release it (e.g., burn, bury, shred)
   - Frame it as a closure ceremony for *his* peace, not for her response
@@ -864,10 +762,7 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Healing Isn’t Lost — It’s Just Hidden Today
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-  - At least 500 words (max 700)
+  - 450–700 words
   - Normalize bad days, regressions, and sudden waves of grief
   - Offer a framework: *Temporary Storm*, *Core Stability*, *Future Memory*
   - Include a story of a man who thought he “was fine” until one song broke him
@@ -888,9 +783,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Who Are You When You’re Not Her Partner?
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 500–800 words
   - Walk the reader through 3 reflection prompts: *My values*, *My forgotten passions*, *My new path*
   - Include examples from real men who rebuilt life from the ground up
@@ -911,9 +803,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: You’re Not the Tragic Hero of This Breakup
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–850 words
   - Explore how men cast themselves as the victim, martyr, or silent hero
   - Use film/storytelling metaphors: “change the narrator, not the plot”
@@ -935,9 +824,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Twelve Months From Now
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 500–800 words
   - Paint a vision of emotional, relational, physical, and financial growth
   - Invite the reader to journal 12 statements starting with: “By this time next year…”
@@ -959,10 +845,7 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Before You Text Her — Read This
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-  - At least 500 words (max 700)
+  - 450–700 words
   - Break down the moment of craving: what it *feels* like, what it *actually means*
   - Offer a 5-minute pause plan with questions to redirect the impulse
   - Share a story of a man who texted out of loneliness — and how it delayed his healing
@@ -983,9 +866,6 @@ Don’t shame ambition. Separate healthy drive from pain-driven chasing.
   ### Topic: Forgiveness Isn’t for Her — It’s for Your Peace
 
   ### Requirements:
-  - Must start with an H1 title line beginning with \`# \`
-  - Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-  - Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
   - 600–900 words
   - Help the reader understand forgiveness as an act of internal liberation, not external justice
   - Walk through 3 truths: *Forgiveness ≠ Approval*, *You can forgive in silence*, *Peace doesn’t need proof*
@@ -1007,9 +887,6 @@ You are a breakup recovery coach writing for a man who is anxious about seeing h
 ### Topic: When You See Her Again — And You Freeze
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–850 words
 - Walk through the internal experience of an unexpected encounter
 - Offer a reset process: *Observe → Breathe → Exit*
@@ -1031,9 +908,6 @@ You are a breakup coach helping a man who feels emotionally discarded.
 ### Topic: She Moved On — And You Feel Replaced
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Deconstruct the pain of being “swapped out”
 - Share a story of someone who compared himself to her new partner
@@ -1055,10 +929,7 @@ You are a breakup recovery coach helping a man obsessing over how others see the
 ### Topic: Let Go of Controlling the Narrative
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 700)
+- 450–700 words
 - Explore the urge to “set the record straight”
 - Introduce the concept of narrative detachment: *You are not the PR manager of your past*
 - Include a quote: “Your healing isn’t a group project.”
@@ -1079,9 +950,6 @@ You are a breakup coach guiding a man who feels lost in the aftermath.
 ### Topic: Who Are You Now — Without Her?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Invite the reader to visualise himself as a solo man again — what’s different now?
 - Share a contrast table: *With Her / Without Her / With Myself*
@@ -1102,9 +970,6 @@ You are a breakup recovery coach helping a man who secretly still hopes she’ll
 ### Topic: If You’re Still Waiting For Her — Read This First
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Unpack the emotional cost of “hope as a leash”
 - Share a story of a man who paused his life waiting — and what finally freed him
@@ -1126,10 +991,7 @@ You are a breakup coach helping a man transform pain into perspective.
 ### Topic: What She Gave You — Even Through Pain
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 750)
+- 450–750 words
 - Guide the reader to reflect on what he learned from her presence and absence
 - Use the tool: *What She Showed / What She Withheld / What I Grew Anyway*
 - Share a story of someone who honoured the pain as part of his development
@@ -1150,9 +1012,6 @@ You are a breakup recovery coach helping a man reflect on his role in the breaku
 ### Topic: Where You Messed Up — And How That Sets You Free
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Normalize imperfect relationships — and missed chances to show up better
 - Share a case study of someone who took accountability *without self-blame*
@@ -1174,10 +1033,7 @@ You are a breakup coach writing for a man who feels he was never truly understoo
 ### Topic: You Were Always Worth Seeing
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 750)
+- 450–750 words
 - Explore the pain of feeling emotionally invisible in the relationship
 - Share a story of someone who later found clarity on his emotional depth
 - Introduce a mantra: “I will never again stay where I must shrink to be loved.”
@@ -1198,10 +1054,7 @@ You are a breakup coach writing for a man tempted to reach out “just to talk.�
 ### Topic: Should You Text Her?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 700)
+- 450–700 words
 - Offer a 5-question impulse check before reaching out
 - Use “Craving vs Clarity” tool to distinguish motives
 - Share two contrasting examples: one who did, one who didn’t
@@ -1222,9 +1075,6 @@ You are a breakup recovery coach helping a man take control of his rebuild.
 ### Topic: The Life You Build After Her Will Shock You
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–900 words
 - Share an inspiring story of a man who hit rock bottom — and rebuilt with intention
 - Include a vision script: *“I wake up and...”* written in future tense

@@ -1,14 +1,13 @@
 const path = require('path');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
-const mime = require('mime-types'); 
+const mime = require('mime-types');
 const fs = require('fs').promises;
 const { marked } = require('marked');
 const { convert } = require('html-to-text');
 
 const { logEvent } = require('./db_logger');
 const { loadTemplate } = require('./loadTemplate');
-
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -17,17 +16,38 @@ const fromEmail = {
   email: 'support@thephoenixprotocol.app'
 };
 
-// Atomic email send, with single-attempt (no retries)
+// --- helpers ---------------------------------------------------------------
+
+/** Remove a single leading H1/H2 from an HTML fragment. */
+function stripLeadingHeading(html) {
+  if (typeof html !== 'string') return html;
+  return html.replace(/^\s*<h[12][^>]*>[\s\S]*?<\/h[12]>\s*/i, '');
+}
+
+/** Force consistent heading sizes inside content fragments by downgrading any stray H1s to H2. */
+function normalizeHeadings(html) {
+  if (typeof html !== 'string') return html;
+  // Only convert remaining H1s, keep other tags intact
+  return html.replace(/<h1([^>]*)>/gi, '<h2$1>').replace(/<\/h1>/gi, '</h2>');
+}
+
+/** Render Markdown -> sanitized HTML fragment */
+function renderMd(md) {
+  const raw = marked.parse(md || '');
+  const noLead = stripLeadingHeading(raw);
+  return normalizeHeadings(noLead);
+}
+
+// --- email sending ---------------------------------------------------------
+
 async function sendRawEmail(to, subject, html, attachmentPath = null) {
   if (!to || !subject || typeof html !== 'string' || html.trim().length === 0) {
     logEvent('email', 'error', 'Invalid parameters for sendRawEmail');
     throw new Error('Invalid raw email parameters');
   }
 
-  // Subject truncation (if needed)
   const finalSubject = subject.length > 140 ? subject.slice(0, 137) + '...' : subject;
 
-  // Build unsubscribe token + URL
   let token = '';
   let unsubscribeUrl = '';
   try {
@@ -37,7 +57,6 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     logEvent('email', 'warn', `Unsubscribe token error for ${to}: ${err.message}`);
   }
 
-  // Only append our tiny footer if the HTML doesn't already contain an unsubscribe
   const hasCustomUnsub = /{{\s*unsubscribe_token\s*}}|\/unsubscribe\?token=/i.test(html);
   let finalHtml = html;
 
@@ -51,32 +70,27 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
     finalHtml += footer;
   }
 
-  // Plain text version for fallback
   const text = convert(finalHtml, {
     wordwrap: 130,
     selectors: [{ selector: 'a', options: { hideLinkHrefIfSameAsText: true } }]
   });
 
-  // Build message
   const msg = {
     to,
     from: fromEmail,
     subject: finalSubject,
     html: finalHtml,
     text,
-    // Prevent SendGrid from adding its own unsubscribe/footer on these emails
     mailSettings: {
       subscriptionTracking: { enable: false },
       footer: { enable: false },
     },
-    // Help Gmail/Apple Mail with one-click unsubscribe
     headers: unsubscribeUrl ? {
       'List-Unsubscribe': `<${unsubscribeUrl}>`,
       'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
     } : undefined,
   };
 
-  // Attachments (if any)
   if (attachmentPath) {
     msg.attachments = [];
     const paths = Array.isArray(attachmentPath) ? attachmentPath : [attachmentPath];
@@ -89,7 +103,6 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
           type: mime.lookup(filePath) || 'application/octet-stream',
           disposition: 'attachment'
         });
-        
       } catch (err) {
         logEvent('email', 'warn', `Attachment failed for ${to}: ${err.message}`);
       }
@@ -106,7 +119,7 @@ async function sendRawEmail(to, subject, html, attachmentPath = null) {
   }
 }
 
-// Markdown-to-HTML email sender (helper, optional)
+// Simple Markdown sender (kept for completeness)
 async function sendMarkdownEmail(to, subject, markdown) {
   if (!to || !subject || !markdown) {
     logEvent('email', 'error', 'Invalid parameters for sendMarkdownEmail');
@@ -121,23 +134,29 @@ async function sendMarkdownEmail(to, subject, markdown) {
   h1, h2, h3 { color: #5f259f; }
 </style>
 </head>
-<body>${marked.parse(markdown)}</body>
+<body>${renderMd(markdown)}</body>
 </html>`;
   await sendRawEmail(to, subject, html);
 }
 
-// Renders a guide object into HTML using /templates/daily_summary.html
+// Render a guide object using /templates/daily_summary.html while enforcing consistent headings
 async function renderEmailMarkdown(guide) {
   const template = await loadTemplate('daily_summary.html');
-  // Use all present keys instead of a hardcoded subset
-  const keys = Object.keys(guide).filter(k => guide[k]?.content);
 
+  // If guide is a multi-section object
+  const keys = Object.keys(guide || {}).filter(k => guide[k]?.content);
   if (keys.length) {
     let fullHtml = '';
     for (const key of keys) {
       const { title = key, content = '' } = guide[key] || {};
       if (content.trim().length > 0) {
-        fullHtml += `<h2>${key.replace('_', ' ').toUpperCase()} — ${title}</h2>\n<div>${marked.parse(content)}</div><hr style="margin:2rem 0;">`;
+        fullHtml += `
+<h2 style="font-size:20px;line-height:1.4;margin:24px 0 8px 0;font-weight:700;">
+  ${key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} — ${title}
+</h2>
+<div>${renderMd(content)}</div>
+<hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb;">
+`;
       }
     }
     return template
@@ -145,10 +164,11 @@ async function renderEmailMarkdown(guide) {
       .replace(/{{\s*content\s*}}/g, fullHtml || '<p><em>No guide content available.</em></p>');
   }
 
-  // fallback: assume it's a single guide object
-  const contentHtml = marked.parse(guide?.content || '');
+  // Fallback: single guide object
+  const safeTitle = (guide && guide.title) ? String(guide.title) : 'Your Daily Guide';
+  const contentHtml = renderMd(guide?.content || '');
   return template
-    .replace(/{{\s*title\s*}}/g, guide?.title || '')
+    .replace(/{{\s*title\s*}}/g, safeTitle)
     .replace(/{{\s*content\s*}}/g, contentHtml);
 }
 

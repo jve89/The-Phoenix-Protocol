@@ -19,7 +19,7 @@ try {
   process.exit(1);
 }
 
-// Crash safety: handle uncaught exceptions and rejections
+// Crash safety
 process.on('uncaughtException', err => {
   console.error('🔥 Uncaught Exception:', err);
   process.exit(1);
@@ -54,6 +54,7 @@ if (!process.env.ADMIN_EMAIL) {
 const app = express();
 
 // Middleware (order matters)
+// Stripe needs raw body on /webhook, so mount before express.json()
 app.use('/', unsubscribeRoute);
 app.use('/webhook', webhookRoutes);
 app.use(express.json());
@@ -61,22 +62,27 @@ app.use(express.static('public'));
 
 // Auto-register clean routes for all public .html pages
 const publicDir = path.join(__dirname, '..', 'public');
-fs.readdirSync(publicDir)
-  .filter(file => file.endsWith('.html'))
-  .forEach(file => {
-    const route = '/' + file.replace(/\.html$/, '');
-    const filePath = path.join(publicDir, file);
+if (fs.existsSync(publicDir)) {
+  fs.readdirSync(publicDir)
+    .filter(file => file.endsWith('.html'))
+    .forEach(file => {
+      const route = '/' + file.replace(/\.html$/, '');
+      const filePath = path.join(publicDir, file);
 
-    console.log(`🔗 Routing ${route} → ${file}`);
+      console.log(`🔗 Routing ${route} → ${file}`);
 
-    app.get(route, (req, res) => {
-      res.sendFile(filePath);
+      app.get(route, (req, res) => {
+        res.sendFile(filePath);
+      });
+
+      // Support /file.html → /file
+      app.get('/' + file, (req, res) => {
+        res.redirect(301, route);
+      });
     });
-
-    app.get('/' + file, (req, res) => {
-      res.redirect(301, route);
-    });
-  });
+} else {
+  console.warn('⚠️ Public directory missing:', publicDir);
+}
 
 // Register feedback *before* general routes, both under /api
 app.use('/api', feedbackRoutes);
@@ -98,16 +104,8 @@ if (process.env.NODE_ENV === 'production') {
 
 async function startServer() {
   try {
-    // Connect to DB and run init migrations if any
-    await connectAndInit();
-
-    // Optional: Run slot-miss check logic here if you want (not required; see below)
-    // e.g., await catchUpOnMissedSlots();
-
-    // Start cron jobs (must be after DB is ready)
-    startCron();
-
-    // Start HTTP server (only after above)
+    await connectAndInit();   // no-op in prod per db.js patch
+    startCron();              // after DB ready
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);
     });
@@ -117,9 +115,14 @@ async function startServer() {
   }
 }
 
-// Global 404 fallback
+// Global 404 fallback (use top-level /public/404.html if present)
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+  const notFoundPath = path.join(__dirname, '..', 'public', '404.html');
+  if (fs.existsSync(notFoundPath)) {
+    res.status(404).sendFile(notFoundPath);
+  } else {
+    res.status(404).type('text/plain').send('404 Not Found');
+  }
 });
 
 startServer();

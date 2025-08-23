@@ -6,14 +6,13 @@ const Stripe = require('stripe');
 const { refundLatestChargeForEmail } = require('../utils/payment');
 const { logEvent } = require('../utils/db_logger');
 
-// Structured logger for webhooks
+// Structured logger
 const logger = {
   info: msg => logEvent('webhook', 'info', msg),
   warn: msg => logEvent('webhook', 'warn', msg),
   error: msg => logEvent('webhook', 'error', msg),
 };
 
-// Validate Stripe config at load time
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 if (!stripeSecret) {
@@ -31,6 +30,22 @@ const stripe = new Stripe(stripeSecret, { apiVersion: '2023-10-16' });
 const asyncHandler = fn => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
+// Check if this event.id has already been processed
+async function isDuplicateEvent(eventId) {
+  try {
+    const { rowCount } = await db.query(
+      `INSERT INTO processed_webhooks (event_id) VALUES ($1)
+       ON CONFLICT DO NOTHING`,
+      [eventId]
+    );
+    return rowCount === 0; // if conflict, already processed
+  } catch (err) {
+    logger.error(`processed_webhooks insert failed: ${err.message}`);
+    // fallback: never block, but risk duplicate
+    return false;
+  }
+}
+
 // Primary Stripe webhook handler
 router.post(
   '/',
@@ -47,9 +62,14 @@ router.post(
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
+    // Deduplicate
+    if (await isDuplicateEvent(event.id)) {
+      logger.warn(`Duplicate event skipped: ${event.id}`);
+      return res.json({ received: true });
+    }
+
     const type = event.type;
 
-    // Handle checkout completion
     if (type === 'checkout.session.completed') {
       const session = event.data.object;
       const sessionId = session.id;
@@ -60,13 +80,12 @@ router.post(
       const plan = (session.metadata?.plan || '30').trim();
       const limit = parseInt(plan, 10);
 
-      // Idempotency check
       const { rows: dupRows } = await db.query(
         'SELECT 1 FROM users WHERE session_id = $1',
         [sessionId]
       );
       if (dupRows.length) {
-        logger.warn(`Duplicate webhook session: ${sessionId}`);
+        logger.warn(`Duplicate checkout session: ${sessionId}`);
         return res.json({ received: true });
       }
 
@@ -74,13 +93,13 @@ router.post(
         `UPDATE users SET
             plan                  = $1,
             plan_limit            = $2,
-            paid_usage_count      = 0,                -- was usage_count
+            paid_usage_count      = 0,
             gender                = $3,
             goal_stage            = $4,
             session_id            = $5,
             is_trial_user         = FALSE,
-            unsubscribed          = FALSE,            -- 🔑 re-enable deliveries
-            paid_started_at       = NOW(),            -- reset anchor for new paid cycle
+            unsubscribed          = FALSE,
+            paid_started_at       = NOW(),
             last_paid_sent_at     = NULL,
             paid_farewell_sent_at = NULL,
             trial_started_at      = NULL,
@@ -94,7 +113,6 @@ router.post(
       }
     }
 
-    // Handle bounce-related events
     const bounceEvents = new Set([
       'invoice.payment_failed',
       'charge.failed',
@@ -111,18 +129,18 @@ router.post(
         logger.warn(`No email for bounce event ${type}`);
       } else {
         const { rows } = await db.query(
-          'SELECT id, bounces FROM users WHERE email = $1',
+          'SELECT id FROM users WHERE email = $1',
           [email]
         );
         if (!rows.length) {
           logger.warn(`Bounce for unknown user: ${email}`);
         } else {
           const user = rows[0];
-          const newBounces = (user.bounces || 0) + 1;
-          await db.query('UPDATE users SET bounces = $1 WHERE id = $2', [
-            newBounces,
-            user.id,
-          ]);
+          const { rows: updated } = await db.query(
+            'UPDATE users SET bounces = bounces + 1 WHERE id=$1 RETURNING bounces',
+            [user.id]
+          );
+          const newBounces = updated[0].bounces;
           logger.info(`Updated bounces for ${email}: ${newBounces}`);
           if (newBounces >= 5) {
             logger.info(`Bounce limit reached for ${email}, refunding`);
@@ -155,7 +173,7 @@ router.post(
       }
 
       const { rows } = await db.query(
-        'SELECT id, bounces FROM users WHERE email = $1',
+        'SELECT id FROM users WHERE email = $1',
         [email]
       );
       if (!rows.length) {
@@ -163,11 +181,11 @@ router.post(
         continue;
       }
       const user = rows[0];
-      const newBounces = (user.bounces || 0) + 1;
-      await db.query('UPDATE users SET bounces = $1 WHERE id = $2', [
-        newBounces,
-        user.id,
-      ]);
+      const { rows: updated } = await db.query(
+        'UPDATE users SET bounces = bounces + 1 WHERE id=$1 RETURNING bounces',
+        [user.id]
+      );
+      const newBounces = updated[0].bounces;
       logger.info(`SendGrid bounce for ${email}: ${newBounces}`);
       if (newBounces >= 5) {
         logger.info(`Bounce limit reached for ${email}, refunding`);
@@ -179,9 +197,9 @@ router.post(
   })
 );
 
-// Error handler middleware
+// Error handler
 router.use((err, req, res, next) => {
-  logger.error(`Webhook handler error: ${err.message}`);
+  logger.error(err.stack || `Webhook handler error: ${err.message}`);
   res.status(500).json({ error: 'Webhook handling failed' });
 });
 

@@ -36,7 +36,10 @@ router.get('/unsubscribe', asyncHandler(async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    logger.info(`Verified unsubscribe token for ${decoded.email}`);
+    const email = typeof decoded.email === 'string' ? decoded.email.trim().toLowerCase() : '';
+    if (!email) throw new Error('Decoded token missing email');
+
+    logger.info(`Verified unsubscribe token for ${email}`);
 
     const html = `
       <html>
@@ -70,58 +73,76 @@ router.post('/unsubscribe', asyncHandler(async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    const email = decoded.email;
+    const email = typeof decoded.email === 'string' ? decoded.email.trim().toLowerCase() : '';
+    if (!email) throw new Error('Decoded token missing email');
+
     logger.info(`Processing unsubscribe for ${email}`);
 
-    // Fetch trial flag once
     const { rows } = await db.query(
-      'SELECT is_trial_user FROM users WHERE email = $1',
+      'SELECT is_trial_user, unsubscribed FROM users WHERE email = $1',
       [email]
     );
     if (!rows.length) {
       logger.warn(`Unsubscribe: user not found for ${email}`);
       return res.status(404).type('text/html').send('<h2>Email not found.</h2>');
     }
-    const isTrial = rows[0].is_trial_user;
+
+    const user = rows[0];
+    if (user.unsubscribed) {
+      logger.info(`User ${email} already unsubscribed`);
+      return res.status(200).type('text/html').send('<h2>You are already unsubscribed.</h2>');
+    }
+
+    const isTrial = user.is_trial_user;
     const farewellTimeField = isTrial ? 'trial_farewell_sent_at' : 'paid_farewell_sent_at';
 
-    // ✅ Patch: stop using legacy usage_count
-    // ✅ Patch: remove nonexistent farewell_sent column
-    if (isTrial) {
-      // Trial: mark as unsubscribed and cap TRIAL usage at plan_limit
-      await db.query(
-        `UPDATE users
-         SET plan = 0,
-             trial_usage_count = plan_limit,
-             unsubscribed = TRUE,
-             ${farewellTimeField} = NOW()
-         WHERE email = $1`,
-        [email]
-      );
-    } else {
-      // Paid: mark as unsubscribed and cap PAID usage at plan_limit
-      await db.query(
-        `UPDATE users
-         SET plan = 0,
-             paid_usage_count = plan_limit,
-             unsubscribed = TRUE,
-             ${farewellTimeField} = NOW()
-         WHERE email = $1`,
-        [email]
-      );
+    // Update with defensive defaults
+    try {
+      if (isTrial) {
+        await db.query(
+          `UPDATE users
+           SET plan = 0,
+               trial_usage_count = COALESCE(plan_limit, 3),
+               unsubscribed = TRUE,
+               ${farewellTimeField} = NOW()
+           WHERE email = $1`,
+          [email]
+        );
+      } else {
+        await db.query(
+          `UPDATE users
+           SET plan = 0,
+               paid_usage_count = COALESCE(plan_limit, paid_usage_count),
+               unsubscribed = TRUE,
+               ${farewellTimeField} = NOW()
+           WHERE email = $1`,
+          [email]
+        );
+      }
+    } catch (e) {
+      logger.error(`DB update failed for unsubscribe ${email}: ${e.message}`);
     }
 
     const templateName = isTrial ? 'trial_farewell.html' : 'farewell_email.html';
     const farewellPath = path.join(__dirname, `../../templates/${templateName}`);
-    const farewellHtml = await fs.readFile(farewellPath, 'utf-8');
+    let farewellHtml = '';
+    try {
+      farewellHtml = await fs.readFile(farewellPath, 'utf-8');
+    } catch (e) {
+      logger.error(`Failed to load farewell template ${templateName}: ${e.message}`);
+      farewellHtml = `<p>You have been unsubscribed from The Phoenix Protocol.</p>`;
+    }
 
-    await sendRawEmail(
-      email,
-      'Thank You for Using The Phoenix Protocol',
-      farewellHtml
-    );
-
-    logger.info(`Farewell email (${templateName}) sent to ${email}`);
+    try {
+      await sendRawEmail(
+        email,
+        'Thank You for Using The Phoenix Protocol',
+        farewellHtml
+      );
+      logger.info(`Farewell email (${templateName}) sent to ${email}`);
+    } catch (e) {
+      logger.error(`Farewell email send failed to ${email}: ${e.message}`);
+    }
 
     const html = `
       <html>

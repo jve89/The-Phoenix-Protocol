@@ -10,8 +10,6 @@ You are a breakup recovery coach writing a **premium guide for a male user who w
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# What It Cost You — And Why That Matters).**
-- Scaffold: H1 Title → a short Intro (2–3 sentences; include one line referencing the reader’s context: gender=\${gender}, goalStage=\${goalStage}) → 2–4 body sections with H2 headings → a final **Practice:** section with 2–4 actionable steps. Keep any required closing line after **Practice:** when specified.
 - Share a story of a man who realised too late how much he emotionally neglected the relationship
 - Include a cost audit: *Connection / Intimacy / Trust / Respect*
 - Reframe: “Knowing the cost doesn’t mean self-punishment — it means you’re ready to invest better.”
@@ -33,8 +31,6 @@ You are a breakup recovery coach helping a man who might soon reconnect with his
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# What Do You Actually Want to Say?).**
-- Scaffold: H1 Title → short Intro (mention context line with gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Help the reader build a 3-part message (not to send yet): *Acknowledgement / Insight / Invitation*
 - Include 4 “Do Not”s (e.g., Don’t ask to start over. Don’t talk about missing her.)
 - End with: “Connection doesn’t start with the past — it starts with who you are now.”
@@ -55,8 +51,6 @@ You are a breakup coach writing for a man who wants to reconnect and prove perso
 
 ### Requirements:
 - 550–800 words
-- Write in Markdown. **Start with an H1 title (# Change That Doesn’t Need to Be Announced).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Contrast performative change vs embodied transformation
 - Include a self-check tool: *Am I changing to grow — or to be seen?*
 - Offer 3 quiet actions that speak louder than “Look at me now”
@@ -78,8 +72,6 @@ You are a breakup coach helping a man prepare emotionally if his ex reaches out.
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# If She Texts You Back — Then What?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explore 3 common pitfalls: *flooding her with emotion*, *over-apologising*, *rushing the moment*
 - Share an example of a man who navigated the first convo with calm curiosity
 - Offer a visual: *Treat it like a second first date — not a reunion*
@@ -101,8 +93,6 @@ You are a breakup recovery coach guiding a man toward emotional wholeness before
 
 ### Requirements:
 - 600–900 words
-- Write in Markdown. **Start with an H1 title (# See the Man You’re Becoming — Before She Does).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Guide the reader through a deep visualisation of future him — post-repair, independent, whole
 - Include prompts like: *What does your space look like? How do you move through a day?*
 - Share a story of someone who reconnected only after becoming his own anchor
@@ -124,8 +114,6 @@ You are a breakup coach helping a man reconnect — and express better next time
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# What She Probably Needed You to Say).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Break down 4 things men often fail to articulate: *hurt*, *confusion*, *appreciation*, *regret*
 - For each, offer one powerful phrase and what it signals emotionally
 - Include a journaling tool: “What I felt but never said”
@@ -147,8 +135,6 @@ You are a breakup recovery coach writing for a man itching to reconnect — but 
 
 ### Requirements:
 - 550–750 words
-- Write in Markdown. **Start with an H1 title (# Why You Might Not Be Ready Yet).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - List 5 signs that reconnection is still ego-driven or premature
 - Include a tool: *Emotional Bandwidth Gauge*
 - Offer 3 things to build before initiating contact: *emotional buffer, independence rituals, peace with no reply*
@@ -170,8 +156,6 @@ You are a breakup coach writing for a man who still doesn’t fully understand h
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Who Were You — When It Got Hard?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Introduce a guided mirror exercise to reflect on your worst relational moments
 - Include a structure: *What I did / What I feared / What I now understand*
 - Share a story of a man who had to confront how he showed up under pressure
@@ -193,8 +177,6 @@ You are a breakup coach writing for a man who feels like he’s backsliding in h
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# It’s Not a Setback — It’s a Sign).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Tell a relatable story of a man who thought he was over her — until one photo shattered him
 - Reframe emotional regressions as proof that *something mattered*
 - Include the metaphor: “Healing isn’t a staircase. It’s a tide.”
@@ -216,8 +198,6 @@ You are a breakup recovery coach guiding a man who hopes to reconnect — but st
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# How to Reconnect Without Losing Yourself).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Map 4 boundary zones: *Contact, Expectation, Intimacy, Autonomy*
 - Share a story of someone who over-accommodated and felt regret
 - Introduce the tool: *The Boundary Ladder*
@@ -239,8 +219,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–900 words
-- Write in Markdown. **Start with an H1 title (# What Did I Bring — and What Did I Break?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Guide the reader to assess both his *positive contributions* and *emotional blind spots*
 - Include a 2-part journaling exercise:
   1. “Moments I’m proud of”
@@ -264,8 +242,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Are You Repeating the Same Story?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Introduce the concept of emotional loops: conflict–repair–hope–collapse
 - Tell a short story of a man who mistook nostalgia for progress
 - Offer a “Pattern Disruption Checklist” — 4 signs you’re looping vs. leading
@@ -287,8 +263,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–800 words
-- Write in Markdown. **Start with an H1 title (# What If She Actually Replies?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Prepare the reader emotionally for the moment she replies
 - Walk through a 3-step mental simulation:
   1. Staying grounded in your mission
@@ -312,8 +286,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 650–900 words
-- Write in Markdown. **Start with an H1 title (# If You Never Get Her Back — Would It Still Be Worth It?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explore the idea of **becoming the man she *would* choose** — even if she never does
 - Introduce the mindset of *process over prize*
 - Include a personal contract: “I evolve for myself, not for her return.”
@@ -334,9 +306,7 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 ### Topic: 5 Tiny Actions That Rebuild Her Perception of You — Without Saying a Word
 
 ### Requirements:
-- 500–700 words
-- Write in Markdown. **Start with an H1 title (# 5 Tiny Actions That Rebuild Her Perception of You — Without Saying a Word).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
+- 450–700 words
 - List 5 subtle but powerful behaviour shifts that reflect emotional growth
   - E.g. consistent boundaries, verbal precision, social steadiness
 - Each point includes a real-world example: “Then” vs. “Now”
@@ -358,8 +328,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 750–1000 words
-- Write in Markdown. **Start with an H1 title (# The Day She Reached Out — And Why I Didn’t Say Yes).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Narrate a fictional first-person story where the man does reconnect — but chooses not to resume the relationship
 - Show how clarity, self-respect, and timing shifted the outcome
 - End with: “Sometimes, the win is knowing when not to restart.”
@@ -380,8 +348,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Are You Ready — or Just Lonely?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Dissect the emotional difference between readiness and avoidance of pain
 - Include a 5-question “Reconnection Audit”
 - Offer reframes for loneliness triggers (“missing her” vs. “missing meaning”)
@@ -403,8 +369,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# What Would a King Do?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Frame the reader’s choices through the metaphor of sovereign leadership
 - Explore 3 kingly traits: stability, boundaries, and benevolence without submission
 - Include a short visualisation: *You walk into the room. She’s there. You speak...*
@@ -426,8 +390,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# Silence Isn’t a Strategy — It’s a Mirror).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explain why “no contact” doesn’t *cause* reconnection — it *reveals* clarity
 - Highlight 3 truths silence surfaces:
   - Your emotional baseline
@@ -451,8 +413,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Train Your Heart Like a Muscle).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Teach emotional resilience as a form of internal conditioning
 - Use gym metaphor: *Volume, Rest, Recovery, Form*
 - Include a weekly “Emotional Training Plan” (Mon–Sun)
@@ -474,8 +434,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–800 words
-- Write in Markdown. **Start with an H1 title (# Would You Date You Right Now?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Walk the reader through a confronting but empowering self-interview
 - Include 6 reflection questions split into two sections: external (how others see you) and internal (how you feel about yourself)
 - Offer a reframe: “She’s not a prize — she’s a mirror”
@@ -497,8 +455,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Build a Ritual That Grounds You Before Reaching Out).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Help the reader create a personal 5-minute ritual to calm, clarify, and re-anchor before initiating contact
 - Include three sensory anchors: breath, posture, voice tone
 - Offer a visualisation: “She picks up — you speak with power, not panic”
@@ -520,8 +476,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Don’t Sell — Build Demand).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Use a product-market metaphor to reframe the mindset: *You are the offer, not the pitch*
 - Explain 4 traits that naturally increase “demand” in the emotional market: clarity, consistency, confidence, calm
 - Offer a short daily discipline plan for being seen as high-integrity, not high-need
@@ -543,8 +497,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 700–1000 words
-- Write in Markdown. **Start with an H1 title (# She Walks Into the Room — Now What?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Guide the reader through a vivid inner visualisation of a spontaneous, unplanned reunion
 - Teach him how to regulate his emotions in real time (breath, thought control, presence)
 - Include a mantra: “I lead with presence, not pressure”
@@ -566,8 +518,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–700 words
-- Write in Markdown. **Start with an H1 title (# If She Says No — Don’t Lose Your Crown).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Prepare the reader to respond with dignity to a firm “no”
 - Include a reframe: rejection doesn’t shrink you — reaction does
 - Offer 3 steps for preserving composure and self-worth after emotional impact
@@ -589,8 +539,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Growth She Can Feel — Without You Having to Say a Word).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Show how true transformation is communicated through presence and pattern — not words
 - Offer a checklist: “Silent Signals of Growth” (consistency, emotional detachment, calm confidence, kindness without agenda)
 - End with: “Proof isn’t what you say. It’s what she senses.”
@@ -611,8 +559,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 700–1000 words
-- Write in Markdown. **Start with an H1 title (# How One Man Got Her Back — But Didn’t Keep Her).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Deconstruct a fictional case study where a man reconnected… then reverted to old habits and lost her again
 - Break down the 3 emotional mistakes he made post-reunion
 - Include a reframe: “Reconnection is a beginning, not a trophy”
@@ -634,8 +580,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Urgency Is the Enemy of Clarity).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Help the reader identify and neutralise panic-driven behaviours
 - Introduce a 4-step protocol: Pause, Breathe, Delay, Decide
 - Include a short breathing ritual: “4 for stillness, 4 for strength”
@@ -657,8 +601,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# You Versus You — The Man She Left vs. The Man She Sees Now).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Compare two versions of the man: *Then* and *Now*
 - Show the visible differences in how he shows up: energy, words, calmness, drive
 - Include a fictional but grounded scene: a mutual friend sees him and is visibly surprised
@@ -680,8 +622,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 700–900 words
-- Write in Markdown. **Start with an H1 title (# Reconnect With Yourself — Before You Reach for Her).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Include 3 interactive exercises:
   1. “The Mirror Test”: What do you admire in yourself now?
   2. “The Gap Check”: What still feels unstable?
@@ -705,8 +645,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# When She Disappears — What to Do in the First 72 Hours).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Frame silence as a trigger, not a verdict
 - Offer a 3-phase protocol:
   1. Freeze reactive texting
@@ -730,8 +668,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# Do You Want Her — or Who You Were With Her?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Separate relationship nostalgia from personal identity regression
 - Include a worksheet split into 3 sections:
   - *Who I was*
@@ -755,8 +691,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# The Energy That Makes Her Reconsider).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Reframe power from pressure → presence
 - Offer a daily energy alignment checklist:
   - Breath before texts
@@ -780,8 +714,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# 5 Signs You’re Not Ready (and That’s Okay)).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Outline 5 common patterns of unreadiness (e.g., outcome obsession, ego-led action)
 - Reframe each as a growth signal, not a failure
 - Include a readiness tracker quiz
@@ -803,8 +735,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 550–800 words
-- Write in Markdown. **Start with an H1 title (# You Don’t Need a Final Conversation).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Challenge the myth of closure through external dialogue
 - Share a fictional story of a man who waited for words that never came — and still healed
 - Offer a visual metaphor: “Some doors never close — they just grow smaller as you move forward”
@@ -826,8 +756,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–900 words
-- Write in Markdown. **Start with an H1 title (# Are You Evolving — or Just Escaping?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Break down three types of false recovery paths (e.g., success obsession, serial dating, gym-only identity)
 - Include a contrast grid: *True Healing* vs *Avoidance Hustle*
 - End with: “Who are you becoming — when no one’s watching?”
@@ -848,8 +776,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Stop Writing the Perfect Text — Start Being the Real You).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Break the illusion that one message can fix months of disconnection
 - Teach the “Energy over Elegance” rule
 - Include two rewritten message examples: before vs after emotional calibration
@@ -871,8 +797,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# You’re Not Repeating — You’re Reintroducing).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Help the reader frame his next contact as a fresh presence, not a re-run
 - Offer a personal audit:
   1. Behavioural evolution
@@ -896,8 +820,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# Feel the Urge? Use the 4-Minute Rule First).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Introduce the “4-Minute Reset” before reaching out
   1. Pause
   2. Breathe deeply
@@ -922,8 +844,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–950 words
-- Write in Markdown. **Start with an H1 title (# Try Seeing It Through Her Eyes).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Guide the reader through an empathy immersion: how she may have experienced the relationship
 - Include prompts:
   - “What did she feel unsafe to express?”
@@ -947,8 +867,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 
 ### Requirements:
 - 600–900 words
-- Write in Markdown. **Start with an H1 title (# Why She Pulled Away — And What You Missed).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Walk through 4 common silent signals women give before emotionally detaching
 - Explain how male avoidance, distraction, or indifference often masks her warning signs
 - Include a case study where the reader recognises his blind spot
@@ -958,7 +876,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 Do not foster guilt. Foster deeper emotional listening and responsibility.
 `,
   },
-
   {
     format: "masculine recalibration",
     tone: "grounded, motivating, no-nonsense",
@@ -970,8 +887,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 500–800 words
-- Write in Markdown. **Start with an H1 title (# Reconnection Is *Earned* — Not Asked For).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Confront the idea that “saying the right thing” leads to getting her back
 - Emphasise behavioural evidence, not persuasive tactics
 - Offer a table of “Actions That Speak” — e.g. consistent behaviour, emotional regulation, honouring boundaries
@@ -992,8 +907,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 
 ### Requirements:
 - 500–750 words
-- Write in Markdown. **Start with an H1 title (# The Real Reason Begging Never Works).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explain how emotional pressure violates safety and triggers resistance
 - Use a metaphor (e.g. “emotional gravity vs emotional push”)
 - Include an emotional posture reframe:
@@ -1017,8 +930,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 
 ### Requirements:
 - 650–950 words
-- Write in Markdown. **Start with an H1 title (# Are You Making Her Feel Safe — or Cornered?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explain the nervous system’s response to emotional pressure (fight/flight/freeze)
 - Teach men how subtle tone, timing, and frequency can overwhelm even kind intentions
 - Include 3 high-safety reconnection behaviours and 3 low-safety ones
@@ -1039,8 +950,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–850 words
-- Write in Markdown. **Start with an H1 title (# You Can’t Reconnect While Resenting Her).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explore subtle forms of resentment men may carry (e.g. blame, feeling abandoned, “after all I did”)
 - Include a resentment detox writing ritual
 - Share a short case study where a man ruined reconnection by holding hidden anger
@@ -1061,8 +970,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 
 ### Requirements:
 - 500–800 words
-- Write in Markdown. **Start with an H1 title (# Stop Guessing What She Wants — Start Becoming What You Respect).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Shift focus from decoding her feelings to building his own centre
 - Include a role-model audit: “What type of man do *you* admire, even if she doesn’t come back?”
 - Include a short morning ritual for identity anchoring
@@ -1083,8 +990,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 600–900 words
-- Write in Markdown. **Start with an H1 title (# The Apology She’ll Actually Hear).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Teach the anatomy of a real apology (acknowledge impact, name behaviour, no justification)
 - Include a “Checklist of Death” — what makes apologies backfire
 - Share a case study of a man who owned his past with dignity, not desperation
@@ -1105,8 +1010,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 
 ### Requirements:
 - 550–850 words
-- Write in Markdown. **Start with an H1 title (# Do You Actually *Trust* Her — Or Just Want Her?).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Examine the difference between attraction, desire, and emotional trust
 - Offer a Trust Audit with 5 questions about past patterns, consistency, and respect
 - Share a story of someone who realised desire masked a deep mistrust
@@ -1127,8 +1030,6 @@ You are a breakup coach writing a **premium guide for a man who wants to reconne
 
 ### Requirements:
 - 600–1000 words
-- Write in Markdown. **Start with an H1 title (# How to Reconnect Without Feeling Like a Little Boy Again).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Explore how unhealed emotional wounds make men regress in conflict or rejection
 - Teach the difference between showing emotion vs collapsing into emotional need
 - Include a 3-part “Strong Core” self-talk strategy
@@ -1149,8 +1050,6 @@ You are a breakup recovery coach writing a **premium guide for a man who wants t
 
 ### Requirements:
 - 650–950 words
-- Write in Markdown. **Start with an H1 title (# The Reconnection Plan — Built for Reality, Not Fantasy).**
-- Scaffold: H1 → Intro with one context line (gender=\${gender}, goalStage=\${goalStage}) → 2–4 H2 sections → final **Practice:** section.
 - Lay out a 3-phase reconnection path: *Inner Grounding → Casual Recontact → Emotional Depth*
 - For each, define clear signals of readiness — both in himself and in her
 - Include sample boundary-respecting messages for first contact

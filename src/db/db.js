@@ -9,7 +9,8 @@ if (!process.env.DATABASE_URL) {
 // Initialize Postgres pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // 🔒 Force SSL for all environments
+  // Keep existing SSL behavior unchanged to avoid surprises
+  ssl: { rejectUnauthorized: false }
 });
 
 // Handle unexpected errors on idle clients
@@ -86,9 +87,14 @@ const initSQL = [
 ];
 
 /**
- * Connect and initialize database schema
+ * Connect and initialize database schema.
+ * In production, this is a NO-OP to avoid schema drift; use migrations instead.
  */
 async function connectAndInit() {
+  if (process.env.NODE_ENV === 'production') {
+    console.log('ℹ️ Skipping schema init in production (use migrations).');
+    return;
+  }
   try {
     for (const sql of initSQL) {
       await pool.query(sql);
@@ -109,19 +115,37 @@ async function connectAndInit() {
 async function query(text, params) {
   const MAX_RETRIES = 2;
   let attempt = 0;
+
   while (true) {
     try {
       return await pool.query(text, params);
     } catch (err) {
-      const transientCodes = ['57P01', 'ECONNRESET', 'ECONNREFUSED', 'ETIMEDOUT'];
-      if (attempt < MAX_RETRIES && transientCodes.includes(err.code)) {
+      const code = err && err.code ? String(err.code) : '';
+      const msg = err && err.message ? String(err.message) : '';
+
+      // Known transient indicators across drivers/platforms
+      const transientCodes = new Set([
+        '57P01',        // admin_shutdown / connection terminated
+        'ECONNRESET',
+        'ECONNREFUSED',
+        'ETIMEDOUT',
+        'EPIPE'
+      ]);
+      const transientRegex = /(ECONNRESET|ECONNREFUSED|ETIMEDOUT|EPIPE|socket hang up|Connection terminated|read ECONNRESET)/i;
+
+      const isTransient =
+        transientCodes.has(code) ||
+        transientRegex.test(msg);
+
+      if (attempt < MAX_RETRIES && isTransient) {
         attempt++;
-        const delayMs = 100 * Math.pow(2, attempt);
-        console.warn(`Query transient error (${err.code}), retry ${attempt} in ${delayMs}ms`);
+        const delayMs = 100 * Math.pow(2, attempt) + Math.floor(Math.random() * 50);
+        console.warn(`Query transient error (${code || 'no-code'}): ${msg}. Retry ${attempt}/${MAX_RETRIES} in ${delayMs}ms`);
         await new Promise(res => setTimeout(res, delayMs));
         continue;
       }
-      console.error(`Query failed: ${err.message} | SQL: ${text}`);
+
+      console.error(`Query failed: ${msg} | SQL: ${text}`);
       throw err;
     }
   }

@@ -9,9 +9,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What Went Wrong? Understanding the Breakup
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–950 words
 - Walk the reader through a self-aware reflection on the relationship timeline
 - Introduce Attachment Theory or Imago-based conflict cycles
@@ -34,9 +31,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Reconnect Without Repeating the Past
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Define the difference between emotional readiness and emotional urgency
 - Offer 5 signs of healthy reconnection mindset (e.g. clarity > hope)
@@ -59,9 +53,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: If You Reach Out, Say This (And Why)
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–900 words
 - Teach the purpose of *first contact* — to express truth, not to gain approval
 - Introduce Nonviolent Communication with examples (Observation, Feeling, Need, Request)
@@ -84,9 +75,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Rediscovering Yourself Before Reconnecting
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Use a metaphor: “Your inner garden was here long before he visited”
 - Include a healing story of reconnection after rediscovering self-expression
@@ -108,9 +96,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What Might He Be Feeling Right Now?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Explore male post-breakup states: avoidant grief vs. delayed grief
 - Share a story of a woman who respected silence and later found a deeper reconnection
@@ -132,9 +117,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: You Don’t Have to Be Perfect to Be Loved Again
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Dismantle the idea that love is “earned” through self-improvement
 - Tell a story: woman who reconnected by showing up vulnerably, not flawlessly
@@ -156,9 +138,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Why It Still Hurts (Even If You’re Healing)
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–900 words
 - Teach about “emotional echoes” — old wounds surfacing in new ways
 - Use vivid metaphor: “echoes in a canyon” or “weather systems in the body”
@@ -180,9 +159,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Your 7-Day Reconnection Readiness Plan
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 650–950 words
 - Create a 7-day sequence focused on *her* — not him
 - Each day explores 1 theme (e.g., clarity, grief, boundaries, stillness)
@@ -204,9 +180,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What Are You No Longer Willing to Tolerate?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–900 words
 - Guide the reader in identifying past patterns she’ll never allow again
 - Include emotional categories: safety, honesty, consistency, presence
@@ -228,9 +201,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Wanting Him Without Needing Him
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Explain what it means to love without attachment to outcome
 - Tell a story: woman who stayed open-hearted while grounded in self
@@ -252,9 +222,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: The Silent Shift — When He Starts to Pull Back Again
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–900 words
 - Explore how reconnection may start strong, then slow down without warning
 - Introduce “emotional elasticity” — different emotional processing speeds
@@ -277,9 +244,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Reconnecting ≠ Regressing
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Reframe reconnection as a new chapter, not a repeat of the past
 - Include a metaphor (e.g. a sequel that improves on the original)
@@ -301,9 +265,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Don’t Rush the Opening Scene
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–1000 words
 - Explore the emotional tone of a first message — honest vs anxious
 - Use two micro-stories: one who rushed, one who timed it wisely
@@ -326,10 +287,7 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What Your Future Self Knows
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 850)
+- 450–850 words
 - Invite the reader to write from her 6-months-ahead self
 - Prompt: “Did I act from peace or panic?”
 - Offer a short ritual to connect with inner guidance
@@ -351,9 +309,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Willingness ≠ Weakness
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Reframe the act of reaching out as strength, not desperation
 - Share a story of a woman who opened the door with dignity
@@ -375,9 +330,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Is It Love — Or Is It the Idea of Him?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–950 words
 - Guide the reader to distinguish fantasy from truth
 - Offer a 5-question audit to examine projection vs reality
@@ -399,9 +351,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: The Door Is Closed, But Not Locked
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–900 words
 - Use the metaphor of a closed-but-unlocked door to represent possibility without pressure
 - Explore what healthy waiting looks like — living fully, not freezing
@@ -423,9 +372,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: The Energetic “Reach Out” — What You Communicate Without Words
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–1000 words
 - Explore how emotional charge affects message tone, even without words
 - Compare two cases: one forced, one aligned
@@ -444,14 +390,11 @@ Avoid mysticism or magical thinking. Keep grounded in emotional congruence.
     prompt: (gender, goalStage) => `
 You are a breakup recovery coach writing a **premium guide for a woman who wants to reconnect with her ex**.
 
-### Topic: Energetic Congruence Check: Tune Your Signal Before You Text
+### Topic: The Energetic “Reach Out” — What You Communicate Without Words
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–1000 words
-- Add a pre-send mini-ritual: breathe, name the feeling, write one honest line, pause 10 minutes
+- Explore how emotional charge affects message tone, even without words
 - Compare two cases: one forced, one aligned
 - Offer 3 energy-check questions before writing or speaking
 - End with: “Energy speaks louder than words — tune yours first.”
@@ -471,9 +414,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What to Do When He Reaches Out First
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Explore the emotional risk of reacting impulsively
 - Offer 3 levels of reply: Pause, Acknowledge, Engage — based on readiness
@@ -495,9 +435,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Release the Timeline, Not the Hope
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–900 words
 - Reframe urgency as self-pressure that blocks reconnection energy
 - Use a metaphor (e.g., "choking the bloom by rushing the bud")
@@ -519,9 +456,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: The Emotional Cleanup Before Reconnection
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–950 words
 - Explore emotional leftovers: resentment, fear, guilt, fantasy
 - Include a self-assessment tool (“Which emotion still lingers most?”)
@@ -543,9 +477,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Reconnecting With You First
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Encourage the reader to explore who she became *without* him
 - Include a mini “identity snapshot” journaling practice
@@ -567,9 +498,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Would You Fall in Love With Him *Now*?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Help the reader assess who *he* is now — not just who he was
 - Include a 3-question reality-check prompt
@@ -591,9 +519,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: The Goodbye That Wasn’t Final
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Explore the pain of unclear endings or open loops
 - Offer a ritual to symbolically “complete” the past without closing the door
@@ -615,9 +540,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What If He Reaches Out?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Prepare her emotionally and practically for unexpected contact
 - Offer a grounding checklist (“Before I respond, I will…”)
@@ -639,9 +561,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: You Are Still Worthy of Love
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Challenge the belief that rejection equals unworthiness
 - Share a story of a woman who reclaimed her value without external validation
@@ -663,10 +582,7 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: It’s Okay to Miss Him
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
-- At least 500 words (max 750)
+- 450–750 words
 - Validate that longing does not mean weakness
 - Include a ritual for “missing consciously” without spiralling
 - Share a calming affirmation to repeat when the ache comes
@@ -687,9 +603,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: If He Asked to Come Back
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Explore how to assess emotional readiness and relational health *before* saying yes
 - Include 5 hard questions she must ask herself
@@ -711,9 +624,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: This Is *Your* Story Too
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Help her reclaim authorship of her healing — not just react to what he does
 - Include a journaling exercise: “If I were the heroine…”
@@ -735,9 +645,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Coping When You Don’t Know Where You Stand
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Teach emotional safety skills for navigating unclear contact or mixed signals
 - Use a metaphor: walking through fog with a compass, not a map
@@ -759,9 +666,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Reimagining What Love Could Feel Like
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Invite her to explore what a *healthy* reconnection might look and feel like
 - Include a guided visualisation: 3 scenes of future connection
@@ -783,9 +687,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: When Old Anger Clouds New Hope
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Help her recognise emotional residues that block reconnection
 - Share a realisation story: someone who had to forgive before she could even speak again
@@ -807,9 +708,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Is He the Only One Who Ever Saw the Real Me?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Explore how past intimacy can feel irreplaceable — and how that belief can distort clarity
 - Include a story of someone who slowly discovered emotional intimacy again (in a surprising place)
@@ -831,9 +729,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: The Tiny Ways You Abandon Yourself
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–900 words
 - Explore micro-boundaries (texting, tone-shifting, people-pleasing)
 - Offer 3 clear examples of self-abandonment and their emotional cost
@@ -855,9 +750,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: When You Feel Ashamed of Still Wanting Him
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–800 words
 - Normalise the slow process of emotional release and rekindled desire
 - Share a story of someone who overcame internalised shame and reclaimed her path
@@ -879,9 +771,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Are You Ready for the Version of Him That Exists Today?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Guide her to gently question whether she’s still loving the current man or a version from the past
 - Include a scenario walkthrough: What if he's changed? What if you have?
@@ -903,9 +792,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: How to Stay Open — Without Losing Yourself
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–1000 words
 - Teach how to remain emotionally available without becoming emotionally dependent
 - Share a personal metaphor (e.g., carrying an open hand instead of a white flag)
@@ -927,9 +813,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What Would You Do If He Never Reached Out Again?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–900 words
 - Explore this difficult thought as a self-inquiry tool
 - Include a visualisation: “Day 30 of no contact” — who are you?
@@ -951,9 +834,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Grief as a Tide, Not a Tsunami
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 500–850 words
 - Use the metaphor of emotional tides to normalise recurring waves of grief
 - Include a story of someone who learned to move with, not against, the rhythm
@@ -975,9 +855,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What Was Missing — And What Still Matters?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–900 words
 - Guide her to reflect on what needs weren't met in the past relationship
 - Offer a side-by-side list: unmet needs then vs. what she values now
@@ -999,9 +876,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Trust Yourself Before You Trust Him Again
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–850 words
 - Explore how rebuilding inner trust creates a safer foundation for reconnection
 - Include a short exercise: “Where did I abandon myself last time?”
@@ -1023,9 +897,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: When You Feel Both Love — and Doubt
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–1000 words
 - Help the reader understand that conflicting emotions are part of healing, not a flaw
 - Use a metaphor (e.g., braided rope, weather patterns, musical chords)
@@ -1047,9 +918,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What You’ll Accept — And What You Won’t Anymore
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–900 words
 - Help her map her emotional and relational boundaries with precision
 - Include 3 journal prompts to identify past boundary breaches
@@ -1071,9 +939,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What If Reconnection Doesn't Lead to a Relationship?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Walk the reader through what reconnection might (and might not) look like long-term
 - Offer 3 scenarios: new friendship, temporary peace, or deeper love
@@ -1095,9 +960,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: How to Be Honest — Without Oversharing
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–850 words
 - Teach the difference between authentic vulnerability and emotional overspill
 - Include 4 journal prompts for preparing a message that reflects truth, not desperation
@@ -1119,9 +981,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: What If You Never Get the Perfect Ending?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Normalize the experience of ambiguous endings and emotional leftovers
 - Offer 3 reframes: closure isn’t a conversation, it’s an internal shift
@@ -1143,9 +1002,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Why Do You Want to Reconnect — Really?
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 550–850 words
 - Guide the reader through an honest inquiry about her true motivations
 - Include a diagram: fear-based vs. hope-based intentions
@@ -1167,9 +1023,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: How to Say What You Mean — Without Sounding Needy
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–900 words
 - Offer sentence structures and tone tips for clear, non-clingy messaging
 - Share 3 emotional filters: “Is this true?”, “Is it needed?”, “Is it mine?”
@@ -1191,9 +1044,6 @@ You are a breakup recovery coach writing a **premium guide for a woman who wants
 ### Topic: Tell the Story Differently — And See What Changes
 
 ### Requirements:
-- Must start with an H1 title line beginning with \`# \`
-- Use a short intro (2–3 sentences), 2–4 body sections with \`##\` subheadings, and a final ‘Practice’/‘Reflection’ section.
-- Address the reader as a \${gender} on a \${goalStage} path in one line of the intro.
 - 600–950 words
 - Help her rewrite the story of their breakup from a place of growth and clarity
 - Use a “past-you vs. now-you” voice journaling technique
