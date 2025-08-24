@@ -1,0 +1,30 @@
+# VCS
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log*
+
+# OS/editor
+.DS_Store
+.vscode
+.idea
+*.swp
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Dev, docs, tests
+docs
+test
+scripts
+templates.backup.*
+README.md
+README*.md
+
+# Logs and artifacts
+*.log
+coverage

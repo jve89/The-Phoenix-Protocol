@@ -1,22 +1,29 @@
-FROM node:lts
+# Pinned base for reproducibility
+FROM node:22.17.1-alpine
 
-# Install PostgreSQL client (optional but useful for Heroku CLI or pg:psql)
-RUN apt-get update && \
-    apt-get install -y postgresql-client && \
-    rm -rf /var/lib/apt/lists/*
+# Environment
+ENV NODE_ENV=production \
+    TZ=UTC
 
-# Set working directory
+# Working directory
 WORKDIR /app
 
-# Optimized layer caching: install deps first
-COPY package*.json ./
-RUN npm install
+# Create non-root user
+RUN addgroup -S nodegrp && adduser -S app -G nodegrp
 
-# Copy source files
-COPY . .
+# Copy manifests first for layer caching
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-# Expose app port
+# Copy only what is needed at runtime
+COPY src ./src
+COPY public ./public
+COPY templates ./templates
+COPY config ./config
+COPY content ./content
+
+# Drop privileges
+USER app
+
 EXPOSE 3000
-
-# Default command
 CMD ["node", "src/server.js"]
