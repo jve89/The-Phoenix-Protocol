@@ -1,7 +1,4 @@
 
-# Snapshot @ a2f9bf3 on 2025-08-24 08:31:01 UTC — DO NOT EDIT
-
-
 /workspace/The-Phoenix-Protocol
 ├── Dockerfile
 ├── LICENSE
@@ -142,7 +139,7 @@
    ├── sendgrid_smoketest.cjs
    └── test_unsub_footer.js
 
-directory: 522 file: 2617
+directory: 521 file: 2614
 
 ignored: directory (11)
 
