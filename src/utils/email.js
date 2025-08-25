@@ -83,7 +83,10 @@ async function sendRawEmail(to, subject, html, attachmentPath = null, options = 
   const hasCustomUnsub = hasUnsubscribe(html);
   const hasFeedbackCta = /thephoenixprotocol\.app\/feedback\.html/i.test(html);
 
+  // Start with provided HTML, then normalize tail separators
   let finalHtml = html;
+  // Avoid double separators before injected footers
+  finalHtml = finalHtml.replace(/(?:\s*<hr[^>]*>\s*)+$/i, '');
 
   // 1) Feedback CTA (above unsubscribe). Inject unless suppressed or already present.
   if (!suppressFeedbackFooter && !hasFeedbackCta) {
