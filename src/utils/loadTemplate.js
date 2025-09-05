@@ -5,28 +5,35 @@ const { logEvent } = require('./db_logger');
 const templatesDir = path.resolve(__dirname, '../../templates') + path.sep;
 const templateCache = new Map();
 
+// Allow only root "<name>.html" or one-level "trial/<name>.html"
+const FILENAME_RE = /^(?:trial\/)?[A-Za-z0-9._-]+\.html$/;
+
 /**
- * Load an HTML template by filename, with caching and defensive checks.
- * @param {string} filename - Must be a plain filename ending with .html (no slashes).
- * @returns {Promise<string>} Template content or '' on error.
+ * Load an HTML template with strict path allowlist and caching.
+ * Allowed:
+ *   - "welcome.html" (in /templates)
+ *   - "trial/female_moveon_day1.html" (in /templates/trial)
+ * Returns '' on any error. Never throws.
  */
-async function loadTemplate(filename) {
-  // Basic validation
-  if (typeof filename !== 'string' || !filename.endsWith('.html') || filename.includes('/') || filename.includes('\\')) {
-    logEvent('loadTemplate', 'error', `Invalid template filename: ${filename}`);
+async function loadTemplate(filenameOrRel) {
+  const inStr = String(filenameOrRel || '');
+
+  // Validate against allowlist
+  if (!FILENAME_RE.test(inStr)) {
+    logEvent('loadTemplate', 'error', `Invalid template filename: ${inStr}`);
     return '';
   }
 
-  // Cache hit
-  if (templateCache.has(filename)) return templateCache.get(filename);
-
-  // Resolve path and prevent traversal
-  const filePath = path.resolve(templatesDir, filename);
+  // Resolve under /templates and block traversal
+  const filePath = path.resolve(templatesDir, inStr);
   const rel = path.relative(templatesDir, filePath);
   if (rel.startsWith('..') || path.isAbsolute(rel)) {
-    logEvent('loadTemplate', 'error', `Path traversal detected: ${filename}`);
+    logEvent('loadTemplate', 'error', `Path traversal detected: ${inStr}`);
     return '';
   }
+
+  // Cache
+  if (templateCache.has(inStr)) return templateCache.get(inStr);
 
   try {
     const content = await fs.readFile(filePath, 'utf8');
@@ -34,7 +41,7 @@ async function loadTemplate(filename) {
       logEvent('loadTemplate', 'error', `Template empty: ${filePath}`);
       return '';
     }
-    templateCache.set(filename, content);
+    templateCache.set(inStr, content);
     return content;
   } catch (err) {
     logEvent('loadTemplate', 'error', `Failed to load template ${filePath}: ${err.message}`);
