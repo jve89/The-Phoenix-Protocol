@@ -87,6 +87,7 @@
 |     ├── unsubscribeFooter.js
 |     └── validateGuide.js
 ├── templates
+|  ├── daily_summary.html
 |  ├── farewell_email.html
 |  ├── premium_guide_email.html
 |  ├── trial
@@ -139,7 +140,7 @@
    ├── sendgrid_smoketest.cjs
    └── test_unsub_footer.js
 
-directory: 521 file: 2614
+directory: 521 file: 2615
 
 ignored: directory (11)
 
