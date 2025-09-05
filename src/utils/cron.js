@@ -170,6 +170,10 @@ async function runDeliverTrialSlot() {
       logger.error(`Missing trial template ${templatePath}: ${err.message}`);
       continue;
     }
+    if (!html || !html.trim()) {
+      logger.error(`Empty trial template: ${templatePath}`);
+      continue;
+    }
 
     const subject = `Phoenix Protocol — Day ${day}`;
     const variant = `${gender}_${goal}`;
@@ -207,6 +211,10 @@ async function runDeliverTrialSlot() {
     );
     if (!farewellUsers.length) return;
     const html = await loadTemplate('trial_farewell.html');
+    if (!html || !html.trim()) {
+      logger.error('Empty trial_farewell.html template — skipping farewell send');
+      return;
+    }
     for (const user of farewellUsers) {
       try {
         const subject = 'Your Trial with The Phoenix Protocol Has Ended';
