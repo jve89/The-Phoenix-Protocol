@@ -1,5 +1,7 @@
 (function() {
   const form = document.getElementById('signup-form');
+  if (!form) return; // ✅ Guard: exit quietly if form not present
+
   const submitBtn = form.querySelector('button[type="submit"]');
 
   // Utility: fetch with timeout
@@ -48,7 +50,6 @@
     submitBtn.innerText = 'Processing...';
 
     try {
-      // Combined signup & checkout in one endpoint (future improvement)
       const res = await fetchWithTimeout('/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -62,12 +63,10 @@
 
       const { url } = await res.json();
       if (!url) {
-        // Trial users won't get a payment URL—show a message or redirect
         window.location.href = '/success.html';
         return;
       }
-      // Paid: Redirect to Stripe checkout
-      window.location.href = url;
+      window.location.href = url; // Stripe redirect
 
     } catch (err) {
       console.error('[Signup Error]', err);
