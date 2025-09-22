@@ -61,8 +61,7 @@
 |  ├── sitemap.xml
 |  ├── stripe-ar21.svg
 |  ├── success.html
-|  ├── terms.html
-|  └── uploads
+|  └── terms.html
 ├── scripts
 |  └── prune_old_logs.sql
 ├── src
@@ -140,7 +139,7 @@
    ├── sendgrid_smoketest.cjs
    └── test_unsub_footer.js
 
-directory: 521 file: 2615
+directory: 520 file: 2615
 
 ignored: directory (11)
 
