@@ -1,12 +1,7 @@
-image:
-  file: ./Dockerfile
-
 tasks:
-  - name: Start Phoenix Protocol SaaS
-    command: |
-      npm install
-      node src/server.js
-
+  - name: shell
+    init: nvm install
+    command: nvm use && npm ci && npm run dev
 ports:
-  - port: 3000
-    onOpen: open-preview
+  - port: 5173
+    onOpen: notify
