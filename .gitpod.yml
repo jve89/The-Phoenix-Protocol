@@ -1,7 +1,7 @@
 image: gitpod/workspace-node:20
 tasks:
   - name: shell
-    command: echo "Run: npm ci && npm run dev"
+    command: npm ci && npm run dev
 ports:
   - port: 5173
     onOpen: notify
