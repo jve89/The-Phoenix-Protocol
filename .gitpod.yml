@@ -1,12 +1,7 @@
-image:
-  file: ./Dockerfile
-
+image: gitpod/workspace-node:20
 tasks:
-  - name: Start Phoenix Protocol SaaS
-    command: |
-      npm install
-      node src/server.js
-
+  - name: shell
+    command: echo "Run: npm ci && npm run dev"
 ports:
-  - port: 3000
-    onOpen: open-preview
+  - port: 5173
+    onOpen: notify
