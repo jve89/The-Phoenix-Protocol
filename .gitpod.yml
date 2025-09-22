@@ -1,7 +1,7 @@
-image: gitpod/workspace-node:20
 tasks:
   - name: shell
-    command: npm ci && npm run dev
+    init: nvm install
+    command: nvm use && npm ci && npm run dev
 ports:
   - port: 5173
     onOpen: notify
